@@ -1,0 +1,106 @@
+/* @tailwind directives removed because Tailwind CSS is not configured in the build process. */
+/* If you want to use Tailwind, follow the setup at https://tailwindcss.com/docs/installation */
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Custom styles */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family:
+    -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+  line-height: 1.6;
+  background-color: #f0f0f0;
+  color: #333;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  margin: 0;
+  padding: 0;
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+ul {
+  list-style: none;
+}
+
+button {
+  cursor: pointer;
+}
+
+:root {
+  --efca-blue: #1a365d;
+  --efca-accent: #2b6cb0;
+  --efca-gray: #f7fafc;
+  --efca-text: #1a365d;
+  --efca-muted: #718096;
+}
+
+@layer base {
+  body {
+    @apply bg-efcaGray min-h-screen font-sans;
+  }
+}
+
+@layer components {
+  .btn-primary {
+    @apply bg-efcaAccent text-white font-bold rounded px-6 py-2 hover:bg-efcaBlue transition;
+  }
+
+  .btn-secondary {
+    @apply bg-white text-efcaAccent border border-efcaAccent rounded px-6 py-2 hover:bg-efcaAccent hover:text-white transition;
+  }
+
+  .input-field {
+    @apply border border-gray-300 rounded px-4 py-2 w-full focus:ring-efcaAccent focus:border-efcaAccent bg-white;
+  }
+
+  .card {
+    @apply bg-white rounded-lg shadow p-8;
+  }
+}
+
+@layer utilities {
+  .text-efcaBlue {
+    color: var(--efca-blue);
+  }
+
+  .bg-efcaBlue {
+    background-color: var(--efca-blue);
+  }
+
+  .text-efcaAccent {
+    color: var(--efca-accent);
+  }
+
+  .bg-efcaAccent {
+    background-color: var(--efca-accent);
+  }
+
+  .bg-efcaGray {
+    background-color: var(--efca-gray);
+  }
+
+  .text-efcaText {
+    color: var(--efca-text);
+  }
+
+  .text-efcaMuted {
+    color: var(--efca-muted);
+  }
+}
