@@ -9,7 +9,7 @@ This document describes the core data models and API endpoints for the Ministry 
 ```json
 {
   "id": "user_123",
-  "email": "applicant@gmail.com",
+  "email": "candidate@gmail.com",
   "name": "Jane Doe",
   "role": "applicant", // or "church", "admin"
   "churchId": "church_456", // only for applicants
@@ -48,14 +48,25 @@ This document describes the core data models and API endpoints for the Ministry 
 
 ---
 
-## 4. Applicant Profile/Upload Model
+## 4. Candidate Profile/Upload Model
 
 ```json
 {
   "id": "profile_001",
   "userId": "user_123",
+  "firstName": "Jane",
+  "lastName": "Doe",
+  "email": "jane@example.com",
+  "phone": "555-123-4567",
+  "streetAddress": "123 Main St",
+  "city": "Springfield",
+  "state": "IL",
+  "zipCode": "62704",
+  "event": "Ministry Match",
+  "createdAt": "2024-06-01",
   "resumeUrl": "https://s3.amazonaws.com/bucket/resume.pdf",
-  "status": "pending", // or "approved", "rejected"
+  "videoUrl": "https://example.com/video-jane.mp4",
+  "status": "pending",
   "adminReviewedBy": "user_999",
   "adminReviewedAt": "2024-06-15T12:00:00Z"
 }
@@ -68,13 +79,13 @@ This document describes the core data models and API endpoints for the Ministry 
 | Endpoint               | Method | Description                             | Request/Response Example                          |
 | ---------------------- | ------ | --------------------------------------- | ------------------------------------------------- |
 | `/api/login`           | POST   | Login user                              | `{ email, password }` → `{ success, role }`       |
-| `/api/register`        | POST   | Register applicant                      | `{ code, name, email, password }` → `{ success }` |
+| `/api/register`        | POST   | Register candidate                     | `{ code, name, email, password }` → `{ success }` |
 | `/api/validate-invite` | POST   | Validate invite code                    | `{ code }` → `{ valid, event }`                   |
-| `/api/applicants`      | GET    | List applicants (admin/church)          | → `[user, ...]`                                   |
+| `/api/candidates`      | GET    | List candidates (admin/church)          | → `[user, ...]`                                   |
 | `/api/churches`        | GET    | List churches (admin)                   | → `[church, ...]`                                 |
-| `/api/profile`         | GET    | Get applicant profile                   | → `{ ...profile }`                                |
-| `/api/profile/upload`  | POST   | Upload applicant document               | `{ file }` → `{ url }`                            |
-| `/api/admin/review`    | POST   | Admin approves/rejects applicant upload | `{ profileId, status }` → `{ success }`           |
+| `/api/profile`         | GET    | Get candidate profile                   | → `{ ...profile }`                                |
+| `/api/profile/upload`  | POST   | Upload candidate document               | `{ file }` → `{ url }`                            |
+| `/api/admin/review`    | POST   | Admin approves/rejects candidate upload | `{ profileId, status }` → `{ success }`           |
 
 ---
 
@@ -84,9 +95,9 @@ This document describes the core data models and API endpoints for the Ministry 
 const mockUsers = [
   {
     id: 'user_1',
-    email: 'applicant@gmail.com',
+    email: 'candidate@gmail.com',
     name: 'Jane Doe',
-    role: 'applicant',
+    role: 'candidate',
     churchId: 'church_1',
     status: 'active',
   },
@@ -106,9 +117,9 @@ const mockChurches = [
 ];
 
 // Example handler
-http.get('/api/applicants', ({ request }) => {
-  // Return applicants for admin/church
-  return Response.json(mockUsers.filter((u) => u.role === 'applicant'));
+http.get('/api/candidates', ({ request }) => {
+  // Return candidates for admin/church
+  return Response.json(mockUsers.filter((u) => u.role === 'candidate'));
 });
 ```
 

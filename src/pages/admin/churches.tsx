@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import PasswordInput from '../../components/PasswordInput';
 
 interface ChurchUser {
   id: string;
@@ -101,11 +102,10 @@ const AdminChurches = () => {
               >
                 Password
               </label>
-              <input
+              <PasswordInput
                 id="new-church-password"
-                className="input-field w-full"
+                className="w-full"
                 placeholder="Password"
-                type="password"
                 value={newPassword}
                 onChange={(e) => setNewPassword(e.target.value)}
               />

@@ -7,12 +7,12 @@ interface Profile {
   firstName: string;
   lastName: string;
   email: string;
-  status: 'draft' | 'submitted' | 'approved' | 'rejected';
+  status: 'draft' | 'pending' | 'approved' | 'rejected';
   lastUpdated: string;
   adminFeedback?: string;
 }
 
-export default function ApplicantDashboard() {
+export default function CandidateDashboard() {
   const router = useRouter();
   const [profile, setProfile] = useState<Profile | null>(null);
   const [loading, setLoading] = useState(true);
@@ -46,7 +46,7 @@ export default function ApplicantDashboard() {
         return 'bg-green-100 text-green-800';
       case 'rejected':
         return 'bg-red-100 text-red-800';
-      case 'submitted':
+      case 'pending':
         return 'bg-blue-100 text-blue-800';
       default:
         return 'bg-gray-100 text-gray-800';
@@ -59,7 +59,7 @@ export default function ApplicantDashboard() {
         return 'Your profile is visible to churches';
       case 'rejected':
         return 'Your profile needs updates';
-      case 'submitted':
+      case 'pending':
         return 'Your profile is under review';
       default:
         return 'Complete your profile to apply for positions';
@@ -95,7 +95,7 @@ export default function ApplicantDashboard() {
   return (
     <div className="min-h-screen bg-efcaGray p-8">
       <div className="max-w-4xl mx-auto">
-        <h1 className="text-3xl font-bold text-efcaDark mb-8">Applicant Dashboard</h1>
+        <h1 className="text-3xl font-bold text-efcaDark mb-8">Candidate Dashboard</h1>
 
         {/* Profile Status Section */}
         <section className="bg-white rounded-lg shadow-sm p-6 mb-8">
@@ -115,7 +115,7 @@ export default function ApplicantDashboard() {
               <span className="text-gray-600">{getStatusMessage(profile?.status ?? 'draft')}</span>
             </div>
             <Link
-              href="/applicant/profile"
+              href="/candidate/profile"
               className="px-4 py-2 bg-efcaAccent text-white rounded font-semibold hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-efcaAccent transition-colors"
             >
               {profile ? 'Edit Profile' : 'Create Profile'}
@@ -142,14 +142,14 @@ export default function ApplicantDashboard() {
             </p>
             <div className="space-y-3">
               <Link
-                href="/applicant/profile"
+                href="/candidate/profile"
                 className="block w-full px-4 py-2 text-center bg-efcaAccent text-white rounded font-semibold hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-efcaAccent transition-colors"
               >
                 {profile ? 'Update Profile' : 'Create Profile'}
               </Link>
               {profile?.status === 'draft' && (
                 <button
-                  onClick={() => router.push('/applicant/profile?submit=true')}
+                  onClick={() => router.push('/candidate/profile?submit=true')}
                   className="block w-full px-4 py-2 text-center bg-green-600 text-white rounded font-semibold hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-500 transition-colors"
                 >
                   Submit for Review

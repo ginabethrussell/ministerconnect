@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/router';
 import Link from 'next/link';
+import PasswordInput from '../../components/PasswordInput';
 
 const Register = () => {
   const [code, setCode] = useState('');
@@ -85,6 +86,7 @@ const Register = () => {
             onChange={(e) => setCode(e.target.value)}
             placeholder="Invite Code"
             required
+            autoFocus
           />
           <input
             className="input-field"
@@ -95,18 +97,14 @@ const Register = () => {
             placeholder="Email"
             required
           />
-          <input
-            className="input-field"
-            type="password"
+          <PasswordInput
             name="password"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
             placeholder="Password"
             required
           />
-          <input
-            className="input-field"
-            type="password"
+          <PasswordInput
             name="confirmPassword"
             value={confirmPassword}
             onChange={(e) => setConfirmPassword(e.target.value)}

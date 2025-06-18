@@ -3,14 +3,14 @@ import { v4 as uuidv4 } from 'uuid';
 
 // Mock data
 const mockUsers = [
-  { email: 'applicant@gmail.com', password: 'password', role: 'applicant' },
+  { email: 'candidate@gmail.com', password: 'password', role: 'candidate' },
   { email: 'church@gmail.com', password: 'password', role: 'church' },
   { email: 'admin@gmail.com', password: 'password', role: 'admin' },
 ];
 
 let mockInviteCodes = [
   { id: '1', code: 'JOBFAIR25', event: 'Ministry Match', maxUses: 100, uses: 0 },
-  { id: '2', code: 'EXPIRED_CODE', event: 'Old Event', maxUses: 10, uses: 10 },
+  { id: '2', code: 'JOBFAIR24', event: 'Old Event', maxUses: 10, uses: 10 },
 ];
 
 interface Profile {
@@ -22,39 +22,22 @@ interface Profile {
   city: string;
   state: string;
   zipCode: string;
-  status: 'draft' | 'submitted' | 'approved' | 'rejected';
-  experience: string;
-  education: string;
-  skills: string[];
-  references: {
-    name: string;
-    email: string;
-    phone: string;
-  }[];
+  status: 'draft' | 'pending' | 'approved' | 'rejected';
   resumeFileId?: string;
+  videoUrl?: string;
 }
 
 // Mock profile data
 const mockProfile: Profile = {
   firstName: 'John',
   lastName: 'Doe',
-  email: 'applicant@gmail.com',
+  email: 'candidate@gmail.com',
   phone: '123-456-7890',
   streetAddress: '123 Test St',
   city: 'Test City',
-  state: 'TS',
+  state: 'TX',
   zipCode: '12345',
   status: 'draft',
-  experience: '5 years in ministry',
-  education: 'M.Div from Seminary',
-  skills: ['Preaching', 'Teaching', 'Leadership'],
-  references: [
-    {
-      name: 'Pastor Smith',
-      email: 'smith@church.com',
-      phone: '123-456-7890',
-    },
-  ],
 };
 
 // Mock data store
@@ -64,7 +47,7 @@ const profiles: Record<string, Profile> = {
 const files: Record<string, { data: ArrayBuffer; type: string }> = {};
 
 // --- Applicant Review Mock Data ---
-interface ApplicantReviewProfile {
+interface CandidateReviewProfile {
   id: string;
   name: string;
   email: string;
@@ -73,13 +56,13 @@ interface ApplicantReviewProfile {
   createdAt: string;
 }
 
-let mockApplicantProfiles: ApplicantReviewProfile[] = [
+let mockCandidateProfiles: CandidateReviewProfile[] = [
   {
     id: '1',
     name: 'Alice Smith',
     email: 'alice@example.com',
     event: 'Ministry Match',
-    status: 'Pending',
+    status: 'draft',
     createdAt: '2024-06-01',
   },
   {
@@ -87,7 +70,7 @@ let mockApplicantProfiles: ApplicantReviewProfile[] = [
     name: 'Bob Jones',
     email: 'bob@example.com',
     event: 'Old Event',
-    status: 'Reviewed',
+    status: 'Approved',
     createdAt: '2024-05-20',
   },
   {
@@ -296,8 +279,8 @@ export const handlers = [
   http.get('/api/user', () => {
     // Return the current user's data
     return HttpResponse.json({
-      email: 'applicant@gmail.com',
-      role: 'applicant',
+      email: 'candidate@gmail.com',
+      role: 'candidate',
     });
   }),
 
@@ -340,24 +323,24 @@ export const handlers = [
     return HttpResponse.json({ success: true });
   }),
 
-  // --- Applicant Review Handlers ---
-  // GET /api/applicants?status=pending
-  http.get('/api/applicants', ({ request }) => {
+  // --- Candidate Review Handlers ---
+  // GET /api/candidates?status=pending
+  http.get('/api/candidates', ({ request }) => {
     const url = new URL(request.url);
     const status = url.searchParams.get('status');
-    let result = mockApplicantProfiles;
+    let result = mockCandidateProfiles;
     if (status) {
       result = result.filter((p) => p.status.toLowerCase() === status.toLowerCase());
     }
     return HttpResponse.json(result);
   }),
 
-  // PATCH /api/applicants/:id
-  http.patch('/api/applicants/:id', async ({ params, request }) => {
+  // PATCH /api/candidates/:id
+  http.patch('/api/candidates/:id', async ({ params, request }) => {
     const { id } = params;
     const { status } = (await request.json()) as { status: string };
     let updated;
-    mockApplicantProfiles = mockApplicantProfiles.map((p) => {
+    mockCandidateProfiles = mockCandidateProfiles.map((p) => {
       if (p.id === id) {
         updated = { ...p, status };
         return updated;
@@ -365,7 +348,7 @@ export const handlers = [
       return p;
     });
     if (!updated) {
-      return new HttpResponse(JSON.stringify({ message: 'Applicant not found' }), { status: 404 });
+      return new HttpResponse(JSON.stringify({ message: 'Candidate not found' }), { status: 404 });
     }
     return HttpResponse.json(updated);
   }),

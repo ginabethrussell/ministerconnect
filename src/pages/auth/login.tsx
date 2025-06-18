@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { useRouter } from 'next/router';
 import Link from 'next/link';
+import PasswordInput from '../../components/PasswordInput';
 
 const Login = () => {
   const [email, setEmail] = useState('');
@@ -40,27 +41,23 @@ const Login = () => {
       <div className="max-w-md mx-auto p-6 bg-white rounded shadow">
         <h2 className="text-xl font-bold mb-4 text-efcaBlue">Login</h2>
         <p className="mb-4 text-gray-600">All users (candidates, churches, admins) log in here.</p>
-        <form onSubmit={handleSubmit}>
+        <form onSubmit={handleSubmit} className="space-y-4">
           <input
-            className="border p-2 w-full mb-2"
+            className="input-field"
             type="email"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
             placeholder="Email"
             required
+            autoFocus
           />
-          <input
-            className="border p-2 w-full mb-2"
-            type="password"
+          <PasswordInput
             value={password}
             onChange={(e) => setPassword(e.target.value)}
             placeholder="Password"
             required
           />
-          <button
-            className="bg-efcaAccent text-white px-4 py-2 rounded w-full font-bold hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-efcaAccent transition-colors"
-            type="submit"
-          >
+          <button className="btn-primary w-full" type="submit">
             Login
           </button>
         </form>

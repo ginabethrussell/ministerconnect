@@ -19,7 +19,7 @@ export default function ChurchDashboard() {
         <section className="bg-white rounded-lg shadow-sm p-6 mb-8">
           <h2 className="text-xl font-bold text-efcaDark mb-2">Welcome to Your Church Dashboard</h2>
           <p className="text-gray-600 mb-4">
-            As a church user, you can search for qualified applicants, save your favorites, and
+            As a church user, you can search for qualified candidates, save your favorites, and
             contact them directly. Use the links below to get started.
           </p>
           <div className="flex flex-col gap-4">
@@ -27,22 +27,22 @@ export default function ChurchDashboard() {
               href="/church/search"
               className="px-4 py-2 bg-efcaAccent text-white rounded font-semibold text-center hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-efcaAccent transition-colors"
             >
-              Search Applicants
+              Search Candidates
             </Link>
             <Link
-              href="/church/applicants"
+              href="/church/candidates"
               className="px-4 py-2 bg-efcaAccent text-white rounded font-semibold text-center hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-efcaAccent transition-colors"
             >
-              View Saved Applicants
+              View Saved Candidates
             </Link>
           </div>
         </section>
         <section className="bg-white rounded-lg shadow-sm p-6">
           <h3 className="text-lg font-bold text-efcaDark mb-2">How It Works</h3>
           <ol className="list-decimal list-inside text-gray-700 space-y-2">
-            <li>Search for applicants that match your ministry needs.</li>
-            <li>Save/favorite applicants to view them later.</li>
-            <li>Contact applicants directly using their profile information.</li>
+            <li>Search for candidates that match your ministry needs.</li>
+            <li>Save/favorite candidates to view them later.</li>
+            <li>Contact candidates directly using their profile information.</li>
           </ol>
         </section>
       </div>

@@ -15,9 +15,9 @@ const features = [
     href: '/admin/churches',
   },
   {
-    title: 'Review Applicant Profiles',
+    title: 'Review Candidate Profiles',
     description:
-      'View, approve, or reject applicant profiles and their uploads before releasing them to church visibility.',
+      'View, approve, or reject candidate profiles and submitted files and videos before releasing them to church visibility.',
     href: '/admin/review',
   },
 ];

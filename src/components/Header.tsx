@@ -16,14 +16,18 @@ const Header = ({ role, onLogout }: HeaderProps) => {
       router.pathname === path ? 'bg-efcaAccent text-white' : 'text-white hover:bg-efcaAccent/80'
     }`;
 
+  const LogoHref = !role ? '/' : `/${role}`;
+
   return (
     <header className="bg-efcaBlue text-white py-4 px-6 shadow">
       <div className="flex justify-between items-center max-w-7xl mx-auto">
-        <Link
-          href="/"
-          className="flex items-center hover:underline hover:text-efcaAccent focus:underline focus:text-efcaAccent transition-colors"
-        >
-          <span className="font-bold text-xl uppercase tracking-wide">Ministry Match</span>
+        <Link href={LogoHref}>
+          <span
+            className="flex items-center font-bold text-xl uppercase tracking-wide cursor-default opacity-100"
+            aria-disabled="true"
+          >
+            Ministry Match
+          </span>
         </Link>
         <button
           className="md:hidden text-white ml-2"
@@ -49,12 +53,12 @@ const Header = ({ role, onLogout }: HeaderProps) => {
           </svg>
         </button>
         <nav className="hidden md:flex items-center space-x-6">
-          {role === 'applicant' && (
+          {role === 'candidate' && (
             <>
-              <Link href="/applicant" className={navLinkClass('/applicant')}>
+              <Link href="/candidate" className={navLinkClass('/candidate')}>
                 Dashboard
               </Link>
-              <Link href="/applicant/profile" className={navLinkClass('/applicant/profile')}>
+              <Link href="/candidate/profile" className={navLinkClass('/candidate/profile')}>
                 Profile
               </Link>
             </>
@@ -65,10 +69,10 @@ const Header = ({ role, onLogout }: HeaderProps) => {
                 Dashboard
               </Link>
               <Link href="/church/search" className={navLinkClass('/church/search')}>
-                Search Applicants
+                Search Candidates
               </Link>
-              <Link href="/church/applicants" className={navLinkClass('/church/applicants')}>
-                Saved Applicants
+              <Link href="/church/candidates" className={navLinkClass('/church/candidates')}>
+                Saved Candidates
               </Link>
             </>
           )}
@@ -78,7 +82,7 @@ const Header = ({ role, onLogout }: HeaderProps) => {
                 Dashboard
               </Link>
               <Link href="/admin/review" className={navLinkClass('/admin/review')}>
-                Review Applications
+                Review Candidates
               </Link>
               <Link href="/admin/churches" className={navLinkClass('/admin/churches')}>
                 Manage Churches
@@ -110,12 +114,12 @@ const Header = ({ role, onLogout }: HeaderProps) => {
       </div>
       {menuOpen && (
         <div className="md:hidden px-2 pt-2 pb-3 space-y-1">
-          {role === 'applicant' && (
+          {role === 'candidate' && (
             <>
-              <Link href="/applicant" className={navLinkClass('/applicant')}>
+              <Link href="/candidate" className={navLinkClass('/candidate')}>
                 Dashboard
               </Link>
-              <Link href="/applicant/profile" className={navLinkClass('/applicant/profile')}>
+              <Link href="/candidate/profile" className={navLinkClass('/candidate/profile')}>
                 Profile
               </Link>
             </>
@@ -125,10 +129,10 @@ const Header = ({ role, onLogout }: HeaderProps) => {
               <Link href="/church" className={navLinkClass('/church')}>
                 Dashboard
               </Link>
-              <Link href="/church/applications" className={navLinkClass('/church/applications')}>
+              <Link href="/church/candidates" className={navLinkClass('/church/candidates')}>
                 Applications
               </Link>
-              <Link href="/church/jobs" className={navLinkClass('/church/jobs')}>
+              <Link href="/church/search" className={navLinkClass('/church/search')}>
                 Jobs
               </Link>
             </>
@@ -139,7 +143,7 @@ const Header = ({ role, onLogout }: HeaderProps) => {
                 Dashboard
               </Link>
               <Link href="/admin/review" className={navLinkClass('/admin/review')}>
-                Review Applicants
+                Review Candidates
               </Link>
               <Link href="/admin/churches" className={navLinkClass('/admin/churches')}>
                 Manage Churches

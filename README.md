@@ -1,6 +1,6 @@
 # Ministry Match
 
-A multi-role Next.js application for connecting ministry applicants with churches, featuring role-based access for applicants, churches, and super admins. Built with React, TypeScript, Tailwind CSS, and MSW for frontend development and API mocking.
+A multi-role Next.js application for connecting ministry candidates with churches, featuring role-based access for candidates, churches, and super admins. Built with React, TypeScript, Tailwind CSS, and MSW for frontend development and API mocking.
 
 ---
 
@@ -19,11 +19,11 @@ A multi-role Next.js application for connecting ministry applicants with churche
 
 ## Overview
 
-Ministry Match streamlines the process of matching ministry applicants with churches. The app supports three user roles:
+Ministry Match streamlines the process of matching ministry candidates with churches. The app supports three user roles:
 
-- **Applicants**: Register, complete a profile, and upload resumes/videos.
-- **Churches**: View applicants, manage church info, and contact admin.
-- **Super Admin**: Manage users, churches, invite codes, and review applicant uploads.
+- **Candidates**: Register, complete a profile, and upload resumes/videos.
+- **Churches**: Search candidates, save candidates, and contact admin.
+- **Super Admin**: Manage users, churches, invite codes, and review candidate uploads.
 
 The frontend is fully mocked using [MSW](https://mswjs.io/) for rapid development and testing.
 
@@ -34,8 +34,8 @@ The frontend is fully mocked using [MSW](https://mswjs.io/) for rapid developmen
 - Role-based authentication and navigation
 - Invite code registration (supports multi-use codes)
 - Responsive, accessible UI styled after EFCA branding
-- Applicant profile with resume/video upload (file or URL)
-- Admin dashboard for reviewing applicants, managing churches, and invite codes
+- Candidate profile with resume/video upload (file or URL)
+- Admin dashboard for reviewing candidates, managing churches, and invite codes
 - Mocked API endpoints and data models for frontend development
 
 ---
@@ -100,7 +100,7 @@ ministry-match/
 │   ├── pages/             # Next.js pages (see below)
 │   │   ├── index.tsx      # Landing page
 │   │   ├── auth/          # Login & registration
-│   │   ├── applicant/     # Applicant profile & dashboard
+│   │   ├── candidate/     # Candidate profile & dashboard
 │   │   ├── church/        # Church dashboard
 │   │   └── admin/         # Admin dashboard & tools
 │   ├── styles/            # Tailwind/global CSS
@@ -122,20 +122,20 @@ See [`API_DATA_MODEL.md`](./API_DATA_MODEL.md) for full details.
 **Key Endpoints:**
 
 - `POST /api/login` — Login user
-- `POST /api/register` — Register applicant
+- `POST /api/register` — Register candidate
 - `POST /api/validate-invite` — Validate invite code
-- `GET /api/applicants` — List applicants (admin/church)
+- `GET /api/candidates` — List applicants (admin/church)
 - `GET /api/churches` — List churches (admin)
-- `GET /api/profile` — Get applicant profile
-- `POST /api/profile/upload` — Upload applicant document
-- `POST /api/admin/review` — Admin approves/rejects applicant upload
+- `GET /api/profile` — Get candidate profile
+- `POST /api/profile/upload` — Upload candidate document
+- `POST /api/admin/review` — Admin approves/rejects candidate profile
 
 **Core Models:**
 
-- User (applicant, church, admin)
+- User (candidate, church, admin)
 - Church
 - Invite Code (supports multi-use)
-- Applicant Profile/Upload
+- Candidate Profile/Upload
 
 ---
 

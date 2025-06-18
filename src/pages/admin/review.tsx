@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 
-interface ApplicantProfile {
+interface CandidateProfile {
   id: string;
   name: string;
   email: string;
@@ -14,21 +14,13 @@ interface ApplicantProfile {
 }
 
 // Mock fetch function (replace with real API call or MSW handler)
-const fetchApplicants = async (): Promise<ApplicantProfile[]> => {
-  const res = await fetch('/api/applicants?status=pending');
+const fetchCandidates = async (): Promise<CandidateProfile[]> => {
+  const res = await fetch('/api/candidates?status=pending');
   return res.json();
 };
 
-const fetchApplicantProfile = async (id: string): Promise<ApplicantProfile> => {
-  // For now, just return the same mock data as the table row
-  // In a real app, fetch `/api/applicants/:id` for full details
-  const res = await fetch('/api/applicants?status=pending');
-  const all = await res.json();
-  return all.find((p: ApplicantProfile) => p.id === id);
-};
-
-const patchApplicantStatus = async (id: string, status: string) => {
-  await fetch(`/api/applicants/${id}`, {
+const patchCandidateStatus = async (id: string, status: string) => {
+  await fetch(`/api/candidates/${id}`, {
     method: 'PATCH',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ status }),
@@ -36,17 +28,14 @@ const patchApplicantStatus = async (id: string, status: string) => {
 };
 
 const AdminReview = () => {
-  const [profiles, setProfiles] = useState<ApplicantProfile[]>([]);
+  const [profiles, setProfiles] = useState<CandidateProfile[]>([]);
   const [sortBy, setSortBy] = useState<'name' | 'createdAt'>('name');
   const [filterEvent, setFilterEvent] = useState<string>('');
   const [loading, setLoading] = useState(true);
-  const [selectedId, setSelectedId] = useState<string | null>(null);
-  const [drawerProfile, setDrawerProfile] = useState<ApplicantProfile | null>(null);
-  const [drawerLoading, setDrawerLoading] = useState(false);
-  const [actionLoading, setActionLoading] = useState(false);
+  const [actionLoadingId, setActionLoadingId] = useState<string | null>(null);
 
   useEffect(() => {
-    fetchApplicants().then((data) => {
+    fetchCandidates().then((data) => {
       setProfiles(data);
       setLoading(false);
     });
@@ -64,26 +53,12 @@ const AdminReview = () => {
     return 0;
   });
 
-  // Open drawer and fetch full profile
-  const openDrawer = async (id: string) => {
-    setSelectedId(id);
-    setDrawerLoading(true);
-    const profile = await fetchApplicantProfile(id);
-    setDrawerProfile(profile);
-    setDrawerLoading(false);
-  };
-
-  // Approve or reject
-  const handleStatus = async (status: 'approved' | 'rejected') => {
-    if (!drawerProfile) return;
-    setActionLoading(true);
-    await patchApplicantStatus(drawerProfile.id, status);
-    setActionLoading(false);
-    setDrawerProfile(null);
-    setSelectedId(null);
-    // Refresh list
+  const handleStatus = async (id: string, status: 'approved' | 'rejected') => {
+    setActionLoadingId(id);
+    await patchCandidateStatus(id, status);
+    setActionLoadingId(null);
     setLoading(true);
-    fetchApplicants().then((data) => {
+    fetchCandidates().then((data) => {
       setProfiles(data);
       setLoading(false);
     });
@@ -91,7 +66,7 @@ const AdminReview = () => {
 
   return (
     <div className="max-w-4xl mx-auto mt-10 p-6 bg-white rounded-xl shadow relative">
-      <h1 className="text-3xl font-bold text-efcaText mb-6">Review Applicant Profiles</h1>
+      <h1 className="text-3xl font-bold text-efcaText mb-6">Review Candidate Profiles</h1>
       <p className="mb-4 text-efcaMuted">
         Showing only profiles submitted and awaiting review for release to church visibility.
       </p>
@@ -126,134 +101,57 @@ const AdminReview = () => {
       {loading ? (
         <div className="text-efcaMuted">Loading...</div>
       ) : filtered.length === 0 ? (
-        <div className="text-efcaMuted">No applicant profiles found.</div>
+        <div className="text-efcaMuted">No candidate profiles found.</div>
       ) : (
-        <div className="overflow-x-auto rounded-lg shadow-sm bg-efcaLight">
-          <table className="w-full text-left">
-            <thead>
-              <tr className="bg-efcaBlue/90 text-white">
-                <th className="py-3 px-4 font-semibold">Name</th>
-                <th className="py-3 px-4 font-semibold">Email</th>
-                <th className="py-3 px-4 font-semibold">Event</th>
-                <th className="py-3 px-4 font-semibold">Status</th>
-                <th className="py-3 px-4 font-semibold">Created</th>
-                <th className="py-3 px-4 font-semibold text-center">Actions</th>
-              </tr>
-            </thead>
-            <tbody>
-              {filtered.map((profile, idx) => (
-                <tr key={profile.id} className={idx % 2 === 0 ? 'bg-white' : 'bg-gray-100'}>
-                  <td className="py-3 px-4 align-middle">{profile.name}</td>
-                  <td className="py-3 px-4 align-middle">{profile.email}</td>
-                  <td className="py-3 px-4 align-middle">{profile.event}</td>
-                  <td className="py-3 px-4 align-middle">{profile.status}</td>
-                  <td className="py-3 px-4 align-middle">{profile.createdAt}</td>
-                  <td className="py-3 px-4 align-middle text-center">
-                    <button
-                      className="px-3 py-1 bg-efcaAccent text-white text-sm rounded-md hover:bg-efcaAccent/80 transition"
-                      title="View"
-                      onClick={() => openDrawer(profile.id)}
-                    >
-                      View
-                    </button>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
-      )}
-      {/* Side Drawer */}
-      {selectedId && (
-        <div className="fixed inset-0 z-40 flex">
-          {/* Overlay */}
-          <div
-            className="fixed inset-0 bg-black bg-opacity-30"
-            onClick={() => {
-              setSelectedId(null);
-              setDrawerProfile(null);
-            }}
-          />
-          {/* Drawer */}
-          <div className="ml-auto w-full max-w-md h-full bg-white shadow-xl p-6 overflow-y-auto relative z-50">
-            <button
-              className="absolute top-4 right-4 text-2xl text-efcaMuted hover:text-efcaAccent"
-              onClick={() => {
-                setSelectedId(null);
-                setDrawerProfile(null);
-              }}
-              aria-label="Close"
-            >
-              ×
-            </button>
-            {drawerLoading || !drawerProfile ? (
-              <div className="mt-20 text-center text-efcaMuted">Loading profile...</div>
-            ) : (
-              <div>
-                <h2 className="text-2xl font-bold text-efcaText mb-2">{drawerProfile.name}</h2>
-                <div className="mb-4 text-efcaMuted">{drawerProfile.email}</div>
-                <div className="mb-2">
-                  <span className="font-semibold">Event:</span> {drawerProfile.event}
-                </div>
-                <div className="mb-2">
-                  <span className="font-semibold">Status:</span> {drawerProfile.status}
-                </div>
-                <div className="mb-2">
-                  <span className="font-semibold">Created:</span> {drawerProfile.createdAt}
-                </div>
-                {drawerProfile.phone && (
-                  <div className="mb-2">
-                    <span className="font-semibold">Phone:</span> {drawerProfile.phone}
-                  </div>
-                )}
-                {/* Resume */}
-                {drawerProfile.resumeUrl && (
-                  <div className="mb-2">
-                    <span className="font-semibold">Resume:</span>{' '}
-                    <a
-                      href={drawerProfile.resumeUrl}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="text-efcaAccent underline"
-                    >
-                      View Resume
-                    </a>
-                  </div>
-                )}
-                {/* Video */}
-                {drawerProfile.videoUrl && (
-                  <div className="mb-2">
-                    <span className="font-semibold">Video:</span>{' '}
-                    <a
-                      href={drawerProfile.videoUrl}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="text-efcaAccent underline"
-                    >
-                      View Video
-                    </a>
-                  </div>
-                )}
-                {/* Add more fields as needed */}
-                <div className="flex gap-4 mt-8">
-                  <button
-                    className="btn-primary flex-1"
-                    disabled={actionLoading}
-                    onClick={() => handleStatus('approved')}
-                  >
-                    {actionLoading ? 'Approving...' : 'Approve'}
-                  </button>
-                  <button
-                    className="btn-secondary flex-1"
-                    disabled={actionLoading}
-                    onClick={() => handleStatus('rejected')}
-                  >
-                    {actionLoading ? 'Rejecting...' : 'Reject'}
-                  </button>
-                </div>
+        <div className="grid gap-4 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3">
+          {filtered.map((profile) => (
+            <div key={profile.id} className="bg-white rounded shadow p-4 flex flex-col h-full">
+              <div className="font-bold text-lg text-efcaText mb-1">{profile.name}</div>
+              <div className="text-sm text-gray-600 mb-1 break-all">{profile.email}</div>
+              <div className="text-xs text-efcaMuted mb-2">Event: {profile.event}</div>
+              <div className="text-xs text-efcaMuted mb-2">Submitted: {profile.createdAt}</div>
+              <div className="text-xs text-efcaMuted mb-2">Status: {profile.status}</div>
+              {profile.phone && (
+                <div className="text-xs text-gray-500 mb-2">Phone: {profile.phone}</div>
+              )}
+              {profile.resumeUrl && (
+                <a
+                  href={profile.resumeUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-efcaAccent underline text-xs mb-2"
+                >
+                  View Resume
+                </a>
+              )}
+              {profile.videoUrl && (
+                <a
+                  href={profile.videoUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-efcaAccent underline text-xs mb-2"
+                >
+                  View Video
+                </a>
+              )}
+              <div className="mt-auto flex gap-2 pt-2">
+                <button
+                  className="btn-primary flex-1 disabled:opacity-50"
+                  disabled={actionLoadingId === profile.id}
+                  onClick={() => handleStatus(profile.id, 'approved')}
+                >
+                  {actionLoadingId === profile.id ? 'Approving...' : 'Approve'}
+                </button>
+                <button
+                  className="btn-secondary flex-1 disabled:opacity-50"
+                  disabled={actionLoadingId === profile.id}
+                  onClick={() => handleStatus(profile.id, 'rejected')}
+                >
+                  {actionLoadingId === profile.id ? 'Rejecting...' : 'Reject'}
+                </button>
               </div>
-            )}
-          </div>
+            </div>
+          ))}
         </div>
       )}
     </div>

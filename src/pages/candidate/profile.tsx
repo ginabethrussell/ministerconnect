@@ -10,9 +10,9 @@ interface Profile {
   city: string;
   state: string;
   zipCode: string;
-  resumeUrl: string;
+  resumeUrl: string | null;
   resumeFile: File | null;
-  videoUrl: string;
+  videoUrl: string | null;
   videoFile: File | null;
   [key: string]: any;
 }
@@ -38,8 +38,8 @@ interface FormData {
   zipCode: string;
   resume: File | null;
   video: File | null;
-  resumeUrl: string;
-  videoUrl: string;
+  resumeUrl: string | null;
+  videoUrl: string | null;
 }
 
 interface FormErrors {
@@ -141,8 +141,8 @@ const CandidateProfilePage = () => {
     zipCode: '',
     resume: null,
     video: null,
-    resumeUrl: '',
-    videoUrl: '',
+    resumeUrl: null,
+    videoUrl: null,
   });
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
@@ -159,7 +159,6 @@ const CandidateProfilePage = () => {
     url: null,
     type: 'pdf',
   });
-  const [previewUrl, setPreviewUrl] = useState<string | null>(null);
 
   const resetForm = () => {
     setForm({
@@ -173,8 +172,8 @@ const CandidateProfilePage = () => {
       zipCode: '',
       resume: null,
       video: null,
-      resumeUrl: '',
-      videoUrl: '',
+      resumeUrl: null,
+      videoUrl: null,
     });
     setFormErrors({});
   };
@@ -284,7 +283,6 @@ const CandidateProfilePage = () => {
             const base64String = event.target?.result as string;
             localStorage.setItem('resume_pdf', base64String);
             setForm((prev) => ({ ...prev, [name]: file }));
-            setPreviewUrl(URL.createObjectURL(file));
           };
           reader.readAsDataURL(file);
         } catch {
@@ -295,7 +293,6 @@ const CandidateProfilePage = () => {
         }
       } else {
         setForm((prev) => ({ ...prev, [name]: file }));
-        setPreviewUrl(URL.createObjectURL(file));
       }
 
       // Clear error when file is selected
@@ -340,7 +337,7 @@ const CandidateProfilePage = () => {
     }
   };
 
-  const handleCreate = async (e: React.FormEvent, status: 'draft' | 'submitted' = 'submitted') => {
+  const handleCreate = async (e: React.FormEvent, status: 'draft' | 'pending' = 'pending') => {
     e.preventDefault();
     if (!validateForm()) return;
 
@@ -371,7 +368,7 @@ const CandidateProfilePage = () => {
     }
   };
 
-  const handleEdit = async (e: React.FormEvent, status: 'draft' | 'submitted' = 'submitted') => {
+  const handleEdit = async (e: React.FormEvent, status: 'draft' | 'pending' = 'pending') => {
     e.preventDefault();
     if (!validateForm()) return;
 
@@ -617,7 +614,7 @@ const CandidateProfilePage = () => {
             <input
               className="flex-1 rounded-lg border p-2.5 text-sm focus:border-efcaAccent focus:ring-efcaAccent border-gray-300"
               name="videoUrl"
-              value={form.videoUrl}
+              value={form.videoUrl ?? ''}
               onChange={handleChange}
               placeholder="Video URL (optional if uploading file)"
             />

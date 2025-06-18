@@ -7,8 +7,9 @@ import Footer from '../components/Footer';
 
 // Initialize MSW
 if (typeof window !== 'undefined' && process.env.NODE_ENV === 'development') {
-  const { worker } = require('../mocks/browser');
-  worker.start({ onUnhandledRequest: 'bypass' });
+  import('../mocks/browser').then(({ worker }) => {
+    worker.start({ onUnhandledRequest: 'bypass' });
+  });
 }
 
 // Define public paths that don't require authentication
@@ -16,7 +17,7 @@ const publicPaths = ['/', '/auth/login', '/auth/register'];
 
 // Define role-based paths
 const roleBasedPaths = {
-  applicant: ['/applicant', '/applicant/profile'],
+  applicant: ['/candidate', '/candidate/profile'],
   church: ['/church'],
   admin: ['/admin', '/admin/review', '/admin/churches', '/admin/codes'],
 };
