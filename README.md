@@ -40,6 +40,46 @@ The frontend is fully mocked using [MSW](https://mswjs.io/) for rapid developmen
 
 ---
 
+## Screenshots
+
+### Landing Page
+![Landing Page](screenshots/landingpage.png)
+
+### Login Page
+![Login](screenshots/login.png)
+
+### Register Page
+![Register](screenshots/register.png)
+
+### Candidate Dashboard
+![Candidate Dashboard](screenshots/candidatedashboard.png)
+
+### Candidate Profile Form
+![Candidate Profile Form](screenshots/candidateprofile.png)
+
+### Church Dashboard
+![Church Dashboard](screenshots/churchdashboard.png)
+
+### Church Candidate Search
+![Church Candidate Search](screenshots/churchsearch.png)
+
+### Church Saved Candidates
+![Church Saved Candidates](screenshots/churchsaved.png)
+
+### Admin Dashboard
+![Admin Dashboard](screenshots/admindashboard.png)
+
+### Admin Review Candidates
+![Admin Review](screenshots/adminreview.png)
+
+### Admin Manage Churches
+![Admin Manage Churches](screenshots/adminchurches.png)
+
+### Admin Manage Invite Codes
+![Admin Manage Codes](screenshots/admincodes.png)
+
+--
+
 ## Tech Stack
 
 - [Next.js](https://nextjs.org/) (v15+)
