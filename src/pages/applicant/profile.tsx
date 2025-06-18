@@ -58,10 +58,36 @@ interface FormErrors {
   [key: string]: string | undefined;
 }
 
+const MAX_FILE_SIZE = 5 * 1024 * 1024; // 5MB limit for localStorage
+
 const PreviewModal: React.FC<PreviewModalProps> = ({ isOpen, onClose, file, url, type }) => {
   if (!isOpen) return null;
 
   const previewUrl = file ? URL.createObjectURL(file) : url || undefined;
+
+  // Helper to detect YouTube URLs
+  const isYouTubeUrl = (url: string) => {
+    return /^(https?:\/\/)?(www\.)?(youtube\.com|youtu\.be)\//.test(url);
+  };
+
+  // Helper to get YouTube embed URL
+  const getYouTubeVideoId = (url: string) => {
+    // Try to match all common YouTube URL patterns
+    const patterns = [
+      /(?:youtube\.com\/watch\\?v=|youtu\.be\/|youtube\.com\/live\/|youtube\.com\/shorts\/)([a-zA-Z0-9_-]{11})/,
+      /youtube\.com\/embed\/([a-zA-Z0-9_-]{11})/,
+    ];
+    for (const pattern of patterns) {
+      const match = url.match(pattern);
+      if (match && match[1]) return match[1];
+    }
+    return null;
+  };
+
+  const getYouTubeEmbedUrl = (url: string) => {
+    const videoId = getYouTubeVideoId(url);
+    return videoId ? `https://www.youtube.com/embed/${videoId}` : '';
+  };
 
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
@@ -84,6 +110,14 @@ const PreviewModal: React.FC<PreviewModalProps> = ({ isOpen, onClose, file, url,
         <div className="flex-1 overflow-auto">
           {type === 'pdf' ? (
             <iframe src={previewUrl} className="w-full h-[70vh]" title="PDF Preview" />
+          ) : url && isYouTubeUrl(url) ? (
+            <iframe
+              src={getYouTubeEmbedUrl(url)}
+              className="w-full h-[70vh]"
+              title="YouTube Video Preview"
+              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+              allowFullScreen
+            />
           ) : (
             <video src={previewUrl} controls className="w-full max-h-[70vh]" />
           )}
@@ -125,6 +159,7 @@ const CandidateProfilePage = () => {
     url: null,
     type: 'pdf',
   });
+  const [previewUrl, setPreviewUrl] = useState<string | null>(null);
 
   const resetForm = () => {
     setForm({
@@ -185,20 +220,20 @@ const CandidateProfilePage = () => {
       const res = await fetch('/api/profile');
       if (res.ok) {
         const data = await res.json();
-        setProfile(data);
+        setProfile(data.profile);
         setForm({
-          firstName: data.firstName || '',
-          lastName: data.lastName || '',
-          email: data.email || '',
-          phone: data.phone || '',
-          streetAddress: data.streetAddress || '',
-          city: data.city || '',
-          state: data.state || '',
-          zipCode: data.zipCode || '',
-          resume: data.resumeFile || null,
-          video: data.videoFile || null,
-          resumeUrl: data.resumeUrl || '',
-          videoUrl: data.videoUrl || '',
+          firstName: data.profile.firstName || '',
+          lastName: data.profile.lastName || '',
+          email: data.profile.email || '',
+          phone: data.profile.phone || '',
+          streetAddress: data.profile.streetAddress || '',
+          city: data.profile.city || '',
+          state: data.profile.state || '',
+          zipCode: data.profile.zipCode || '',
+          resume: data.profile.resumeFile || null,
+          video: data.profile.videoFile || null,
+          resumeUrl: data.profile.resumeUrl || '',
+          videoUrl: data.profile.videoUrl || '',
         });
         setMode('view');
       } else {
@@ -227,10 +262,42 @@ const CandidateProfilePage = () => {
     }
   };
 
-  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, files } = e.target;
     if (files && files[0]) {
-      setForm((prev) => ({ ...prev, [name]: files[0] }));
+      const file = files[0];
+
+      // Check file size
+      if (file.size > MAX_FILE_SIZE) {
+        setFormErrors((prev) => ({
+          ...prev,
+          [name]: 'File size must be less than 5MB for local storage',
+        }));
+        return;
+      }
+
+      // For PDF files, store in localStorage
+      if (name === 'resume' && file.type === 'application/pdf') {
+        try {
+          const reader = new FileReader();
+          reader.onload = (event) => {
+            const base64String = event.target?.result as string;
+            localStorage.setItem('resume_pdf', base64String);
+            setForm((prev) => ({ ...prev, [name]: file }));
+            setPreviewUrl(URL.createObjectURL(file));
+          };
+          reader.readAsDataURL(file);
+        } catch {
+          setFormErrors((prev) => ({
+            ...prev,
+            [name]: 'Error storing PDF locally',
+          }));
+        }
+      } else {
+        setForm((prev) => ({ ...prev, [name]: file }));
+        setPreviewUrl(URL.createObjectURL(file));
+      }
+
       // Clear error when file is selected
       if (formErrors[name]) {
         setFormErrors((prev) => ({ ...prev, [name]: '' }));
@@ -240,12 +307,23 @@ const CandidateProfilePage = () => {
 
   const handlePreview = (type: 'pdf' | 'video') => {
     if (type === 'pdf') {
-      const url = form.resume ? URL.createObjectURL(form.resume) : form.resumeUrl;
+      let url: string | null = null;
+
+      // Try to get PDF from localStorage first
+      const storedPdf = localStorage.getItem('resume_pdf');
+      if (storedPdf) {
+        url = storedPdf;
+      } else if (form.resume) {
+        url = URL.createObjectURL(form.resume);
+      } else {
+        url = form.resumeUrl;
+      }
+
       if (url) {
         setPreviewModal({
           isOpen: true,
           file: form.resume,
-          url: form.resume ? null : url,
+          url: storedPdf ? url : null,
           type: 'pdf',
         });
       }
@@ -262,7 +340,7 @@ const CandidateProfilePage = () => {
     }
   };
 
-  const handleCreate = async (e: React.FormEvent) => {
+  const handleCreate = async (e: React.FormEvent, status: 'draft' | 'submitted' = 'submitted') => {
     e.preventDefault();
     if (!validateForm()) return;
 
@@ -275,13 +353,14 @@ const CandidateProfilePage = () => {
           formData.append(key, value);
         }
       });
+      formData.append('status', status);
 
       const res = await fetch('/api/profile', {
         method: 'POST',
         body: formData,
       });
       if (res.ok) {
-        setSuccess('Profile created!');
+        setSuccess(status === 'draft' ? 'Draft saved!' : 'Profile submitted!');
         fetchProfile();
       } else {
         const data = await res.json();
@@ -292,7 +371,7 @@ const CandidateProfilePage = () => {
     }
   };
 
-  const handleEdit = async (e: React.FormEvent) => {
+  const handleEdit = async (e: React.FormEvent, status: 'draft' | 'submitted' = 'submitted') => {
     e.preventDefault();
     if (!validateForm()) return;
 
@@ -305,13 +384,14 @@ const CandidateProfilePage = () => {
           formData.append(key, value);
         }
       });
+      formData.append('status', status);
 
       const res = await fetch('/api/profile', {
         method: 'PUT',
         body: formData,
       });
       if (res.ok) {
-        setSuccess('Profile updated!');
+        setSuccess(status === 'draft' ? 'Draft saved!' : 'Profile submitted!');
         fetchProfile();
       } else {
         const data = await res.json();
@@ -372,7 +452,10 @@ const CandidateProfilePage = () => {
   if (loading) return <div className="text-center mt-10">Loading...</div>;
 
   const renderForm = () => (
-    <form onSubmit={mode === 'create' ? handleCreate : handleEdit} className="space-y-4">
+    <form
+      onSubmit={(e) => (mode === 'create' ? handleCreate(e) : handleEdit(e))}
+      className="space-y-4"
+    >
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         <div>
           <label className="block text-sm font-medium text-gray-700">First Name</label>
@@ -496,40 +579,33 @@ const CandidateProfilePage = () => {
         </div>
       </div>
 
-      <div>
-        <label className="block text-sm font-medium text-gray-700">Resume</label>
-        <div className="mt-1 space-y-2">
-          <div className="flex gap-2">
-            <input
-              className={`flex-1 rounded-lg border p-2.5 text-sm focus:border-efcaAccent focus:ring-efcaAccent ${
-                formErrors.resumeUrl ? 'border-red-500' : 'border-gray-300'
-              }`}
-              name="resumeUrl"
-              value={form.resumeUrl}
-              onChange={handleChange}
-              placeholder="Resume URL (optional if uploading file)"
-            />
-            {(form.resumeUrl || form.resume) && (
-              <button
-                type="button"
-                onClick={() => handlePreview('pdf')}
-                className="px-4 py-2.5 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 focus:outline-none focus:ring-2 focus:ring-gray-400"
-              >
-                Preview
-              </button>
-            )}
-          </div>
-          <div className="flex items-center">
-            <input
-              type="file"
-              name="resume"
-              onChange={handleFileChange}
-              accept=".pdf,.doc,.docx"
-              className="block w-full text-sm text-gray-500 file:mr-4 file:py-2.5 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-semibold file:bg-efcaAccent file:text-white hover:file:bg-efcaAccent-dark"
-            />
-          </div>
-          {formErrors.resume && <p className="mt-1 text-sm text-red-600">{formErrors.resume}</p>}
+      <div className="mb-4">
+        <label htmlFor="resume" className="block text-efcaMuted text-sm font-semibold mb-1">
+          Resume (PDF)
+        </label>
+        <div className="flex gap-2">
+          <input
+            type="file"
+            id="resume"
+            name="resume"
+            onChange={handleFileChange}
+            accept=".pdf"
+            className={`flex-1 rounded-lg border p-2.5 text-sm focus:border-efcaAccent focus:ring-efcaAccent ${
+              formErrors.resume ? 'border-red-500' : 'border-gray-300'
+            }`}
+          />
+          {(form.resumeUrl || form.resume || localStorage.getItem('resume_pdf')) && (
+            <button
+              type="button"
+              onClick={() => handlePreview('pdf')}
+              className="px-4 py-2 bg-efcaAccent text-white rounded hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-efcaAccent transition-colors"
+            >
+              Preview
+            </button>
+          )}
         </div>
+        {formErrors.resume && <p className="mt-1 text-sm text-red-600">{formErrors.resume}</p>}
+        <p className="mt-1 text-sm text-gray-500">Upload a PDF file (max 5MB) or provide a URL</p>
       </div>
 
       <div>
@@ -572,11 +648,20 @@ const CandidateProfilePage = () => {
           className="bg-efcaAccent text-white px-4 py-2.5 rounded-lg font-bold hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-efcaAccent transition-colors"
           type="submit"
         >
-          {mode === 'create' ? 'Create Profile' : 'Save Changes'}
+          Submit Profile
+        </button>
+        <button
+          className="bg-gray-400 text-white px-4 py-2.5 rounded-lg font-bold hover:bg-gray-500 focus:outline-none focus:ring-2 focus:ring-gray-400 transition-colors"
+          type="button"
+          onClick={(e) =>
+            mode === 'create' ? handleCreate(e as any, 'draft') : handleEdit(e as any, 'draft')
+          }
+        >
+          Save as Draft
         </button>
         {mode === 'edit' && (
           <button
-            className="bg-gray-400 text-white px-4 py-2.5 rounded-lg font-bold hover:bg-gray-500 focus:outline-none focus:ring-2 focus:ring-gray-400 transition-colors"
+            className="bg-gray-200 text-gray-700 px-4 py-2.5 rounded-lg font-bold hover:bg-gray-300 focus:outline-none focus:ring-2 focus:ring-gray-200 transition-colors"
             type="button"
             onClick={() => setMode('view')}
           >

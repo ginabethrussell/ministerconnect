@@ -64,11 +64,11 @@ const Header = ({ role, onLogout }: HeaderProps) => {
               <Link href="/church" className={navLinkClass('/church')}>
                 Dashboard
               </Link>
-              <Link href="/church/applications" className={navLinkClass('/church/applications')}>
-                Applications
+              <Link href="/church/search" className={navLinkClass('/church/search')}>
+                Search Applicants
               </Link>
-              <Link href="/church/jobs" className={navLinkClass('/church/jobs')}>
-                Jobs
+              <Link href="/church/applicants" className={navLinkClass('/church/applicants')}>
+                Saved Applicants
               </Link>
             </>
           )}

@@ -22,6 +22,7 @@ interface Profile {
   city: string;
   state: string;
   zipCode: string;
+  status: 'draft' | 'submitted' | 'approved' | 'rejected';
   experience: string;
   education: string;
   skills: string[];
@@ -43,6 +44,7 @@ const mockProfile: Profile = {
   city: 'Test City',
   state: 'TS',
   zipCode: '12345',
+  status: 'draft',
   experience: '5 years in ministry',
   education: 'M.Div from Seminary',
   skills: ['Preaching', 'Teaching', 'Leadership'],
@@ -178,7 +180,7 @@ export const handlers = [
       return new HttpResponse(null, { status: 404 });
     }
 
-    return HttpResponse.json(profile);
+    return HttpResponse.json({ success: true, profile });
   }),
 
   // GET /api/files/:fileId

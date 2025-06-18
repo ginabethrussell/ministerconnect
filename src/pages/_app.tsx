@@ -1,8 +1,15 @@
 import type { AppProps } from 'next/app';
 import { useRouter } from 'next/router';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import '../styles/globals.css';
 import Header from '../components/Header';
+import Footer from '../components/Footer';
+
+// Initialize MSW
+if (typeof window !== 'undefined' && process.env.NODE_ENV === 'development') {
+  const { worker } = require('../mocks/browser');
+  worker.start({ onUnhandledRequest: 'bypass' });
+}
 
 // Define public paths that don't require authentication
 const publicPaths = ['/', '/auth/login', '/auth/register'];
@@ -16,11 +23,13 @@ const roleBasedPaths = {
 
 export default function App({ Component, pageProps }: AppProps) {
   const router = useRouter();
+  const [role, setRole] = useState<string | null>(null);
 
   useEffect(() => {
     // Check if user is authenticated
     const isAuthenticated = localStorage.getItem('isAuthenticated') === 'true';
     const userRole = localStorage.getItem('userRole');
+    setRole(userRole);
 
     // Get current path
     const currentPath = router.pathname;
@@ -49,14 +58,18 @@ export default function App({ Component, pageProps }: AppProps) {
     if (typeof window !== 'undefined') {
       localStorage.removeItem('userRole');
       localStorage.removeItem('isAuthenticated');
+      setRole(null);
       router.push('/');
     }
   };
 
   return (
-    <div className="min-h-screen bg-efcaGray font-sans">
-      <Header role={localStorage.getItem('userRole')} onLogout={handleLogout} />
-      <Component {...pageProps} />
+    <div className="min-h-screen flex flex-col bg-efcaGray font-sans">
+      <Header role={role} onLogout={handleLogout} />
+      <main className="flex-1">
+        <Component {...pageProps} />
+      </main>
+      <Footer />
     </div>
   );
 }
