@@ -15,7 +15,7 @@ const Login = () => {
     setError('');
     setSuccess(false);
     try {
-      const response = await fetch('/api/login', {
+      const response = await fetch('/api/auth/login', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email, password }),
@@ -24,10 +24,26 @@ const Login = () => {
       const data = await response.json();
 
       if (data.success) {
-        localStorage.setItem('userRole', data.role);
+        localStorage.setItem('userRole', data.user.role);
         localStorage.setItem('isAuthenticated', 'true');
+        localStorage.setItem('userEmail', data.user.email);
         window.dispatchEvent(new Event('roleChanged'));
-        router.push(`/${data.role}`);
+        
+        // Check if user needs to change password
+        if (data.user.needsPasswordChange) {
+          // Set flag for profile completion if needed
+          if (data.user.needsProfileCompletion) {
+            localStorage.setItem('needsProfileCompletion', 'true');
+          }
+          router.push('/auth/force-password-change');
+        } else {
+          // Check if profile completion is needed
+          if (data.user.needsProfileCompletion) {
+            router.push('/church/settings?incomplete=true');
+          } else {
+            router.push(`/${data.user.role}`);
+          }
+        }
       } else {
         setError(data.message || 'Login failed');
       }
@@ -57,6 +73,14 @@ const Login = () => {
             placeholder="Password"
             required
           />
+          <div className="text-right">
+            <Link
+              href="/auth/forgot-password"
+              className="text-sm text-efcaAccent hover:text-blue-700 underline"
+            >
+              Forgot Password?
+            </Link>
+          </div>
           <button className="btn-primary w-full" type="submit">
             Login
           </button>

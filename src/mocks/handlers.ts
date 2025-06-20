@@ -162,15 +162,87 @@ export const handlers = [
     return Response.json({ success: true, message: 'Registration successful!' }, { status: 200 });
   }),
 
-  // Login handler
-  http.post('/api/login', async ({ request }) => {
-    const { email, password } = (await request.json()) as { email: string; password: string };
-    const user = mockUsers.find((u) => u.email === email && u.password === password);
-    if (user) {
-      return Response.json({ success: true, role: user.role }, { status: 200 });
+  // POST /api/auth/login
+  http.post('/api/auth/login', async ({ request }) => {
+    console.log('Mock handler: login called');
+    const { email, password } = await request.json() as { email: string; password: string };
+    
+    console.log('Mock handler: email:', email);
+    console.log('Mock handler: password:', password);
+    
+    // Mock login logic
+    if (email && password) {
+      // Simulate different user types and scenarios
+      if (email === 'newchurch@example.com') {
+        // New church that needs to change password
+        return HttpResponse.json({
+          success: true,
+          user: {
+            id: 'new-church-1',
+            email: 'newchurch@example.com',
+            role: 'church',
+            name: 'New Church',
+            needsPasswordChange: true,
+            needsProfileCompletion: true
+          },
+          message: 'Login successful. Please change your password.',
+          redirectTo: '/auth/force-password-change'
+        });
+      } else if (email === 'church@example.com' && password === 'password123') {
+        // Regular church login - check if profile is complete
+        const churchName = localStorage.getItem('churchName');
+        const churchEmail = localStorage.getItem('churchEmail');
+        const churchPhone = localStorage.getItem('churchPhone');
+        const streetAddress = localStorage.getItem('churchStreetAddress');
+        const city = localStorage.getItem('churchCity');
+        const state = localStorage.getItem('churchState');
+        const zipCode = localStorage.getItem('churchZipCode');
+        
+        const isProfileComplete = !!(churchName && churchEmail && churchPhone && streetAddress && city && state && zipCode);
+        
+        return HttpResponse.json({
+          success: true,
+          user: {
+            id: 'church-1',
+            email: 'church@example.com',
+            role: 'church',
+            name: 'Sample Church',
+            needsPasswordChange: false,
+            needsProfileCompletion: !isProfileComplete
+          },
+          message: 'Login successful'
+        });
+      } else if (email === 'candidate@example.com' && password === 'password123') {
+        // Candidate login
+        return HttpResponse.json({
+          success: true,
+          user: {
+            id: 'candidate-1',
+            email: 'candidate@example.com',
+            role: 'candidate',
+            name: 'John Doe',
+            needsPasswordChange: false
+          },
+          message: 'Login successful'
+        });
+      } else if (email === 'admin@example.com' && password === 'admin123') {
+        // Admin login
+        return HttpResponse.json({
+          success: true,
+          user: {
+            id: 'admin-1',
+            email: 'admin@example.com',
+            role: 'admin',
+            name: 'Admin User',
+            needsPasswordChange: false
+          },
+          message: 'Login successful'
+        });
+      }
     }
-    return Response.json(
-      { success: false, message: 'Invalid email or password.' },
+    
+    return new HttpResponse(
+      JSON.stringify({ success: false, message: 'Invalid email or password' }),
       { status: 401 }
     );
   }),
@@ -416,5 +488,142 @@ export const handlers = [
     const { id } = params;
     mockChurches = mockChurches.filter((c) => c.id !== id);
     return HttpResponse.json({ success: true });
+  }),
+
+  // POST /api/auth/forgot-password
+  http.post('/api/auth/forgot-password', async ({ request }) => {
+    console.log('Mock handler: forgot-password called');
+    const { email } = await request.json() as { email: string };
+    
+    console.log('Mock handler: email received:', email);
+    
+    // In a real app, you would:
+    // 1. Check if email exists in database
+    // 2. Generate a secure reset token
+    // 3. Store token with expiration in database
+    // 4. Send email with reset link
+    
+    // For mock purposes, we'll just return success
+    const mockResetToken = 'mock-reset-token-' + Date.now();
+    
+    console.log(`Password reset requested for: ${email}`);
+    console.log(`Mock reset link: ${process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000'}/auth/reset-password?token=${mockResetToken}`);
+    
+    return HttpResponse.json({ 
+      success: true, 
+      message: 'If an account with that email exists, a password reset link has been sent.' 
+    });
+  }),
+
+  // GET /api/auth/validate-reset-token
+  http.get('/api/auth/validate-reset-token', ({ request }) => {
+    const url = new URL(request.url);
+    const token = url.searchParams.get('token');
+    
+    // In a real app, you would:
+    // 1. Check if token exists in database
+    // 2. Check if token is not expired
+    // 3. Return user info if valid
+    
+    // For mock purposes, accept any token that starts with 'mock-reset-token-'
+    if (token && token.startsWith('mock-reset-token-')) {
+      return HttpResponse.json({ 
+        success: true, 
+        message: 'Token is valid' 
+      });
+    }
+    
+    return new HttpResponse(
+      JSON.stringify({ success: false, message: 'Invalid or expired token' }),
+      { status: 400 }
+    );
+  }),
+
+  // POST /api/auth/reset-password
+  http.post('/api/auth/reset-password', async ({ request }) => {
+    const { token, password } = await request.json() as { token: string; password: string };
+    
+    // In a real app, you would:
+    // 1. Validate the token
+    // 2. Hash the new password
+    // 3. Update user's password in database
+    // 4. Invalidate/delete the reset token
+    
+    // For mock purposes, accept any token that starts with 'mock-reset-token-'
+    if (token && token.startsWith('mock-reset-token-') && password && password.length >= 8) {
+      console.log(`Password reset successful for token: ${token}`);
+      console.log(`New password: ${password} (would be hashed in production)`);
+      
+      return HttpResponse.json({ 
+        success: true, 
+        message: 'Password has been reset successfully' 
+      });
+    }
+    
+    return new HttpResponse(
+      JSON.stringify({ success: false, message: 'Invalid token or password' }),
+      { status: 400 }
+    );
+  }),
+
+  // POST /api/auth/force-password-change
+  http.post('/api/auth/force-password-change', async ({ request }) => {
+    console.log('Mock handler: force-password-change called');
+    const { currentPassword, newPassword } = await request.json() as { currentPassword: string; newPassword: string };
+    
+    console.log('Mock handler: current password:', currentPassword);
+    console.log('Mock handler: new password:', newPassword);
+    
+    // In a real app, you would:
+    // 1. Verify the current password is correct
+    // 2. Hash the new password
+    // 3. Update user's password in database
+    // 4. Mark user as having changed their password
+    
+    // For mock purposes, accept any current password and validate new password
+    if (currentPassword && newPassword && newPassword.length >= 8 && newPassword !== currentPassword) {
+      console.log(`Force password change successful`);
+      console.log(`New password: ${newPassword} (would be hashed in production)`);
+      
+      return HttpResponse.json({ 
+        success: true, 
+        message: 'Password has been changed successfully' 
+      });
+    }
+    
+    return new HttpResponse(
+      JSON.stringify({ success: false, message: 'Invalid current password or new password requirements not met' }),
+      { status: 400 }
+    );
+  }),
+
+  // POST /api/auth/change-password
+  http.post('/api/auth/change-password', async ({ request }) => {
+    console.log('Mock handler: change-password called');
+    const { currentPassword, newPassword } = await request.json() as { currentPassword: string; newPassword: string };
+    
+    console.log('Mock handler: current password:', currentPassword);
+    console.log('Mock handler: new password:', newPassword);
+    
+    // In a real app, you would:
+    // 1. Verify the current password is correct
+    // 2. Hash the new password
+    // 3. Update user's password in database
+    
+    // For mock purposes, accept any current password and validate new password
+    if (currentPassword && newPassword && newPassword.length >= 8 && newPassword !== currentPassword) {
+      console.log(`Password change successful`);
+      console.log(`New password: ${newPassword} (would be hashed in production)`);
+      
+      return HttpResponse.json({ 
+        success: true, 
+        message: 'Password has been changed successfully' 
+      });
+    }
+    
+    return new HttpResponse(
+      JSON.stringify({ success: false, message: 'Invalid current password or new password requirements not met' }),
+      { status: 400 }
+    );
   }),
 ];

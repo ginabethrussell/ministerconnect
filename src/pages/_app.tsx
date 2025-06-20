@@ -13,7 +13,16 @@ if (typeof window !== 'undefined' && process.env.NODE_ENV === 'development') {
 }
 
 // Define public paths that don't require authentication
-const publicPaths = ['/', '/auth/login', '/auth/register'];
+const publicPaths = [
+  '/auth/login',
+  '/auth/register', 
+  '/auth/forgot-password',
+  '/auth/reset-password',
+  '/auth/force-password-change',
+  '/church/settings',
+  '/church/jobs',
+  '/church/jobs/create'
+];
 
 // Define role-based paths
 const roleBasedPaths = {
