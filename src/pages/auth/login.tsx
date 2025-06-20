@@ -66,7 +66,7 @@ const Login = () => {
         <p className="mt-4 text-sm text-gray-600">
           Are you a church or organization? Please{' '}
           <a
-            href="mailto:ginabeth.russell@gmail.com?subject=Ministry%20Match%20Access%20Request"
+            href="mailto:ginabeth.russell@gmail.com?subject=Minister%20Connect%20Access%20Request"
             className="text-efcaAccent underline hover:text-efcaAccent-dark"
           >
             contact the admin

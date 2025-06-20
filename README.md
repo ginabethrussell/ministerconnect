@@ -1,4 +1,4 @@
-# Ministry Match
+# Minister Connect
 
 A multi-role Next.js application for connecting ministry candidates with churches, featuring role-based access for candidates, churches, and super admins. Built with React, TypeScript, Tailwind CSS, and MSW for frontend development and API mocking.
 
@@ -19,11 +19,11 @@ A multi-role Next.js application for connecting ministry candidates with churche
 
 ## Overview
 
-Ministry Match streamlines the process of matching ministry candidates with churches. The app supports three user roles:
+Minister Match streamlines the process of matching ministry candidates with churches. The app supports three user roles:
 
-- **Candidates**: Register, complete a profile, and upload resumes/videos.
-- **Churches**: Search candidates, save candidates, and contact admin.
-- **Super Admin**: Manage users, churches, invite codes, and review candidate uploads.
+- **Candidates**: Register, complete a profile, and view and express interest in open positions.
+- **Churches**: Create a profile, add job listings, search candidates, save candidates, and identify candidates with mutual interest.
+- **Super Admin**: Manage users, churches, invite codes, and review and approve candidate and church profiles.
 
 The frontend is fully mocked using [MSW](https://mswjs.io/) for rapid development and testing.
 
@@ -34,7 +34,9 @@ The frontend is fully mocked using [MSW](https://mswjs.io/) for rapid developmen
 - Role-based authentication and navigation
 - Invite code registration (supports multi-use codes)
 - Responsive, accessible UI styled after EFCA branding
-- Candidate profile with resume/video upload (file or URL)
+- Candidate profiles with contact info, documents and media, and placement preferences
+- Church profiles with job listings
+- Candidate and church functionality to express and identify mutual interest
 - Admin dashboard for reviewing candidates, managing churches, and invite codes
 - Mocked API endpoints and data models for frontend development
 
@@ -102,7 +104,7 @@ The frontend is fully mocked using [MSW](https://mswjs.io/) for rapid developmen
 1. Clone the repository:
    ```
    git clone <repository-url>
-   cd ministry-match
+   cd ministerconnect
    ```
 2. Install dependencies:
    ```
@@ -133,7 +135,7 @@ npm start
 ## Folder Structure
 
 ```
-ministry-match/
+ministerconnect/
 ├── public/                # Static assets & MSW worker
 ├── src/
 │   ├── components/        # Shared React components (e.g., Header)

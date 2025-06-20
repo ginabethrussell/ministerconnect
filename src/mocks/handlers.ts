@@ -1,5 +1,6 @@
 import { http, HttpResponse } from 'msw';
 import { v4 as uuidv4 } from 'uuid';
+import { generateMockResumeUrl } from '../utils/pdfUtils';
 
 // Mock data
 const mockUsers = [
@@ -9,8 +10,8 @@ const mockUsers = [
 ];
 
 let mockInviteCodes = [
-  { id: '1', code: 'JOBFAIR25', event: 'Ministry Match', maxUses: 100, uses: 0 },
-  { id: '2', code: 'JOBFAIR24', event: 'Old Event', maxUses: 10, uses: 10 },
+  { id: '1', code: 'JOBFAIR25', event: 'Job Fair 2025', maxUses: 100, uses: 0 },
+  { id: '2', code: 'JOBFAIR24', event: 'Job Fair 2024', maxUses: 10, uses: 10 },
 ];
 
 interface Profile {
@@ -26,6 +27,7 @@ interface Profile {
   resumeFileId?: string;
   videoUrl?: string;
   pictureUrl?: string;
+  resumeUrl?: string;
 }
 
 // Mock profile data
@@ -40,6 +42,7 @@ const mockProfile: Profile = {
   zipCode: '12345',
   status: 'draft',
   pictureUrl: '/sampleman.jpg',
+  resumeUrl: '/student-pastor-resume.pdf',
 };
 
 // Mock data store
@@ -56,6 +59,10 @@ interface CandidateReviewProfile {
   event: string;
   status: string;
   createdAt: string;
+  phone?: string;
+  resumeUrl?: string;
+  videoUrl?: string;
+  pictureUrl?: string;
 }
 
 let mockCandidateProfiles: CandidateReviewProfile[] = [
@@ -63,25 +70,37 @@ let mockCandidateProfiles: CandidateReviewProfile[] = [
     id: '1',
     name: 'Alice Smith',
     email: 'alice@example.com',
-    event: 'Ministry Match',
+    event: 'Job Fair 2025',
     status: 'draft',
     createdAt: '2024-06-01',
+    phone: '555-123-4567',
+    resumeUrl: generateMockResumeUrl('Alice Smith'),
+    pictureUrl: '/sampleman.jpg',
+    videoUrl: 'https://www.youtube.com/live/w-6-z8w0Zv4?si=KcAy1iRb-Ss4zrPd',
   },
   {
     id: '2',
     name: 'Bob Jones',
     email: 'bob@example.com',
-    event: 'Old Event',
+    event: 'Job Fair 2024',
     status: 'Approved',
     createdAt: '2024-05-20',
+    phone: '555-234-5678',
+    resumeUrl: generateMockResumeUrl('Bob Jones'),
+    pictureUrl: '/sampleman.jpg',
+    videoUrl: 'https://www.youtube.com/live/w-6-z8w0Zv4?si=KcAy1iRb-Ss4zrPd',
   },
   {
     id: '3',
     name: 'Carol Lee',
     email: 'carol@example.com',
-    event: 'Ministry Match',
+    event: 'Job Fair 2025',
     status: 'Pending',
     createdAt: '2024-06-02',
+    phone: '555-345-6789',
+    resumeUrl: generateMockResumeUrl('Carol Lee'),
+    pictureUrl: '/sampleman.jpg',
+    videoUrl: 'https://www.youtube.com/live/w-6-z8w0Zv4?si=KcAy1iRb-Ss4zrPd',
   },
 ];
 

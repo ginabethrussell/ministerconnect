@@ -1,6 +1,6 @@
 # API & Data Model Documentation
 
-This document describes the core data models and API endpoints for the Ministry Match application. Use this as a reference for frontend mocks and future backend implementation.
+This document describes the core data models and API endpoints for the Minister Connect application. Use this as a reference for frontend mocks and future backend implementation.
 
 ---
 
@@ -62,7 +62,7 @@ This document describes the core data models and API endpoints for the Ministry 
   "city": "Springfield",
   "state": "IL",
   "zipCode": "62704",
-  "event": "Ministry Match",
+  "event": "JOBFAIR25",
   "createdAt": "2024-06-01",
   "resumeUrl": "https://s3.amazonaws.com/bucket/resume.pdf",
   "videoUrl": "https://example.com/video-jane.mp4",

@@ -8,15 +8,15 @@ const dummySaved = [
     email: 'jane@example.com',
     phone: '555-123-4567',
     status: 'Approved',
-    event: 'Ministry Match',
+    event: 'Job Fair 2025',
     createdAt: '2024-06-01',
     streetAddress: '123 Main St',
     city: 'Springfield',
     state: 'IL',
     zipCode: '62704',
-    resumeUrl: 'https://example.com/resume-jane.pdf',
+    resumeUrl: '/student-pastor-resume.pdf',
     videoUrl: 'https://example.com/video-jane.mp4',
-    pictureUrl: 'https://example.com/jane.jpg',
+    pictureUrl: '/sampleman.jpg',
   },
 ];
 
