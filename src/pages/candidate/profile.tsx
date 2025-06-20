@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 
 interface Profile {
   id: string;
@@ -40,6 +40,8 @@ interface FormData {
   video: File | null;
   resumeUrl: string | null;
   videoUrl: string | null;
+  picture: File | null;
+  placementPreferences: string[];
 }
 
 interface FormErrors {
@@ -55,6 +57,8 @@ interface FormErrors {
   video?: string;
   resumeUrl?: string;
   videoUrl?: string;
+  picture?: string;
+  placementPreferences?: string;
   [key: string]: string | undefined;
 }
 
@@ -143,6 +147,8 @@ const CandidateProfilePage = () => {
     video: null,
     resumeUrl: null,
     videoUrl: null,
+    picture: null,
+    placementPreferences: [],
   });
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
@@ -159,6 +165,7 @@ const CandidateProfilePage = () => {
     url: null,
     type: 'pdf',
   });
+  const firstNameRef = useRef<HTMLInputElement>(null);
 
   const resetForm = () => {
     setForm({
@@ -174,12 +181,17 @@ const CandidateProfilePage = () => {
       video: null,
       resumeUrl: null,
       videoUrl: null,
+      picture: null,
+      placementPreferences: [],
     });
     setFormErrors({});
   };
 
   useEffect(() => {
     fetchProfile();
+    if (firstNameRef.current) {
+      firstNameRef.current.focus();
+    }
   }, []);
 
   const validateForm = () => {
@@ -205,6 +217,9 @@ const CandidateProfilePage = () => {
     if (!form.zipCode.trim()) errors.zipCode = 'ZIP code is required';
     if (!form.resumeUrl && !form.resume) {
       errors.resume = 'Either resume URL or file upload is required';
+    }
+    if (form.videoUrl && !/^https?:\/\/.+\..+/.test(form.videoUrl)) {
+      errors.videoUrl = 'Please enter a valid video URL';
     }
 
     setFormErrors(errors);
@@ -233,6 +248,8 @@ const CandidateProfilePage = () => {
           video: data.profile.videoFile || null,
           resumeUrl: data.profile.resumeUrl || '',
           videoUrl: data.profile.videoUrl || '',
+          picture: data.profile.picture || null,
+          placementPreferences: data.profile.placementPreferences || [],
         });
         setMode('view');
       } else {
@@ -446,6 +463,19 @@ const CandidateProfilePage = () => {
     }
   };
 
+  const handlePlacementPreferenceChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = e.target.value;
+    setForm((prev) => {
+      const current = prev.placementPreferences || [];
+      if (current.includes(value)) {
+        return { ...prev, placementPreferences: current.filter((v) => v !== value) };
+      } else if (current.length < 5) {
+        return { ...prev, placementPreferences: [...current, value] };
+      }
+      return prev;
+    });
+  };
+
   if (loading) return <div className="text-center mt-10">Loading...</div>;
 
   const renderForm = () => (
@@ -453,10 +483,12 @@ const CandidateProfilePage = () => {
       onSubmit={(e) => (mode === 'create' ? handleCreate(e) : handleEdit(e))}
       className="space-y-4"
     >
+      <h3 className="mb-2 text-base font-semibold text-efcaDark">Contact Information</h3>
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         <div>
           <label className="block text-sm font-medium text-gray-700">First Name</label>
           <input
+            ref={firstNameRef}
             className={`mt-1 block w-full rounded-lg border p-2.5 text-sm focus:border-efcaAccent focus:ring-efcaAccent ${
               formErrors.firstName ? 'border-red-500' : 'border-gray-300'
             }`}
@@ -576,9 +608,35 @@ const CandidateProfilePage = () => {
         </div>
       </div>
 
+      <hr className="my-6 border-gray-200" />
+      <h3 className="mb-2 text-base font-semibold text-efcaDark">Documents & Media</h3>
       <div className="mb-4">
-        <label htmlFor="resume" className="block text-efcaMuted text-sm font-semibold mb-1">
-          Resume (PDF)
+        <label htmlFor="picture" className="block mb-2 text-sm text-gray-700">
+          Individual or Family Picture (Optional)
+        </label>
+        <input
+          type="file"
+          id="picture"
+          name="picture"
+          accept="image/*"
+          onChange={handleFileChange}
+          className="flex-1 rounded-lg border p-2.5 text-sm focus:border-efcaAccent focus:ring-efcaAccent border-gray-300"
+        />
+        {form.picture && (
+          <div className="mt-2">
+            <img
+              src={URL.createObjectURL(form.picture)}
+              alt="Profile Preview"
+              className="h-32 w-32 object-cover rounded-lg border"
+            />
+          </div>
+        )}
+        <p className="mt-1 text-sm text-gray-500">Upload a photo of yourself or your family (JPG, PNG, etc.)</p>
+      </div>
+
+      <div className="mb-4">
+        <label htmlFor="resume" className="block mb-2 text-sm text-gray-700">
+          Resume (PDF) Required
         </label>
         <div className="flex gap-2">
           <input
@@ -587,11 +645,12 @@ const CandidateProfilePage = () => {
             name="resume"
             onChange={handleFileChange}
             accept=".pdf"
+            required
             className={`flex-1 rounded-lg border p-2.5 text-sm focus:border-efcaAccent focus:ring-efcaAccent ${
               formErrors.resume ? 'border-red-500' : 'border-gray-300'
             }`}
           />
-          {(form.resumeUrl || form.resume || localStorage.getItem('resume_pdf')) && (
+          {form.resume && (
             <button
               type="button"
               onClick={() => handlePreview('pdf')}
@@ -602,42 +661,102 @@ const CandidateProfilePage = () => {
           )}
         </div>
         {formErrors.resume && <p className="mt-1 text-sm text-red-600">{formErrors.resume}</p>}
-        <p className="mt-1 text-sm text-gray-500">Upload a PDF file (max 5MB) or provide a URL</p>
+        <p className="mt-1 text-sm text-gray-500">Upload a PDF file (max 5MB)</p>
       </div>
 
       <div>
-        <label className="block text-sm font-medium text-gray-700">
-          Video Introduction (Optional)
+        <label className="block mb-2 text-sm text-gray-700">
+          Teaching/Preaching Video URL (Optional)
         </label>
-        <div className="mt-1 space-y-2">
-          <div className="flex gap-2">
-            <input
-              className="flex-1 rounded-lg border p-2.5 text-sm focus:border-efcaAccent focus:ring-efcaAccent border-gray-300"
-              name="videoUrl"
-              value={form.videoUrl ?? ''}
-              onChange={handleChange}
-              placeholder="Video URL (optional if uploading file)"
-            />
-            {(form.videoUrl || form.video) && (
-              <button
-                type="button"
-                onClick={() => handlePreview('video')}
-                className="px-4 py-2.5 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 focus:outline-none focus:ring-2 focus:ring-gray-400"
-              >
-                Preview
-              </button>
-            )}
-          </div>
-          <div className="flex items-center">
-            <input
-              type="file"
-              name="video"
-              onChange={handleFileChange}
-              accept="video/*"
-              className="block w-full text-sm text-gray-500 file:mr-4 file:py-2.5 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-semibold file:bg-efcaAccent file:text-white hover:file:bg-efcaAccent-dark"
-            />
-          </div>
+        <div className="flex gap-2 mt-1">
+          <input
+            className="flex-1 rounded-lg border p-2.5 text-sm focus:border-efcaAccent focus:ring-efcaAccent border-gray-300"
+            name="videoUrl"
+            value={form.videoUrl ?? ''}
+            onChange={handleChange}
+            placeholder="Video URL (YouTube, Vimeo, etc.)"
+          />
+          {form.videoUrl && (
+            <button
+              type="button"
+              onClick={() => handlePreview('video')}
+              className="px-4 py-2 bg-efcaAccent text-white rounded hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-efcaAccent transition-colors"
+            >
+              Preview
+            </button>
+          )}
         </div>
+        {formErrors.videoUrl && <p className="mt-1 text-sm text-red-600">{formErrors.videoUrl}</p>}
+      </div>
+
+      <hr className="my-6 border-gray-200" />
+      <h3 className="mb-2 text-base font-semibold text-efcaDark">Placement Preferences</h3>
+      <p className="text-sm text-gray-700 mb-4">
+        Choose up to 5 positions for which you are most qualified and interested.
+      </p>
+      <div className="block mb-2 font-semibold text-sm text-gray-700">Senior/Solo Pastor Positions</div>
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-2 mb-4">
+        {[
+          'Solo pastor',
+          'Church-planting pastor',
+          'Senior pastor (plus one or two full-time staff)',
+          'Senior pastor (plus three or more full-time staff)'
+        ].map((role) => (
+          <label key={role} className="flex items-center text-sm text-gray-700">
+            <input
+              type="checkbox"
+              name="placementPreferences"
+              value={role}
+              checked={form.placementPreferences?.includes(role)}
+              onChange={handlePlacementPreferenceChange}
+              disabled={
+                !form.placementPreferences?.includes(role) &&
+                form.placementPreferences?.length >= 5
+              }
+              className="mr-2"
+            />
+            {role}
+          </label>
+        ))}
+      </div>
+      <div className="block mb-2 font-semibold text-sm text-gray-700">Associate Staff Roles</div>
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-2 mb-4">
+        {[
+          'Administration/operations/business',
+          'Adult education/small groups/discipleship',
+          'Associate pastor',
+          "Children's ministry",
+          'Christian education (all ages)',
+          'College ministries',
+          'Communications/technology',
+          'Executive pastor',
+          'Family/community life',
+          "Men's ministry",
+          'Multicultural ministry',
+          'Music and worship',
+          'Outreach/evangelism',
+          'Pastoral care/counseling',
+          'Seniors ministry',
+          'Singles ministry',
+          'Student/youth ministry',
+          "Women's ministry"
+        ].map((role) => (
+          <label key={role} className="flex items-center text-sm text-gray-700">
+            <input
+              type="checkbox"
+              name="placementPreferences"
+              value={role}
+              checked={form.placementPreferences?.includes(role)}
+              onChange={handlePlacementPreferenceChange}
+              disabled={
+                !form.placementPreferences?.includes(role) &&
+                form.placementPreferences?.length >= 5
+              }
+              className="mr-2"
+            />
+            {role}
+          </label>
+        ))}
       </div>
 
       <div className="flex gap-2 pt-4">
@@ -663,6 +782,15 @@ const CandidateProfilePage = () => {
             onClick={() => setMode('view')}
           >
             Cancel
+          </button>
+        )}
+        {mode === 'edit' && (
+          <button
+            className="bg-red-600 text-white px-4 py-2.5 rounded-lg font-bold hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-600 transition-colors"
+            type="button"
+            onClick={handleDelete}
+          >
+            Delete
           </button>
         )}
       </div>
@@ -737,7 +865,7 @@ const CandidateProfilePage = () => {
       </div>
       {profile?.videoUrl && (
         <div>
-          <div className="font-semibold text-gray-700">Video Introduction:</div>
+          <div className="font-semibold text-gray-700">Teaching/Preaching Video (Optional):</div>
           <div className="flex items-center gap-2">
             <a
               href={profile.videoUrl}

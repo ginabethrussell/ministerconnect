@@ -25,6 +25,7 @@ interface Profile {
   status: 'draft' | 'pending' | 'approved' | 'rejected';
   resumeFileId?: string;
   videoUrl?: string;
+  pictureUrl?: string;
 }
 
 // Mock profile data
@@ -38,6 +39,7 @@ const mockProfile: Profile = {
   state: 'TX',
   zipCode: '12345',
   status: 'draft',
+  pictureUrl: '/sampleman.jpg',
 };
 
 // Mock data store

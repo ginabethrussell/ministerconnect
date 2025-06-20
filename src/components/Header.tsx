@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
+import Image from 'next/image';
 
 interface HeaderProps {
   role: string | null;
@@ -20,13 +21,16 @@ const Header = ({ role, onLogout }: HeaderProps) => {
 
   return (
     <header className="bg-efcaBlue text-white py-4 px-6 shadow">
-      <div className="flex justify-between items-center max-w-7xl mx-auto">
+      <div className="flex justify-between items-center max-w-7xl mx-auto pl-4">
         <Link href={LogoHref}>
           <span
             className="flex items-center font-bold text-xl uppercase tracking-wide cursor-default opacity-100"
             aria-disabled="true"
           >
-            Ministry Match
+            <span className="bg-white rounded-md p-1 mr-4">
+              <Image src="/gldlogo.png" alt="GLD Logo" width={72} height={72} />
+            </span>
+            Minister Connect
           </span>
         </Link>
         <button

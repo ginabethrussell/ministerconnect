@@ -16,6 +16,7 @@ const dummySaved = [
     zipCode: '62704',
     resumeUrl: 'https://example.com/resume-jane.pdf',
     videoUrl: 'https://example.com/video-jane.mp4',
+    pictureUrl: 'https://example.com/jane.jpg',
   },
 ];
 
@@ -48,6 +49,13 @@ export default function SavedCandidates() {
                   key={candidate.id}
                   className="bg-white rounded shadow p-4 flex flex-col h-full"
                 >
+                  {candidate.pictureUrl && (
+                    <img
+                      src={candidate.pictureUrl}
+                      alt={`${candidate.name}'s profile`}
+                      className="h-24 w-24 object-cover rounded-lg border mx-auto mb-2"
+                    />
+                  )}
                   <div className="font-bold text-lg text-efcaText mb-1">{candidate.name}</div>
                   <div className="text-sm text-gray-600 mb-1 break-all">{candidate.email}</div>
                   <div className="text-xs text-efcaMuted mb-1">Phone: {candidate.phone}</div>
