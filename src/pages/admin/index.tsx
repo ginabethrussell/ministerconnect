@@ -20,11 +20,17 @@ const features = [
       'View, approve, or reject candidate profiles and submitted files and videos before releasing them to church visibility.',
     href: '/admin/review',
   },
+  {
+    title: 'Review Job Listings',
+    description:
+      'Review, approve, or reject job listings posted by churches before they become visible to candidates.',
+    href: '/admin/jobs',
+  },
 ];
 
 const AdminDashboard = () => {
   return (
-    <div className="min-h-screen flex items-center justify-center bg-efcaGray font-sans">
+    <div className="min-h-screen flex items-center justify-center bg-efcaGray font-sans mt-6">
       <div className="max-w-3xl w-full mx-auto p-8 bg-white rounded-xl shadow">
         <h2 className="text-3xl font-bold mb-4 text-efcaBlue">Admin Dashboard</h2>
         <p className="mb-8 text-efcaMuted text-lg">

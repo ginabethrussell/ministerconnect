@@ -97,6 +97,9 @@ const Header = ({ role, onLogout, profileStatus }: HeaderProps) => {
               <Link href="/admin/review" className={navLinkClass('/admin/review')}>
                 Review Candidates
               </Link>
+              <Link href="/admin/jobs" className={navLinkClass('/admin/jobs')}>
+                Review Jobs
+              </Link>
               <Link href="/admin/churches" className={navLinkClass('/admin/churches')}>
                 Manage Churches
               </Link>
@@ -165,6 +168,9 @@ const Header = ({ role, onLogout, profileStatus }: HeaderProps) => {
               </Link>
               <Link href="/admin/review" className={navLinkClass('/admin/review')}>
                 Review Candidates
+              </Link>
+              <Link href="/admin/jobs" className={navLinkClass('/admin/jobs')}>
+                Review Jobs
               </Link>
               <Link href="/admin/churches" className={navLinkClass('/admin/churches')}>
                 Manage Churches

@@ -3,11 +3,15 @@ import { useRouter } from 'next/router';
 import Link from 'next/link';
 import { JobListing } from '../../types';
 
+interface JobListingWithStatus extends JobListing {
+  status: 'pending' | 'approved' | 'rejected';
+}
+
 export default function ChurchJobs() {
   const router = useRouter();
   const [isProfileComplete, setIsProfileComplete] = useState<boolean | null>(null);
   const [loading, setLoading] = useState(true);
-  const [jobs, setJobs] = useState<JobListing[]>([]);
+  const [jobs, setJobs] = useState<JobListingWithStatus[]>([]);
   const [expandedJobs, setExpandedJobs] = useState<number[]>([]);
 
   useEffect(() => {
@@ -24,32 +28,20 @@ export default function ChurchJobs() {
     }
   }, [router]);
 
-  const loadJobs = () => {
-    const mockJobs: JobListing[] = [
-      {
-        id: 1,
-        church_id: 1,
-        title: 'Youth Pastor',
-        ministry_type: 'Youth',
-        employment_type: 'Full Time with Benefits',
-        job_description: 'We are seeking a passionate and experienced Youth Pastor to lead our growing youth ministry. The ideal candidate will have a heart for discipling young people, experience in youth ministry, and strong leadership skills. Responsibilities include planning and leading weekly youth services, organizing events and retreats, mentoring youth leaders, and collaborating with parents and church leadership.',
-        about_church: 'Grace Fellowship Church is a vibrant, multi-generational congregation located in Springfield, IL. We are committed to making disciples who make disciples, with a strong emphasis on family ministry and community outreach. Our church values authentic relationships, biblical teaching, and serving our community with the love of Christ.',
-        created_at: '2024-07-21',
-        updated_at: '2024-07-21',
-      },
-      {
-        id: 2,
-        church_id: 1,
-        title: 'Worship Leader',
-        ministry_type: 'Worship',
-        employment_type: 'Part Time',
-        job_description: 'We are looking for a gifted Worship Leader to help create meaningful worship experiences for our congregation. The role involves leading worship during Sunday services, rehearsing with the worship team, selecting appropriate songs, and helping to develop other worship leaders. Musical proficiency and a heart for worship are essential.',
-        about_church: 'Grace Fellowship Church is a vibrant, multi-generational congregation located in Springfield, IL. We are committed to making disciples who make disciples, with a strong emphasis on family ministry and community outreach. Our church values authentic relationships, biblical teaching, and serving our community with the love of Christ.',
-        created_at: '2024-07-20',
-        updated_at: '2024-07-20',
-      },
-    ];
-    setJobs(mockJobs);
+  const loadJobs = async () => {
+    try {
+      const response = await fetch('/api/job-listings');
+      if (response.ok) {
+        const data = await response.json();
+        // Filter to only show jobs for this church (church_id: 1 for now)
+        const churchJobs = data.filter((job: JobListingWithStatus) => job.church_id === 1);
+        setJobs(churchJobs);
+      } else {
+        console.error('Failed to load jobs');
+      }
+    } catch (error) {
+      console.error('Error loading jobs:', error);
+    }
   };
 
   const handleDeleteJob = (jobId: number) => {
@@ -64,6 +56,32 @@ export default function ChurchJobs() {
         ? prev.filter(id => id !== jobId)
         : [...prev, jobId]
     );
+  };
+
+  const getStatusColor = (status: string) => {
+    switch (status) {
+      case 'pending':
+        return 'bg-yellow-100 text-yellow-800';
+      case 'approved':
+        return 'bg-green-100 text-green-800';
+      case 'rejected':
+        return 'bg-red-100 text-red-800';
+      default:
+        return 'bg-gray-100 text-gray-800';
+    }
+  };
+
+  const getStatusMessage = (status: string) => {
+    switch (status) {
+      case 'pending':
+        return 'Pending admin review';
+      case 'approved':
+        return 'Approved and visible to candidates';
+      case 'rejected':
+        return 'Rejected by admin';
+      default:
+        return 'Unknown status';
+    }
   };
 
   if (loading) {
@@ -135,8 +153,8 @@ export default function ChurchJobs() {
                             </p>
                           </div>
                           <div className="text-right md:text-left">
-                            <span className="inline-block px-3 py-1 bg-blue-100 text-blue-800 text-sm font-medium rounded-full">
-                              {job.employment_type}
+                            <span className={`inline-block px-3 py-1 ${getStatusColor(job.status)} text-sm font-medium rounded-full`}>
+                              {getStatusMessage(job.status)}
                             </span>
                           </div>
                         </div>

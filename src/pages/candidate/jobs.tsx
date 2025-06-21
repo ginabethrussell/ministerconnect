@@ -4,47 +4,18 @@ import Link from 'next/link';
 import ExpressInterestButton from '../../components/ExpressInterestButton';
 import { JobListing } from '../../types';
 
-// Mock data using the actual JobListing type
-const mockJobListings: JobListing[] = [
-  {
-    id: 1,
-    church_id: 1,
-    title: 'Youth Pastor',
-    ministry_type: 'Youth',
-    employment_type: 'Full Time with Benefits',
-    job_description: 'We are seeking a passionate and experienced Youth Pastor to lead our growing youth ministry. The ideal candidate will have a heart for discipling young people, experience in youth ministry, and strong leadership skills. Responsibilities include planning and leading weekly youth services, organizing events and retreats, mentoring youth leaders, and collaborating with parents and church leadership.',
-    about_church: 'Grace Fellowship Church is a vibrant, multi-generational congregation located in Springfield, IL. We are committed to making disciples who make disciples, with a strong emphasis on family ministry and community outreach. Our church values authentic relationships, biblical teaching, and serving our community with the love of Christ.',
-    created_at: '2024-07-21',
-    updated_at: '2024-07-21',
-  },
-  {
-    id: 2,
-    church_id: 1,
-    title: 'Worship Leader',
-    ministry_type: 'Worship',
-    employment_type: 'Part Time',
-    job_description: 'We are looking for a gifted Worship Leader to help create meaningful worship experiences for our congregation. The role involves leading worship during Sunday services, rehearsing with the worship team, selecting appropriate songs, and helping to develop other worship leaders. Musical proficiency and a heart for worship are essential.',
-    about_church: 'Grace Fellowship Church is a vibrant, multi-generational congregation located in Springfield, IL. We are committed to making disciples who make disciples, with a strong emphasis on family ministry and community outreach. Our church values authentic relationships, biblical teaching, and serving our community with the love of Christ.',
-    created_at: '2024-07-20',
-    updated_at: '2024-07-20',
-  },
-  {
-    id: 3,
-    church_id: 2,
-    title: 'Missions Coordinator',
-    ministry_type: 'Missions',
-    employment_type: 'Full Time with Benefits',
-    job_description: 'New Hope Community Church is seeking a Missions Coordinator to oversee our local and global mission initiatives. This role involves developing mission partnerships, organizing mission trips, coordinating volunteer teams, and helping our congregation engage with our community and the world. Strong organizational skills and a passion for missions are required.',
-    about_church: 'New Hope Community Church is a dynamic, mission-focused congregation in Shelbyville, IL. We are passionate about reaching our community and the world with the gospel through both word and deed. Our church emphasizes authentic community, spiritual growth, and active engagement in God\'s mission.',
-    created_at: '2024-07-19',
-    updated_at: '2024-07-19',
-  },
-];
+interface JobListingWithStatus extends JobListing {
+  status: 'pending' | 'approved' | 'rejected';
+  church_name: string;
+  church_email: string;
+  church_phone: string;
+}
 
 export default function CandidateJobs() {
   const router = useRouter();
   const [profile, setProfile] = useState<any>(null);
   const [loading, setLoading] = useState(true);
+  const [jobListings, setJobListings] = useState<JobListingWithStatus[]>([]);
   const [search, setSearch] = useState('');
   const [filter, setFilter] = useState('all'); // all, full-time, part-time
   const [expressedInterest, setExpressedInterest] = useState<number[]>([]);
@@ -69,8 +40,15 @@ export default function CandidateJobs() {
           router.push('/candidate');
           return;
         }
+
+        // Load approved job listings
+        const jobsResponse = await fetch('/api/job-listings?status=approved');
+        if (jobsResponse.ok) {
+          const jobsData = await jobsResponse.json();
+          setJobListings(jobsData);
+        }
       } catch (error) {
-        console.error('Failed to load profile:', error);
+        console.error('Failed to load profile or jobs:', error);
         router.push('/candidate');
         return;
       } finally {
@@ -81,10 +59,11 @@ export default function CandidateJobs() {
     checkProfileAndLoadJobs();
   }, [router]);
 
-  const filteredJobs = mockJobListings.filter(job => {
+  const filteredJobs = jobListings.filter(job => {
     const matchesSearch = 
       job.title.toLowerCase().includes(search.toLowerCase()) ||
-      job.ministry_type.toLowerCase().includes(search.toLowerCase());
+      job.ministry_type.toLowerCase().includes(search.toLowerCase()) ||
+      job.church_name.toLowerCase().includes(search.toLowerCase());
     
     const matchesFilter = 
       filter === 'all' || 
@@ -207,7 +186,7 @@ export default function CandidateJobs() {
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
                           <div>
                             <p className="text-lg font-medium text-gray-800">
-                              {job.church_id === 1 ? 'Grace Fellowship Church' : 'New Hope Community Church'}
+                              {job.church_name}
                             </p>
                             <p className="text-gray-600">{job.ministry_type}</p>
                             <p className="text-sm text-gray-500">

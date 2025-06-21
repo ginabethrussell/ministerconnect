@@ -105,25 +105,80 @@ let mockCandidateProfiles: CandidateReviewProfile[] = [
 ];
 
 // --- Church Credentials Mock Data ---
-interface ChurchUser {
-  id: string;
+interface ChurchWithUser {
+  id: number;
+  name: string;
   email: string;
-  churchName: string;
-  createdAt: string;
+  phone: string;
+  website: string;
+  street_address: string;
+  city: string;
+  state: string;
+  zipcode: string;
+  status: string;
+  created_at: string;
+  updated_at: string;
+  users: Array<{
+    id: number;
+    email: string;
+    role: 'church';
+    church_id: number;
+    requires_password_change: boolean;
+    password?: string;
+    created_at: string;
+    updated_at: string;
+  }>;
 }
 
-let mockChurches: ChurchUser[] = [
+// Initialize mock churches with users from data.ts
+let mockChurchesWithUsers: ChurchWithUser[] = [
   {
-    id: '1',
-    email: 'firstchurch@example.com',
-    churchName: 'First Church',
-    createdAt: '2024-06-01',
+    id: 1,
+    name: 'Grace Fellowship Church',
+    email: 'contact@gracefellowship.org',
+    phone: '555-111-1111',
+    website: 'https://gracefellowship.org',
+    street_address: '123 Church Rd',
+    city: 'Springfield',
+    state: 'IL',
+    zipcode: '62704',
+    status: 'active',
+    created_at: new Date().toISOString(),
+    updated_at: new Date().toISOString(),
+    users: [{
+      id: 2,
+      email: 'pastor.bob@gracefellowship.org',
+      role: 'church',
+      church_id: 1,
+      requires_password_change: false,
+      password: 'password123',
+      created_at: new Date().toISOString(),
+      updated_at: new Date().toISOString(),
+    }]
   },
   {
-    id: '2',
-    email: 'gracechapel@example.com',
-    churchName: 'Grace Chapel',
-    createdAt: '2024-06-02',
+    id: 2,
+    name: 'New Hope Community',
+    email: 'info@newhope.com',
+    phone: '555-222-2222',
+    website: 'https://newhope.com',
+    street_address: '456 Chapel Ln',
+    city: 'Shelbyville',
+    state: 'IL',
+    zipcode: '62565',
+    status: 'active',
+    created_at: new Date().toISOString(),
+    updated_at: new Date().toISOString(),
+    users: [{
+      id: 5,
+      email: 'pastor.sarah@newhope.com',
+      role: 'church',
+      church_id: 2,
+      requires_password_change: false,
+      password: 'password123',
+      created_at: new Date().toISOString(),
+      updated_at: new Date().toISOString(),
+    }]
   },
 ];
 
@@ -475,36 +530,178 @@ export const handlers = [
   // --- Church Credentials Handlers ---
   // GET /api/churches
   http.get('/api/churches', () => {
-    return HttpResponse.json(mockChurches);
+    return HttpResponse.json(mockChurchesWithUsers);
   }),
 
   // POST /api/churches
   http.post('/api/churches', async ({ request }) => {
-    const { email, churchName } = (await request.json()) as { email: string; churchName: string };
-    const newChurch = {
-      id: Date.now().toString(),
-      email,
-      churchName,
-      createdAt: new Date().toISOString().slice(0, 10),
+    const { church, users } = (await request.json()) as {
+      church: {
+        name: string;
+        email: string;
+        phone: string;
+        website: string;
+        street_address: string;
+        city: string;
+        state: string;
+        zipcode: string;
+        status: string;
+      };
+      users: Array<{
+        email: string;
+        password: string;
+        role: 'church';
+        requires_password_change: boolean;
+      }>;
     };
-    mockChurches.push(newChurch);
+
+    // Validate required fields
+    if (!church.name || !church.email || !users || users.length === 0) {
+      return new HttpResponse(
+        JSON.stringify({ message: 'Missing required fields' }),
+        { status: 400 }
+      );
+    }
+
+    // Validate each user has required fields
+    for (const user of users) {
+      if (!user.email || !user.password) {
+        return new HttpResponse(
+          JSON.stringify({ message: 'All users must have email and password' }),
+          { status: 400 }
+        );
+      }
+    }
+
+    // Check if church email already exists
+    if (mockChurchesWithUsers.some(c => c.email === church.email)) {
+      return new HttpResponse(
+        JSON.stringify({ message: 'Church email already exists' }),
+        { status: 400 }
+      );
+    }
+
+    // Check if any user email already exists
+    for (const user of users) {
+      if (mockChurchesWithUsers.some(c => c.users.some(u => u.email === user.email))) {
+        return new HttpResponse(
+          JSON.stringify({ message: `User email ${user.email} already exists` }),
+          { status: 400 }
+        );
+      }
+    }
+
+    const now = new Date().toISOString();
+    const newChurchId = Math.max(...mockChurchesWithUsers.map(c => c.id), 0) + 1;
+    const maxUserId = Math.max(...mockChurchesWithUsers.flatMap(c => c.users.map(u => u.id)), 0);
+
+    const newChurch: ChurchWithUser = {
+      id: newChurchId,
+      name: church.name,
+      email: church.email,
+      phone: church.phone || '',
+      website: church.website || '',
+      street_address: church.street_address,
+      city: church.city,
+      state: church.state,
+      zipcode: church.zipcode,
+      status: church.status || 'active',
+      created_at: now,
+      updated_at: now,
+      users: users.map((user, index) => ({
+        id: maxUserId + index + 1,
+        email: user.email,
+        role: 'church',
+        church_id: newChurchId,
+        requires_password_change: user.requires_password_change,
+        password: user.password,
+        created_at: now,
+        updated_at: now,
+      }))
+    };
+
+    mockChurchesWithUsers.push(newChurch);
     return HttpResponse.json(newChurch, { status: 201 });
+  }),
+
+  // GET /api/churches/:id - Get a specific church
+  http.get('/api/churches/:id', ({ params }) => {
+    const { id } = params;
+    const churchId = parseInt(id as string);
+    
+    const church = mockChurchesWithUsers.find((c) => c.id === churchId);
+    if (!church) {
+      return new HttpResponse(
+        JSON.stringify({ message: 'Church not found' }),
+        { status: 404 }
+      );
+    }
+    
+    return HttpResponse.json(church);
   }),
 
   // PUT /api/churches/:id
   http.put('/api/churches/:id', async ({ params, request }) => {
     const { id } = params;
-    const { email, churchName } = (await request.json()) as { email: string; churchName: string };
+    const churchId = parseInt(id as string);
+    const updateData = (await request.json()) as Partial<ChurchWithUser> & { users?: any[] };
+    
     let updated;
-    mockChurches = mockChurches.map((c) => {
-      if (c.id === id) {
-        updated = { ...c, email, churchName };
+    mockChurchesWithUsers = mockChurchesWithUsers.map((c) => {
+      if (c.id === churchId) {
+        const now = new Date().toISOString();
+        
+        // Handle user updates if provided
+        let updatedUsers = c.users;
+        if (updateData.users) {
+          updatedUsers = updateData.users.map((user, index) => {
+            if (user.id) {
+              // Update existing user
+              const existingUser = c.users.find(u => u.id === user.id);
+              if (!existingUser) {
+                throw new Error(`User with id ${user.id} not found`);
+              }
+              return {
+                ...existingUser,
+                email: user.email,
+                requires_password_change: user.requires_password_change,
+                updated_at: now,
+                // Only update password if provided
+                ...(user.password && { password: user.password }),
+              };
+            } else {
+              // Add new user
+              const maxUserId = Math.max(...c.users.map(u => u.id), 0);
+              return {
+                id: maxUserId + 1,
+                email: user.email,
+                password: user.password || '',
+                role: 'church' as const,
+                church_id: churchId,
+                requires_password_change: user.requires_password_change,
+                created_at: now,
+                updated_at: now,
+              };
+            }
+          });
+        }
+        
+        updated = { 
+          ...c, 
+          ...updateData,
+          users: updatedUsers,
+          updated_at: now
+        };
         return updated;
       }
       return c;
     });
+    
     if (!updated) {
-      return new HttpResponse(JSON.stringify({ message: 'Church not found' }), { status: 404 });
+      return new HttpResponse(
+        JSON.stringify({ message: 'Church not found' }),
+        { status: 404 }
+      );
     }
     return HttpResponse.json(updated);
   }),
@@ -512,7 +709,17 @@ export const handlers = [
   // DELETE /api/churches/:id
   http.delete('/api/churches/:id', ({ params }) => {
     const { id } = params;
-    mockChurches = mockChurches.filter((c) => c.id !== id);
+    const churchId = parseInt(id as string);
+    const initialLength = mockChurchesWithUsers.length;
+    mockChurchesWithUsers = mockChurchesWithUsers.filter((c) => c.id !== churchId);
+    
+    if (mockChurchesWithUsers.length === initialLength) {
+      return new HttpResponse(
+        JSON.stringify({ message: 'Church not found' }),
+        { status: 404 }
+      );
+    }
+    
     return HttpResponse.json({ success: true });
   }),
 
@@ -651,5 +858,110 @@ export const handlers = [
       JSON.stringify({ success: false, message: 'Invalid current password or new password requirements not met' }),
       { status: 400 }
     );
+  }),
+
+  // --- Job Listing Review Handlers ---
+  
+  // GET /api/job-listings - Get job listings with optional status filter
+  http.get('/api/job-listings', ({ request }) => {
+    const url = new URL(request.url);
+    const status = url.searchParams.get('status');
+    
+    // Import mock data
+    const { mockJobListings, mockChurches } = require('./data');
+    
+    // Join job listings with church information
+    const jobListingsWithChurch = mockJobListings.map((job: any) => {
+      const church = mockChurches.find((c: any) => c.id === job.church_id);
+      return {
+        ...job,
+        church_name: church?.name || 'Unknown Church',
+        church_email: church?.email || '',
+        church_phone: church?.phone || '',
+      };
+    });
+    
+    // Filter by status if provided
+    let filteredListings = jobListingsWithChurch;
+    if (status && status !== 'all') {
+      filteredListings = jobListingsWithChurch.filter((job: any) => job.status === status);
+    }
+    
+    return HttpResponse.json(filteredListings);
+  }),
+
+  // PATCH /api/job-listings/:id - Update job listing status
+  http.patch('/api/job-listings/:id', async ({ params, request }) => {
+    const { id } = params;
+    const jobId = parseInt(id as string);
+    const { status } = await request.json() as { status: 'pending' | 'approved' | 'rejected' };
+    
+    // Import mock data
+    const { mockJobListings } = require('./data');
+    
+    // Find and update the job listing
+    const jobIndex = mockJobListings.findIndex((job: any) => job.id === jobId);
+    if (jobIndex === -1) {
+      return new HttpResponse(
+        JSON.stringify({ message: 'Job listing not found' }),
+        { status: 404 }
+      );
+    }
+    
+    // Update the status
+    mockJobListings[jobIndex].status = status;
+    mockJobListings[jobIndex].updated_at = new Date().toISOString();
+    
+    return HttpResponse.json(mockJobListings[jobIndex]);
+  }),
+
+  // GET /api/job-listings/:id - Get a specific job listing
+  http.get('/api/job-listings/:id', ({ params }) => {
+    const { id } = params;
+    const jobId = parseInt(id as string);
+    
+    // Import mock data
+    const { mockJobListings, mockChurches } = require('./data');
+    
+    const job = mockJobListings.find((j: any) => j.id === jobId);
+    if (!job) {
+      return new HttpResponse(
+        JSON.stringify({ message: 'Job listing not found' }),
+        { status: 404 }
+      );
+    }
+    
+    const church = mockChurches.find((c: any) => c.id === job.church_id);
+    const jobWithChurch = {
+      ...job,
+      church_name: church?.name || 'Unknown Church',
+      church_email: church?.email || '',
+      church_phone: church?.phone || '',
+    };
+    
+    return HttpResponse.json(jobWithChurch);
+  }),
+
+  // POST /api/job-listings - Create a new job listing
+  http.post('/api/job-listings', async ({ request }) => {
+    const jobData = await request.json() as any;
+    
+    // Import mock data
+    const { mockJobListings } = require('./data');
+    
+    // Generate new ID
+    const maxId = Math.max(...mockJobListings.map((j: any) => j.id), 0);
+    const newJob = {
+      id: maxId + 1,
+      ...jobData,
+      status: 'pending', // All new job listings start as pending
+      created_at: new Date().toISOString(),
+      updated_at: new Date().toISOString(),
+    };
+    
+    // Add to mock data
+    mockJobListings.push(newJob);
+    
+    return HttpResponse.json(newJob, { status: 201 });
   }),
 ];

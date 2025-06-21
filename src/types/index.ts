@@ -19,6 +19,7 @@ export interface User {
   password?: string; // Password should be optional on the frontend
   role: 'candidate' | 'church' | 'admin';
   church_id: number | null;
+  requires_password_change?: boolean; // Track if user needs to change password on first login
   created_at: string;
   updated_at: string;
 }
@@ -61,6 +62,7 @@ export interface JobListing {
   employment_type: string;
   job_description: string;
   about_church: string;
+  status: 'pending' | 'approved' | 'rejected';
   created_at: string;
   updated_at: string;
 }

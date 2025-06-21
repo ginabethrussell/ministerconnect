@@ -61,13 +61,27 @@ export default function CreateJob() {
       about_church: formData.about_church,
     };
 
-    console.log('Creating simplified job posting:', newJob);
-    
-    // In a real app, this would be an API call
-    setTimeout(() => {
+    try {
+      const response = await fetch('/api/job-listings', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(newJob),
+      });
+
+      if (response.ok) {
+        alert('Job posting created successfully! It will be reviewed by an administrator before becoming visible to candidates.');
+        router.push('/church/jobs');
+      } else {
+        alert('Error creating job posting. Please try again.');
+      }
+    } catch (error) {
+      console.error('Error creating job posting:', error);
+      alert('Error creating job posting. Please try again.');
+    } finally {
       setSaving(false);
-      router.push('/church/jobs');
-    }, 1000);
+    }
   };
 
   if (loading) {
