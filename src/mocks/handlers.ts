@@ -23,7 +23,7 @@ interface Profile {
   city: string;
   state: string;
   zipCode: string;
-  status: 'draft' | 'pending' | 'approved' | 'rejected';
+  status: null |'draft' | 'pending' | 'approved' | 'rejected';
   resumeFileId?: string;
   videoUrl?: string;
   pictureUrl?: string;
@@ -188,7 +188,7 @@ export const handlers = [
           message: 'Login successful. Please change your password.',
           redirectTo: '/auth/force-password-change'
         });
-      } else if (email === 'church@example.com' && password === 'password123') {
+      } else if (email === 'church@gmail.com' && password === 'password') {
         // Regular church login - check if profile is complete
         const churchName = localStorage.getItem('churchName');
         const churchEmail = localStorage.getItem('churchEmail');
@@ -212,7 +212,7 @@ export const handlers = [
           },
           message: 'Login successful'
         });
-      } else if (email === 'candidate@example.com' && password === 'password123') {
+      } else if (email === 'candidate@gmail.com' && password === 'password') {
         // Candidate login
         return HttpResponse.json({
           success: true,
@@ -238,7 +238,7 @@ export const handlers = [
           },
           message: 'Login successful'
         });
-      }
+      } 
     }
     
     return new HttpResponse(
