@@ -1,47 +1,75 @@
-export interface ExampleProps {
-  title: string;
-  description?: string;
-}
-
-export type User = {
-  id: string;
-  name: string;
-  email: string;
-  role: 'candidate' | 'church' | 'admin';
-};
-
-export type ApiResponse<T> = {
-  data: T;
-  error?: string;
-};
-
 export interface Church {
-  id: string;
+  id: number;
   name: string;
   email: string;
   phone: string;
-  website?: string;
-  address: {
-    street: string;
-    city: string;
-    state: string;
-    zipCode: string;
-  };
+  website: string;
+  street_address: string;
+  city: string;
+  state: string;
+  zipcode: string;
+  status: string;
+  created_at: string;
+  updated_at: string;
 }
 
-export interface JobPosting {
-  id: string;
-  churchId: string;
-  churchName: string;
+export interface User {
+  id: number;
+  email: string;
+  password?: string; // Password should be optional on the frontend
+  role: 'candidate' | 'church' | 'admin';
+  church_id: number | null;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface InviteCode {
+  id: number;
+  code: string;
+  event: string;
+  uses: number;
+  status: string;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface Profile {
+  id: number;
+  first_name: string;
+  last_name: string;
+  email: string;
+  user_id: number;
+  invite_code_id: number;
+  street_address: string;
+  city: string;
+  state: string;
+  zipcode: string;
+  status: 'pending' | 'approved' | 'rejected';
+  photo: string;
+  resume: string;
+  video_url: string;
+  placement_preferences: string[];
+  created_at: string;
+  updated_at: string;
+}
+
+export interface JobListing {
+  id: number;
+  church_id: number;
   title: string;
-  position: string;
-  employmentType: 'Part Time' | 'Full Time with Benefits' | 'Internship';
-  location: {
-    city: string;
-    state: string;
-  };
-  jobUrl: string;
-  isActive: boolean;
-  createdAt: string;
-  updatedAt: string;
+  ministry_type: string;
+  employment_type: string;
+  job_posting_url: string;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface MutualInterest {
+  id: number;
+  job_listing_id: number;
+  profile_id: number;
+  expressed_by: 'candidate' | 'church';
+  expressed_by_user_id: number;
+  created_at: string;
+  updated_at: string;
 }

@@ -2,125 +2,119 @@
 
 This document describes the core data models and API endpoints for the Minister Connect application. Use this as a reference for frontend mocks and future backend implementation.
 
----
-
-## 1. User Model
-
-```json
-{
-  "id": "user_123",
-  "email": "candidate@gmail.com",
-  "name": "Jane Doe",
-  "role": "applicant", // or "church", "admin"
-  "churchId": "church_456", // only for applicants
-  "status": "active" // or "pending", "rejected"
-}
-```
+## Database Schema
+![Database Schema](docs/db_diagram.png)
 
 ---
 
-## 2. Church Model
+## 1. Churches Model
 
 ```json
 {
-  "id": "church_456",
-  "name": "First Evangelical Free Church",
-  "contactEmail": "pastor@firstefc.org",
-  "subscriptionStatus": "active", // or "trial", "inactive"
-  "address": "123 Main St, City, State",
-  "users": ["user_789", "user_101"] // church admins/users
-}
-```
-
----
-
-## 3. Invite Code Model
-
-```json
-{
-  "code": "JOBFAIR24",
-  "maxUses": 100,
-  "uses": 23,
-  "event": "Job Fair 2024",
-  "expiresAt": "2024-12-31T23:59:59Z"
-}
-```
-
----
-
-## 4. Candidate Profile/Upload Model
-
-```json
-{
-  "id": "profile_001",
-  "userId": "user_123",
-  "firstName": "Jane",
-  "lastName": "Doe",
-  "email": "jane@example.com",
-  "phone": "555-123-4567",
-  "streetAddress": "123 Main St",
+  "id": 1,
+  "name": "Grace Fellowship Church",
+  "email": "contact@gracefellowship.org",
+  "phone": "555-111-1111",
+  "website": "https://gracefellowship.org",
+  "street_address": "123 Church Rd",
   "city": "Springfield",
   "state": "IL",
-  "zipCode": "62704",
-  "event": "JOBFAIR25",
-  "createdAt": "2024-06-01",
-  "resumeUrl": "https://s3.amazonaws.com/bucket/resume.pdf",
-  "videoUrl": "https://example.com/video-jane.mp4",
-  "status": "pending",
-  "adminReviewedBy": "user_999",
-  "adminReviewedAt": "2024-06-15T12:00:00Z"
+  "zipcode": "62704",
+  "status": "active",
+  "created_at": "2024-01-01T00:00:00.000Z",
+  "updated_at": "2024-01-01T00:00:00.000Z"
 }
 ```
 
 ---
 
-## 5. Example API Endpoints
+## 2. Users Model
 
-| Endpoint               | Method | Description                             | Request/Response Example                          |
-| ---------------------- | ------ | --------------------------------------- | ------------------------------------------------- |
-| `/api/login`           | POST   | Login user                              | `{ email, password }` → `{ success, role }`       |
-| `/api/register`        | POST   | Register candidate                     | `{ code, name, email, password }` → `{ success }` |
-| `/api/validate-invite` | POST   | Validate invite code                    | `{ code }` → `{ valid, event }`                   |
-| `/api/candidates`      | GET    | List candidates (admin/church)          | → `[user, ...]`                                   |
-| `/api/churches`        | GET    | List churches (admin)                   | → `[church, ...]`                                 |
-| `/api/profile`         | GET    | Get candidate profile                   | → `{ ...profile }`                                |
-| `/api/profile/upload`  | POST   | Upload candidate document               | `{ file }` → `{ url }`                            |
-| `/api/admin/review`    | POST   | Admin approves/rejects candidate upload | `{ profileId, status }` → `{ success }`           |
+```json
+{
+  "id": 1,
+  "email": "admin@ministerconnect.com",
+  "password": "password123", // encrypted on the backend
+  "role": "admin", // or "church", "candidate"
+  "church_id": null,
+  "created_at": "2024-01-01T00:00:00.000Z",
+  "updated_at": "2024-01-01T00:00:00.000Z"
+}
+```
 
 ---
 
-## 6. Mock Data Example (for MSW)
+## 3. Invite Codes Model
 
-```js
-const mockUsers = [
-  {
-    id: 'user_1',
-    email: 'candidate@gmail.com',
-    name: 'Jane Doe',
-    role: 'candidate',
-    churchId: 'church_1',
-    status: 'active',
-  },
-  { id: 'user_2', email: 'church@gmail.com', name: 'Pastor Bob', role: 'church', status: 'active' },
-  { id: 'user_3', email: 'admin@gmail.com', name: 'Super Admin', role: 'admin', status: 'active' },
-];
+```json
+{
+  "id": 1,
+  "code": "SUMMERCONF24",
+  "event": "Summer Conference 2024",
+  "uses": 15,
+  "status": "active",
+  "created_at": "2024-01-01T00:00:00.000Z",
+  "updated_at": "2024-01-01T00:00:00.000Z"
+}
+```
 
-const mockChurches = [
-  {
-    id: 'church_1',
-    name: 'First Evangelical Free Church',
-    contactEmail: 'pastor@firstefc.org',
-    subscriptionStatus: 'active',
-    address: '123 Main St',
-    users: ['user_2'],
-  },
-];
+---
 
-// Example handler
-http.get('/api/candidates', ({ request }) => {
-  // Return candidates for admin/church
-  return Response.json(mockUsers.filter((u) => u.role === 'candidate'));
-});
+## 4. Profiles Model
+
+```json
+{
+  "id": 1,
+  "first_name": "John",
+  "last_name": "Doe",
+  "email": "john.candidate@email.com",
+  "user_id": 3,
+  "invite_code_id": 1,
+  "street_address": "789 Candidate Ave",
+  "city": "Springfield",
+  "state": "IL",
+  "zipcode": "62701",
+  "status": "approved", // or "pending", "rejected"
+  "photo": "/sampleman.jpg",
+  "resume": "/student-pastor-resume.pdf",
+  "video_url": "https://www.youtube.com/live/jfKfPfyJRdk",
+  "placement_preferences": ["Youth Ministry", "Missions"],
+  "created_at": "2024-01-01T00:00:00.000Z",
+  "updated_at": "2024-01-01T00:00:00.000Z"
+}
+```
+
+---
+
+## 5. Job Listings Model
+
+```json
+{
+  "id": 1,
+  "church_id": 1,
+  "title": "Youth Pastor",
+  "ministry_type": "Youth",
+  "employment_type": "Full-time",
+  "job_posting_url": "https://gracefellowship.org/jobs/youth-pastor",
+  "created_at": "2024-01-01T00:00:00.000Z",
+  "updated_at": "2024-01-01T00:00:00.000Z"
+}
+```
+
+---
+
+## 6. Mutual Interests Model
+
+```json
+{
+  "id": 1,
+  "job_listing_id": 1,
+  "profile_id": 1,
+  "expressed_by": "candidate", // or "church"
+  "expressed_by_user_id": 3,
+  "created_at": "2024-01-01T00:00:00.000Z",
+  "updated_at": "2024-01-01T00:00:00.000Z"
+}
 ```
 
 ---

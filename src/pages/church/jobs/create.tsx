@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/router';
 import Link from 'next/link';
-import { JobPosting } from '../../../types';
+import { JobListing } from '../../../types';
 
 export default function CreateJob() {
   const router = useRouter();
@@ -11,7 +11,7 @@ export default function CreateJob() {
   const [formData, setFormData] = useState({
     title: '',
     position: '',
-    employmentType: '' as JobPosting['employmentType'] | '',
+    employmentType: '' as JobListing['employmentType'] | '',
     jobUrl: '',
   });
 
@@ -51,7 +51,7 @@ export default function CreateJob() {
       return;
     }
 
-    const newJob: Partial<JobPosting> = {
+    const newJob: Partial<JobListing> = {
       churchId: 'church-1', // Mocked
       churchName: localStorage.getItem('churchName') || 'Sample Church',
       title: formData.title,

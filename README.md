@@ -2,45 +2,29 @@
 
 A multi-role Next.js application for connecting ministry candidates with churches, featuring role-based access for candidates, churches, and super admins. Built with React, TypeScript, Tailwind CSS, and MSW for frontend development and API mocking.
 
----
-
-## Table of Contents
-
-- [Overview](#overview)
-- [Features](#features)
-- [Tech Stack](#tech-stack)
-- [Getting Started](#getting-started)
-- [Folder Structure](#folder-structure)
-- [API & Data Model](#api--data-model)
-- [Contributing](#contributing)
-- [License](#license)
-
----
-
-## Overview
-
-Minister Match streamlines the process of matching ministry candidates with churches. The app supports three user roles:
-
-- **Candidates**: Register, complete a profile, and view and express interest in open positions.
-- **Churches**: Create a profile, add job listings, search candidates, save candidates, and identify candidates with mutual interest.
-- **Super Admin**: Manage users, churches, invite codes, and review and approve candidate and church profiles.
-
-The frontend is fully mocked using [MSW](https://mswjs.io/) for rapid development and testing.
-
----
-
 ## Features
 
-- Role-based authentication and navigation
-- Invite code registration (supports multi-use codes)
-- Responsive, accessible UI styled after EFCA branding
-- Candidate profiles with contact info, documents and media, and placement preferences
-- Church profiles with job listings
-- Candidate and church functionality to express and identify mutual interest
-- Admin dashboard for reviewing candidates, managing churches, and invite codes
-- Mocked API endpoints and data models for frontend development
+- **For Candidates**: Browse job listings, express interest, and manage profiles
+- **For Churches**: Post job listings, browse candidates, and manage hiring process
+- **For Admins**: Moderate content, manage users, and oversee platform operations
 
----
+## Quick Start
+
+```bash
+npm install
+npm run dev
+```
+
+The application will be available at `http://localhost:3000`
+
+## Documentation
+
+- **Use Case Diagram**: See `docs/use-case-diagram.puml` for the PlantUML source code
+- **API Data Model**: See `API_DATA_MODEL.md` for detailed data structure information
+- **Documentation**: See `docs/README.md` for additional documentation
+
+### Use Case Diagram
+![Use Case Diagram](docs/usecase_diagram.png)
 
 ## Screenshots
 
@@ -160,6 +144,9 @@ ministerconnect/
 ## API & Data Model (Mocked)
 
 See [`API_DATA_MODEL.md`](./API_DATA_MODEL.md) for full details.
+
+### Database Schema
+![Database Schema](docs/db_diagram.png)
 
 **Key Endpoints:**
 

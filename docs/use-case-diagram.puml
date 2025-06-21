@@ -1,0 +1,42 @@
+@startuml
+title Minister Connect - Use Case Diagram
+
+actor Candidate
+actor Church
+actor Admin
+
+rectangle "Minister Connect App" {
+  (Register/Login)
+  (Edit Profile)
+  (Browse Job Listings)
+  (Express Interest in a Job Listing)
+  (View Mutual Matches)
+
+  (Post Job Listing)
+  (Browse Candidate Profiles)
+  (Express Interest in a Candidate)
+
+  (Moderate Listings)
+  (Moderate Profiles)
+  (Manage Invite Codes)
+  (Manage Users)
+}
+
+Candidate --> (Register/Login)
+Candidate --> (Edit Profile)
+Candidate --> (Browse Job Listings)
+Candidate --> (Express Interest in a Job Listing)
+
+Church --> (Register/Login)
+Church --> (Edit Profile)
+Church --> (Post Job Listing)
+Church --> (Browse Candidate Profiles)
+Church --> (Express Interest in a Candidate)
+Church --> (View Mutual Matches)
+
+Admin --> (Moderate Listings)
+Admin --> (Moderate Profiles)
+Admin --> (Manage Invite Codes)
+Admin --> (Manage Users)
+
+@enduml
