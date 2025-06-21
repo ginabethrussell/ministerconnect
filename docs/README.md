@@ -120,7 +120,7 @@ Table mutual_interests {
 }
 ```
 
-## Project Structure
+## Documentation Files
 
 - `use-case-diagram.puml` - PlantUML source code for the use case diagram
 - `usecase_diagram.png` - Generated use case diagram
