@@ -1,42 +1,46 @@
 @startuml
-title Minister Connect - Use Case Diagram
+title Minister Connect - Use Case Diagram (System-Centric)
+left to right direction
 
 actor Candidate
 actor Church
 actor Admin
 
 rectangle "Minister Connect App" {
-  (Register/Login)
-  (Edit Profile)
-  (Browse Job Listings)
-  (Express Interest in a Job Listing)
-  (View Mutual Matches)
 
-  (Post Job Listing)
-  (Browse Candidate Profiles)
-  (Express Interest in a Candidate)
-
-  (Moderate Listings)
-  (Moderate Profiles)
-  (Manage Invite Codes)
-  (Manage Users)
+  (Authenticate User)
+  (Allow Profile Editing)
+  
+  (Present Job Listings)
+  (Record Interest in Job Listing)
+  
+  (Accept Job Listings from Churches)
+  (Present Candidate Profiles to Churches)
+  (Record Interest in Candidate)
+  
+  (Detect and Display Mutual Matches)
+  
+  (Allow Listing Moderation)
+  (Allow Profile Moderation)
+  (Manage Invite Code Access)
+  (Administer User Accounts)
 }
 
-Candidate --> (Register/Login)
-Candidate --> (Edit Profile)
-Candidate --> (Browse Job Listings)
-Candidate --> (Express Interest in a Job Listing)
+Candidate --> (Authenticate User)
+Candidate --> (Allow Profile Editing)
+Candidate --> (Present Job Listings)
+Candidate --> (Record Interest in Job Listing)
 
-Church --> (Register/Login)
-Church --> (Edit Profile)
-Church --> (Post Job Listing)
-Church --> (Browse Candidate Profiles)
-Church --> (Express Interest in a Candidate)
-Church --> (View Mutual Matches)
+Church --> (Authenticate User)
+Church --> (Allow Profile Editing)
+Church --> (Accept Job Listings from Churches)
+Church --> (Present Candidate Profiles to Churches)
+Church --> (Record Interest in Candidate)
+Church --> (Detect and Display Mutual Matches)
 
-Admin --> (Moderate Listings)
-Admin --> (Moderate Profiles)
-Admin --> (Manage Invite Codes)
-Admin --> (Manage Users)
+Admin --> (Allow Listing Moderation)
+Admin --> (Allow Profile Moderation)
+Admin --> (Manage Invite Code Access)
+Admin --> (Administer User Accounts)
 
 @enduml
