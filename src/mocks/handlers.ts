@@ -2,13 +2,6 @@ import { http, HttpResponse } from 'msw';
 import { v4 as uuidv4 } from 'uuid';
 import { generateMockResumeUrl } from '../utils/pdfUtils';
 
-// Mock data
-const mockUsers = [
-  { email: 'candidate@gmail.com', password: 'password', role: 'candidate' },
-  { email: 'church@gmail.com', password: 'password', role: 'church' },
-  { email: 'admin@gmail.com', password: 'password', role: 'admin' },
-];
-
 let mockInviteCodes = [
   { id: '1', code: 'JOBFAIR25', event: 'Job Fair 2025', maxUses: 100, uses: 0 },
   { id: '2', code: 'JOBFAIR24', event: 'Job Fair 2024', maxUses: 10, uses: 10 },
@@ -222,85 +215,66 @@ export const handlers = [
     console.log('Mock handler: login called');
     const { email, password } = await request.json() as { email: string; password: string };
     
-    console.log('Mock handler: email:', email);
-    console.log('Mock handler: password:', password);
-    
     // Mock login logic
     if (email && password) {
-      // Simulate different user types and scenarios
-      if (email === 'newchurch@example.com') {
+      if (email === 'newchurchuser@gmail.com') {
         // New church that needs to change password
         return HttpResponse.json({
           success: true,
           user: {
-            id: 'new-church-1',
-            email: 'newchurch@example.com',
+            id: 400,
+            email: 'newchurchuser@gmail.com',
             role: 'church',
             name: 'New Church',
             needsPasswordChange: true,
-            needsProfileCompletion: true
           },
           message: 'Login successful. Please change your password.',
           redirectTo: '/auth/force-password-change'
         });
-      } else if (email === 'church@gmail.com' && password === 'password') {
-        // Regular church login - check if profile is complete
-        const churchName = localStorage.getItem('churchName');
-        const churchEmail = localStorage.getItem('churchEmail');
-        const churchPhone = localStorage.getItem('churchPhone');
-        const streetAddress = localStorage.getItem('churchStreetAddress');
-        const city = localStorage.getItem('churchCity');
-        const state = localStorage.getItem('churchState');
-        const zipCode = localStorage.getItem('churchZipCode');
-        
-        const isProfileComplete = !!(churchName && churchEmail && churchPhone && streetAddress && city && state && zipCode);
-        
+      } else if (email === 'churchuser@gmail.com' && password === 'password') {    
         return HttpResponse.json({
           success: true,
           user: {
-            id: 'church-1',
-            email: 'church@example.com',
+            id: 500,
+            email: 'church@gmail.com',
             role: 'church',
             name: 'Sample Church',
             needsPasswordChange: false,
-            needsProfileCompletion: !isProfileComplete
           },
           message: 'Login successful'
         });
-      } else if (email === 'candidate@gmail.com' && password === 'password') {
-        // Candidate login
-        console.log("This should be successful")
+      } else if (email === 'candidateuser@gmail.com' && password === 'password') {
         return HttpResponse.json({
           success: true,
           user: {
-            id: 'candidate-1',
-            email: 'candidate@example.com',
+            id: 200,
+            email: 'candidateuser@gmail.com',
             role: 'candidate',
             name: 'John Doe',
             needsPasswordChange: false
           },
           message: 'Login successful'
         });
-      } else if (email === 'john.candidate@email.com' && password === 'password123') {
+      } else if (email === 'approvedcandidateuser@gmail.com' && password === 'password') {
         // Candidate with approved profile
         return HttpResponse.json({
           success: true,
           user: {
-            id: 'candidate-3',
-            email: 'john.candidate@email.com',
+            id: 300,
+            email: 'approvedcandidateuser@gmail.com',
             role: 'candidate',
             name: 'John Doe',
             needsPasswordChange: false
           },
           message: 'Login successful'
         });
-      } else if (email === 'admin@example.com' && password === 'admin123') {
+      } else if (email === 'adminuser@gmail.com' && password === 'password') {
         // Admin login
         return HttpResponse.json({
           success: true,
           user: {
-            id: 'admin-1',
-            email: 'admin@example.com',
+            id: 100,
+            email: 'adminuser@gmail.com',
             role: 'admin',
             name: 'Admin User',
             needsPasswordChange: false
@@ -323,7 +297,7 @@ export const handlers = [
     const approvedProfile = {
       firstName: 'John',
       lastName: 'Doe',
-      email: 'john.candidate@email.com',
+      email: 'approvedcandidateuser@email.com',
       phone: '555-123-4567',
       streetAddress: '789 Candidate Ave',
       city: 'Springfield',
@@ -453,7 +427,7 @@ export const handlers = [
   http.get('/api/user', () => {
     // Return the current user's data for john.candidate@email.com
     return HttpResponse.json({
-      email: 'john.candidate@email.com',
+      email: 'approvedcandidate@gmail.com',
       role: 'candidate',
     });
   }),
@@ -963,5 +937,262 @@ export const handlers = [
     mockJobListings.push(newJob);
     
     return HttpResponse.json(newJob, { status: 201 });
+  }),
+
+  // PUT /api/job-listings/:id - Update job listing
+  http.put('/api/job-listings/:id', async ({ params, request }) => {
+    const { id } = params;
+    const jobId = parseInt(id as string);
+    const updateData = await request.json() as any;
+    
+    // Import mock data
+    const { mockJobListings } = require('./data');
+    
+    // Find and update the job listing
+    const jobIndex = mockJobListings.findIndex((job: any) => job.id === jobId);
+    if (jobIndex === -1) {
+      return new HttpResponse(
+        JSON.stringify({ message: 'Job listing not found' }),
+        { status: 404 }
+      );
+    }
+    
+    // Update the job listing
+    mockJobListings[jobIndex] = {
+      ...mockJobListings[jobIndex],
+      ...updateData,
+      updated_at: new Date().toISOString(),
+    };
+    
+    return HttpResponse.json(mockJobListings[jobIndex]);
+  }),
+
+  // DELETE /api/job-listings/:id - Delete job listing
+  http.delete('/api/job-listings/:id', ({ params }) => {
+    const { id } = params;
+    const jobId = parseInt(id as string);
+    
+    // Import mock data
+    const { mockJobListings } = require('./data');
+    
+    // Find and remove the job listing
+    const jobIndex = mockJobListings.findIndex((job: any) => job.id === jobId);
+    if (jobIndex === -1) {
+      return new HttpResponse(
+        JSON.stringify({ message: 'Job listing not found' }),
+        { status: 404 }
+      );
+    }
+    
+    const removedJob = mockJobListings.splice(jobIndex, 1)[0];
+    
+    return HttpResponse.json({ message: 'Job listing deleted successfully', removedJob });
+  }),
+
+  // --- Mutual Interests Handlers ---
+  
+  // GET /api/mutual-interests - Get mutual interests for current user/church
+  http.get('/api/mutual-interests', ({ request }) => {
+    // Import mock data
+    const { mockMutualInterests, mockJobListings, mockProfiles, mockChurches } = require('./data');
+    
+    // Get current user from localStorage (simplified for mock)
+    const currentUserEmail = localStorage.getItem('userEmail');
+    const currentUserRole = localStorage.getItem('userRole');
+    
+    let userMutualInterests = mockMutualInterests;
+    
+    // Filter by user role and church_id if church user
+    if (currentUserRole === 'church') {
+      const church = mockChurches.find((c: any) => 
+        c.users?.some((u: any) => u.email === currentUserEmail)
+      );
+      if (church) {
+        // Get job listings for this church
+        const churchJobIds = mockJobListings
+          .filter((j: any) => j.church_id === church.id)
+          .map((j: any) => j.id);
+        
+        // Get mutual interests for these job listings
+        userMutualInterests = mockMutualInterests.filter((mi: any) => 
+          churchJobIds.includes(mi.job_listing_id)
+        );
+      }
+    } else if (currentUserRole === 'candidate') {
+      // Get candidate's profile
+      const profile = mockProfiles.find((p: any) => p.email === currentUserEmail);
+      if (profile) {
+        userMutualInterests = mockMutualInterests.filter((mi: any) => 
+          mi.profile_id === profile.id
+        );
+      }
+    }
+    
+    // Join with job listings and profiles for complete data
+    const mutualInterestsWithDetails = userMutualInterests.map((mi: any) => {
+      const job = mockJobListings.find((j: any) => j.id === mi.job_listing_id);
+      const profile = mockProfiles.find((p: any) => p.id === mi.profile_id);
+      const church = job ? mockChurches.find((c: any) => c.id === job.church_id) : null;
+      
+      return {
+        ...mi,
+        job_listing: job,
+        profile: profile,
+        church: church,
+      };
+    });
+    
+    return HttpResponse.json(mutualInterestsWithDetails);
+  }),
+
+  // POST /api/mutual-interests - Express interest in a job/candidate
+  http.post('/api/mutual-interests', async ({ request }) => {
+    const interestData = await request.json() as any;
+    
+    // Import mock data
+    const { mockMutualInterests } = require('./data');
+    
+    // Generate new ID
+    const maxId = Math.max(...mockMutualInterests.map((mi: any) => mi.id), 0);
+    const newInterest = {
+      id: maxId + 1,
+      ...interestData,
+      created_at: new Date().toISOString(),
+      updated_at: new Date().toISOString(),
+    };
+    
+    // Add to mock data
+    mockMutualInterests.push(newInterest);
+    
+    return HttpResponse.json(newInterest, { status: 201 });
+  }),
+
+  // DELETE /api/mutual-interests/:id - Remove interest
+  http.delete('/api/mutual-interests/:id', ({ params }) => {
+    const { id } = params;
+    const interestId = parseInt(id as string);
+    
+    // Import mock data
+    const { mockMutualInterests } = require('./data');
+    
+    // Find and remove the mutual interest
+    const interestIndex = mockMutualInterests.findIndex((mi: any) => mi.id === interestId);
+    if (interestIndex === -1) {
+      return new HttpResponse(
+        JSON.stringify({ message: 'Mutual interest not found' }),
+        { status: 404 }
+      );
+    }
+    
+    const removedInterest = mockMutualInterests.splice(interestIndex, 1)[0];
+    
+    return HttpResponse.json({ message: 'Interest removed successfully', removedInterest });
+  }),
+
+  // --- Admin Operations Handlers ---
+  
+  // POST /api/admin/review-job - Admin approves/rejects job listing
+  http.post('/api/admin/review-job', async ({ request }) => {
+    const { jobId, status } = await request.json() as { jobId: number; status: 'pending' | 'approved' | 'rejected' };
+    
+    // Import mock data
+    const { mockJobListings } = require('./data');
+    
+    // Find and update the job listing
+    const jobIndex = mockJobListings.findIndex((job: any) => job.id === jobId);
+    if (jobIndex === -1) {
+      return new HttpResponse(
+        JSON.stringify({ message: 'Job listing not found' }),
+        { status: 404 }
+      );
+    }
+    
+    // Update the status
+    mockJobListings[jobIndex].status = status;
+    mockJobListings[jobIndex].updated_at = new Date().toISOString();
+    
+    return HttpResponse.json(mockJobListings[jobIndex]);
+  }),
+
+  // GET /api/admin/invite-codes - List invite codes
+  http.get('/api/admin/invite-codes', () => {
+    // Import mock data
+    const { mockInviteCodes } = require('./data');
+    return HttpResponse.json(mockInviteCodes);
+  }),
+
+  // POST /api/admin/invite-codes - Create invite code
+  http.post('/api/admin/invite-codes', async ({ request }) => {
+    const { code, event, uses } = await request.json() as { code: string; event: string; uses: number };
+    
+    // Import mock data
+    const { mockInviteCodes } = require('./data');
+    
+    // Generate new ID
+    const maxId = Math.max(...mockInviteCodes.map((ic: any) => ic.id), 0);
+    const newInviteCode = {
+      id: maxId + 1,
+      code,
+      event,
+      uses,
+      status: 'active',
+      created_at: new Date().toISOString(),
+      updated_at: new Date().toISOString(),
+    };
+    
+    // Add to mock data
+    mockInviteCodes.push(newInviteCode);
+    
+    return HttpResponse.json(newInviteCode, { status: 201 });
+  }),
+
+  // PUT /api/admin/invite-codes/:id - Update invite code
+  http.put('/api/admin/invite-codes/:id', async ({ params, request }) => {
+    const { id } = params;
+    const inviteCodeId = parseInt(id as string);
+    const updateData = await request.json() as any;
+    
+    // Import mock data
+    const { mockInviteCodes } = require('./data');
+    
+    // Find and update the invite code
+    const codeIndex = mockInviteCodes.findIndex((ic: any) => ic.id === inviteCodeId);
+    if (codeIndex === -1) {
+      return new HttpResponse(
+        JSON.stringify({ message: 'Invite code not found' }),
+        { status: 404 }
+      );
+    }
+    
+    // Update the invite code
+    mockInviteCodes[codeIndex] = {
+      ...mockInviteCodes[codeIndex],
+      ...updateData,
+      updated_at: new Date().toISOString(),
+    };
+    
+    return HttpResponse.json(mockInviteCodes[codeIndex]);
+  }),
+
+  // DELETE /api/admin/invite-codes/:id - Delete invite code
+  http.delete('/api/admin/invite-codes/:id', ({ params }) => {
+    const { id } = params;
+    const inviteCodeId = parseInt(id as string);
+    
+    // Import mock data
+    const { mockInviteCodes } = require('./data');
+    
+    // Find and remove the invite code
+    const codeIndex = mockInviteCodes.findIndex((ic: any) => ic.id === inviteCodeId);
+    if (codeIndex === -1) {
+      return new HttpResponse(
+        JSON.stringify({ message: 'Invite code not found' }),
+        { status: 404 }
+      );
+    }
+    
+    const removedCode = mockInviteCodes.splice(codeIndex, 1)[0];
+    
+    return HttpResponse.json({ message: 'Invite code deleted successfully', removedCode });
   }),
 ];

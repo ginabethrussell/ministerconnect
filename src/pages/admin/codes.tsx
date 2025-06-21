@@ -4,14 +4,12 @@ interface InviteCode {
   id: string;
   code: string;
   uses: number;
-  maxUses: number;
   event: string;
 }
 
 const AdminCodes = () => {
   const [codes, setCodes] = useState<InviteCode[]>([]);
   const [newCode, setNewCode] = useState('');
-  const [newMaxUses, setNewMaxUses] = useState(1);
   const [newEvent, setNewEvent] = useState('');
   const [loading, setLoading] = useState(true);
   const [editingId, setEditingId] = useState<string | null>(null);
@@ -29,12 +27,11 @@ const AdminCodes = () => {
     const res = await fetch('/api/codes', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ code: newCode.trim(), maxUses: newMaxUses, event: newEvent.trim() }),
+      body: JSON.stringify({ code: newCode.trim(), event: newEvent.trim() }),
     });
     const created = await res.json();
     setCodes((prev) => [...prev, created]);
     setNewCode('');
-    setNewMaxUses(1);
     setNewEvent('');
   };
 
@@ -50,14 +47,14 @@ const AdminCodes = () => {
     await fetch(`/api/codes/${id}`, {
       method: 'PUT',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ code: updated.code, maxUses: updated.maxUses, event: updated.event }),
+      body: JSON.stringify({ code: updated.code, event: updated.event }),
     });
     setCodes(codes.map((c) => (c.id === id ? updated : c)));
   };
 
   const startEdit = (code: InviteCode) => {
     setEditingId(code.id);
-    setEditValues({ code: code.code, event: code.event, maxUses: code.maxUses });
+    setEditValues({ code: code.code, event: code.event });
   };
 
   const cancelEdit = () => {
@@ -68,7 +65,6 @@ const AdminCodes = () => {
   const saveEdit = async (id: string) => {
     await handleEdit(id, 'code', editValues.code ?? '');
     await handleEdit(id, 'event', editValues.event ?? '');
-    await handleEdit(id, 'maxUses', editValues.maxUses ?? 1);
     setEditingId(null);
     setEditValues({});
   };
@@ -113,23 +109,6 @@ const AdminCodes = () => {
                 onChange={(e) => setNewEvent(e.target.value)}
               />
             </div>
-            <div>
-              <label
-                htmlFor="new-max-uses"
-                className="block text-efcaMuted text-sm font-semibold mb-1"
-              >
-                Max Uses
-              </label>
-              <input
-                id="new-max-uses"
-                className="input-field w-full"
-                type="number"
-                min={1}
-                placeholder="Max Uses"
-                value={newMaxUses}
-                onChange={(e) => setNewMaxUses(Number(e.target.value))}
-              />
-            </div>
             <div className="flex md:block justify-end">
               <button className="btn-primary w-full md:w-auto" type="submit">
                 Add
@@ -150,7 +129,6 @@ const AdminCodes = () => {
                   <th className="py-3 px-4 font-semibold">Code</th>
                   <th className="py-3 px-4 font-semibold">Event</th>
                   <th className="py-3 px-4 font-semibold text-right">Uses</th>
-                  <th className="py-3 px-4 font-semibold text-right">Max Uses</th>
                   <th className="py-3 px-4 font-semibold text-center">Actions</th>
                 </tr>
               </thead>
@@ -184,21 +162,6 @@ const AdminCodes = () => {
                         )}
                       </td>
                       <td className="py-3 px-4 align-middle text-right">{code.uses}</td>
-                      <td className="py-3 px-4 align-middle text-right">
-                        {isEditing ? (
-                          <input
-                            className="input-field w-20 text-right"
-                            type="number"
-                            min={1}
-                            value={editValues.maxUses as number}
-                            onChange={(e) =>
-                              setEditValues((v) => ({ ...v, maxUses: Number(e.target.value) }))
-                            }
-                          />
-                        ) : (
-                          <span className="text-efcaText text-base">{code.maxUses}</span>
-                        )}
-                      </td>
                       <td className="py-3 px-4 align-middle text-center">
                         <div className="flex justify-center gap-2">
                           {isEditing ? (
