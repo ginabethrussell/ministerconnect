@@ -59,7 +59,8 @@ export interface JobListing {
   title: string;
   ministry_type: string;
   employment_type: string;
-  job_posting_url: string;
+  job_description: string;
+  about_church: string;
   created_at: string;
   updated_at: string;
 }

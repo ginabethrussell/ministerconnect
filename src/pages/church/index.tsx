@@ -53,38 +53,6 @@ export default function ChurchDashboard() {
       <div className="max-w-2xl mx-auto">
         <header className="flex justify-between items-center mb-8">
           <h1 className="text-3xl font-bold text-efcaDark">Church Dashboard</h1>
-          <div className="flex gap-2">
-            <Link
-              href="/church/jobs"
-              className="px-4 py-2 bg-efcaAccent text-white rounded hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-efcaAccent transition-colors"
-            >
-              Manage Jobs
-            </Link>
-            <Link
-              href="/church/settings"
-              className="px-4 py-2 bg-gray-600 text-white rounded hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-gray-500 transition-colors"
-            >
-              Settings
-            </Link>
-            <button
-              onClick={() => {
-                localStorage.removeItem('userRole');
-                localStorage.removeItem('isAuthenticated');
-                localStorage.removeItem('userEmail');
-                localStorage.removeItem('churchName');
-                localStorage.removeItem('churchEmail');
-                localStorage.removeItem('churchPhone');
-                localStorage.removeItem('churchStreetAddress');
-                localStorage.removeItem('churchCity');
-                localStorage.removeItem('churchState');
-                localStorage.removeItem('churchZipCode');
-                window.location.href = '/auth/login';
-              }}
-              className="px-4 py-2 bg-efcaDark text-white rounded hover:bg-blue-900 focus:outline-none focus:ring-2 focus:ring-efcaAccent transition-colors"
-            >
-              Logout
-            </button>
-          </div>
         </header>
         <section className="bg-white rounded-lg shadow-sm p-6 mb-8">
           <h2 className="text-xl font-bold text-efcaDark mb-2">Welcome to Your Church Dashboard</h2>
@@ -94,10 +62,16 @@ export default function ChurchDashboard() {
           </p>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <Link
-              href="/church/jobs"
+              href="/church/jobs/create"
               className="px-4 py-2 bg-efcaAccent text-white rounded font-semibold text-center hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-efcaAccent transition-colors"
             >
               Post Job Openings
+            </Link>
+            <Link
+              href="/church/jobs"
+              className="px-4 py-2 bg-efcaAccent text-white rounded font-semibold text-center hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-efcaAccent transition-colors"
+            >
+              Manage Jobs
             </Link>
             <Link
               href="/church/search"
@@ -106,16 +80,10 @@ export default function ChurchDashboard() {
               Search Candidates
             </Link>
             <Link
-              href="/church/candidates"
+              href="/church/mutual-interests"
               className="px-4 py-2 bg-efcaAccent text-white rounded font-semibold text-center hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-efcaAccent transition-colors"
             >
-              View Saved Candidates
-            </Link>
-            <Link
-              href="/church/jobs"
-              className="px-4 py-2 bg-gray-100 text-gray-700 rounded font-semibold text-center hover:bg-gray-200 focus:outline-none focus:ring-2 focus:ring-gray-500 transition-colors"
-            >
-              Manage Job Applications
+              View Mutual Interests
             </Link>
           </div>
         </section>

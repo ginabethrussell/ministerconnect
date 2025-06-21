@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/router';
 import Link from 'next/link';
 import PDFViewer from '../../components/PDFViewer';
+import ExpressInterestButton from '../../components/ExpressInterestButton';
 
 const dummyApplicants = [
   {
@@ -55,7 +56,7 @@ export default function ChurchSearch() {
   const [isProfileComplete, setIsProfileComplete] = useState<boolean | null>(null);
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState('');
-  const [saved, setSaved] = useState<string[]>([]);
+  const [expressedInterest, setExpressedInterest] = useState<string[]>([]);
   const [pdfViewer, setPdfViewer] = useState<{
     isOpen: boolean;
     url: string;
@@ -122,9 +123,21 @@ export default function ChurchSearch() {
       a.email.toLowerCase().includes(search.toLowerCase())
   );
 
-  const handleSave = (id: string) => {
-    if (!saved.includes(id)) {
-      setSaved([...saved, id]);
+  const handleExpressInterest = async (candidateId: string) => {
+    try {
+      // Simulate API call
+      await new Promise(resolve => setTimeout(resolve, 1000));
+      
+      if (expressedInterest.includes(candidateId)) {
+        // Remove interest
+        setExpressedInterest(prev => prev.filter(id => id !== candidateId));
+      } else {
+        // Add interest
+        setExpressedInterest(prev => [...prev, candidateId]);
+      }
+    } catch (error) {
+      console.error('Failed to express interest:', error);
+      // You could show a toast notification here
     }
   };
 
@@ -149,13 +162,18 @@ export default function ChurchSearch() {
       <div className="max-w-4xl mx-auto">
         <header className="flex justify-between items-center mb-8">
           <h1 className="text-3xl font-bold text-efcaDark">Search Candidates</h1>
-          <Link
-            href="/church"
-            className="px-4 py-2 bg-efcaDark text-white rounded hover:bg-blue-900 focus:outline-none focus:ring-2 focus:ring-efcaAccent transition-colors"
-          >
-            Dashboard
-          </Link>
         </header>
+        {/* Information Section */}
+        <section className="bg-blue-50 border border-blue-200 rounded-lg p-6 my-6">
+          <h3 className="text-lg font-semibold text-blue-800 mb-2">How Expressing Interest Works</h3>
+          <div className="text-blue-700 space-y-2">
+            <p>• A candidate with an approved profile can express interest in a job posting.</p>
+            <p>• To complete the match, you must also express interest in that candidate's profile.</p>
+            <p>• Only when both parties express interest does it become a mutual interest.</p>
+            <p>• You can express interest in multiple candidates and withdraw interest at any time</p>
+            <p>• Candidates are not notified when you express or rescind interest.</p>
+          </div>
+        </section>
         <section className="bg-white rounded-lg shadow-sm p-6">
           <input
             type="text"
@@ -168,73 +186,78 @@ export default function ChurchSearch() {
             <div className="py-4 text-gray-500">No candidates found.</div>
           ) : (
             <div className="grid gap-4 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3">
-              {filteredApplicants.map((applicant) => (
-                <div
-                  key={applicant.id}
-                  className="bg-white rounded shadow p-4 flex flex-col h-full"
-                >
-                  {applicant.pictureUrl && (
-                    <img
-                      src={applicant.pictureUrl}
-                      alt={applicant.name + ' profile'}
-                      className="h-24 w-24 object-cover rounded-lg border mx-auto mb-2"
-                    />
-                  )}
-                  <div className="font-bold text-lg text-efcaText mb-1">{applicant.name}</div>
-                  <div className="text-sm text-gray-600 mb-1 break-all">{applicant.email}</div>
-                  <div className="text-xs text-efcaMuted mb-1">Phone: {applicant.phone}</div>
-                  <div className="text-xs text-efcaMuted mb-1">Status: {applicant.status}</div>
-                  <div className="text-xs text-efcaMuted mb-1">Event: {applicant.event}</div>
-                  <div className="text-xs text-efcaMuted mb-1">Submitted: {applicant.createdAt}</div>
-                  <div className="text-xs text-efcaMuted mb-1">Address: {applicant.streetAddress}, {applicant.city}, {applicant.state} {applicant.zipCode}</div>
-                  <div className="text-xs text-efcaMuted mb-1">ID: {applicant.id}</div>
-                  {applicant.resumeUrl && (
-                    <div className="flex gap-2 mb-1">
-                      <a
-                        href={applicant.resumeUrl}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="text-efcaAccent underline text-xs"
-                      >
-                        View Resume
-                      </a>
-                      <button
-                        onClick={() => handleViewResume(applicant.resumeUrl, applicant.name)}
-                        className="text-efcaAccent underline text-xs"
-                      >
-                        Preview
-                      </button>
+              {filteredApplicants.map((applicant) => {
+                const hasExpressedInterest = expressedInterest.includes(applicant.id);
+                
+                return (
+                  <div
+                    key={applicant.id}
+                    className="bg-white rounded shadow p-4 flex flex-col h-full border border-gray-200 hover:shadow-md transition-shadow"
+                  >
+                    {applicant.pictureUrl && (
+                      <img
+                        src={applicant.pictureUrl}
+                        alt={applicant.name + ' profile'}
+                        className="h-24 w-24 object-cover rounded-lg border mx-auto mb-2"
+                      />
+                    )}
+                    <div className="font-bold text-lg text-efcaText mb-1">{applicant.name}</div>
+                    <div className="text-sm text-gray-600 mb-1 break-all">{applicant.email}</div>
+                    <div className="text-xs text-efcaMuted mb-1">Phone: {applicant.phone}</div>
+                    <div className="text-xs text-efcaMuted mb-1">Status: {applicant.status}</div>
+                    <div className="text-xs text-efcaMuted mb-1">Event: {applicant.event}</div>
+                    <div className="text-xs text-efcaMuted mb-1">Submitted: {applicant.createdAt}</div>
+                    <div className="text-xs text-efcaMuted mb-1">Address: {applicant.streetAddress}, {applicant.city}, {applicant.state} {applicant.zipCode}</div>
+                    <div className="text-xs text-efcaMuted mb-1">ID: {applicant.id}</div>
+                    {applicant.resumeUrl && (
+                      <div className="flex gap-2 mb-1">
+                        <a
+                          href={applicant.resumeUrl}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="text-efcaAccent underline text-xs"
+                        >
+                          View Resume
+                        </a>
+                        <button
+                          onClick={() => handleViewResume(applicant.resumeUrl, applicant.name)}
+                          className="text-efcaAccent underline text-xs"
+                        >
+                          Preview
+                        </button>
+                      </div>
+                    )}
+                    {applicant.videoUrl && (
+                      <div className="flex gap-2 mb-1">
+                        <a
+                          href={applicant.videoUrl}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="text-efcaAccent underline text-xs"
+                        >
+                          View Video
+                        </a>
+                        <button
+                          onClick={() => handleViewVideo(applicant.videoUrl, applicant.name)}
+                          className="text-efcaAccent underline text-xs"
+                        >
+                          Preview
+                        </button>
+                      </div>
+                    )}
+                    <div className="mt-auto flex gap-2 pt-2">
+                      <ExpressInterestButton
+                        id={applicant.id}
+                        hasExpressedInterest={expressedInterest.includes(applicant.id)}
+                        onExpressInterest={handleExpressInterest}
+                        className="w-full"
+                        size="md"
+                        variant="primary"
+                      />
                     </div>
-                  )}
-                  {applicant.videoUrl && (
-                    <div className="flex gap-2 mb-1">
-                      <a
-                        href={applicant.videoUrl}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="text-efcaAccent underline text-xs"
-                      >
-                        View Video
-                      </a>
-                      <button
-                        onClick={() => handleViewVideo(applicant.videoUrl, applicant.name)}
-                        className="text-efcaAccent underline text-xs"
-                      >
-                        Preview
-                      </button>
-                    </div>
-                  )}
-                  <div className="mt-auto flex gap-2 pt-2">
-                    <button
-                      onClick={() => handleSave(applicant.id)}
-                      className="btn-primary flex-1 disabled:opacity-50"
-                      disabled={saved.includes(applicant.id)}
-                    >
-                      {saved.includes(applicant.id) ? 'Saved' : 'Save'}
-                    </button>
                   </div>
-                </div>
-              ))}
+                );
+              })}
             </div>
           )}
         </section>

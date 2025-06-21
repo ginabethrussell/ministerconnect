@@ -5,7 +5,7 @@ A multi-role Next.js application for connecting ministry candidates with churche
 ## Features
 
 - **For Candidates**: Browse job listings, express interest, and manage profiles
-- **For Churches**: Post job listings, browse candidates, and manage hiring process
+- **For Churches**: Post job listings, browse candidates, express interest, and view candidates with mutual interest.
 - **For Admins**: Moderate content, manage users, and oversee platform operations
 
 ## Quick Start

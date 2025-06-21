@@ -6,9 +6,10 @@ import Image from 'next/image';
 interface HeaderProps {
   role: string | null;
   onLogout: () => void;
+  profileStatus?: 'draft' | 'pending' | 'approved' | 'rejected';
 }
 
-const Header = ({ role, onLogout }: HeaderProps) => {
+const Header = ({ role, onLogout, profileStatus }: HeaderProps) => {
   const router = useRouter();
   const [menuOpen, setMenuOpen] = useState(false);
 
@@ -65,6 +66,11 @@ const Header = ({ role, onLogout }: HeaderProps) => {
               <Link href="/candidate/profile" className={navLinkClass('/candidate/profile')}>
                 Profile
               </Link>
+              {profileStatus === 'approved' && (
+                <Link href="/candidate/jobs" className={navLinkClass('/candidate/jobs')}>
+                  View Job Listings
+                </Link>
+              )}
             </>
           )}
           {role === 'church' && (
@@ -75,8 +81,11 @@ const Header = ({ role, onLogout }: HeaderProps) => {
               <Link href="/church/search" className={navLinkClass('/church/search')}>
                 Search Candidates
               </Link>
-              <Link href="/church/candidates" className={navLinkClass('/church/candidates')}>
-                Saved Candidates
+              <Link href="/church/jobs" className={navLinkClass('/church/jobs')}>
+                Manage Jobs
+              </Link>
+              <Link href="/church/mutual-interests" className={navLinkClass('/church/mutual-interests')}>
+                Mutual Interests
               </Link>
             </>
           )}
@@ -126,6 +135,11 @@ const Header = ({ role, onLogout }: HeaderProps) => {
               <Link href="/candidate/profile" className={navLinkClass('/candidate/profile')}>
                 Profile
               </Link>
+              {profileStatus === 'approved' && (
+                <Link href="/candidate/jobs" className={navLinkClass('/candidate/jobs')}>
+                  View Job Listings
+                </Link>
+              )}
             </>
           )}
           {role === 'church' && (
@@ -133,11 +147,14 @@ const Header = ({ role, onLogout }: HeaderProps) => {
               <Link href="/church" className={navLinkClass('/church')}>
                 Dashboard
               </Link>
-              <Link href="/church/candidates" className={navLinkClass('/church/candidates')}>
-                Applications
-              </Link>
               <Link href="/church/search" className={navLinkClass('/church/search')}>
-                Jobs
+                Search Candidates
+              </Link>
+              <Link href="/church/jobs" className={navLinkClass('/church/jobs')}>
+                Manage Jobs
+              </Link>
+              <Link href="/church/mutual-interests" className={navLinkClass('/church/mutual-interests')}>
+                Mutual Interests
               </Link>
             </>
           )}

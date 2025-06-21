@@ -25,7 +25,7 @@ const publicPaths = [
 
 // Define role-based paths
 const roleBasedPaths = {
-  applicant: ['/candidate', '/candidate/profile'],
+  applicant: ['/candidate', '/candidate/profile', '/candidate/jobs'],
   church: [
     '/church',
     '/church/candidates',
@@ -33,6 +33,7 @@ const roleBasedPaths = {
     '/church/jobs/create',
     '/church/search',
     '/church/settings',
+    '/church/mutual-interests',
   ],
   admin: ['/admin', '/admin/review', '/admin/churches', '/admin/codes'],
 };
@@ -40,12 +41,28 @@ const roleBasedPaths = {
 export default function App({ Component, pageProps }: AppProps) {
   const router = useRouter();
   const [role, setRole] = useState<string | null>(null);
+  const [profileStatus, setProfileStatus] = useState<'draft' | 'pending' | 'approved' | 'rejected' | undefined>(undefined);
 
   useEffect(() => {
     // Check if user is authenticated
     const isAuthenticated = localStorage.getItem('isAuthenticated') === 'true';
     const userRole = localStorage.getItem('userRole');
     setRole(userRole);
+
+    // Fetch profile status for candidates
+    if (userRole === 'candidate' && isAuthenticated) {
+      fetch('/api/profile')
+        .then(res => res.json())
+        .then(data => {
+          if (data.success && data.profile) {
+            setProfileStatus(data.profile.status);
+          }
+        })
+        .catch(() => {
+          // If profile fetch fails, assume draft status
+          setProfileStatus('draft');
+        });
+    }
 
     // Get current path
     const currentPath = router.pathname;
@@ -75,13 +92,14 @@ export default function App({ Component, pageProps }: AppProps) {
       localStorage.removeItem('userRole');
       localStorage.removeItem('isAuthenticated');
       setRole(null);
+      setProfileStatus(undefined);
       router.push('/');
     }
   };
 
   return (
     <div className="min-h-screen flex flex-col bg-efcaGray font-sans">
-      <Header role={role} onLogout={handleLogout} />
+      <Header role={role} onLogout={handleLogout} profileStatus={profileStatus} />
       <main className="flex-1">
         <Component {...pageProps} />
       </main>

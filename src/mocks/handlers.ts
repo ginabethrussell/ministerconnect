@@ -214,11 +214,25 @@ export const handlers = [
         });
       } else if (email === 'candidate@gmail.com' && password === 'password') {
         // Candidate login
+        console.log("This should be successful")
         return HttpResponse.json({
           success: true,
           user: {
             id: 'candidate-1',
             email: 'candidate@example.com',
+            role: 'candidate',
+            name: 'John Doe',
+            needsPasswordChange: false
+          },
+          message: 'Login successful'
+        });
+      } else if (email === 'john.candidate@email.com' && password === 'password123') {
+        // Candidate with approved profile
+        return HttpResponse.json({
+          success: true,
+          user: {
+            id: 'candidate-3',
+            email: 'john.candidate@email.com',
             role: 'candidate',
             name: 'John Doe',
             needsPasswordChange: false
@@ -249,14 +263,26 @@ export const handlers = [
 
   // GET /api/profile
   http.get('/api/profile', () => {
-    const userId = 'test-user-id';
-    const profile = profiles[userId];
-
-    if (!profile) {
-      return new HttpResponse(null, { status: 404 });
-    }
-
-    return HttpResponse.json({ success: true, profile });
+    // For john.candidate@email.com, always return approved profile
+    // This simulates the user having an approved profile
+    const approvedProfile = {
+      firstName: 'John',
+      lastName: 'Doe',
+      email: 'john.candidate@email.com',
+      phone: '555-123-4567',
+      streetAddress: '789 Candidate Ave',
+      city: 'Springfield',
+      state: 'IL',
+      zipCode: '62701',
+      status: 'approved',
+      pictureUrl: '/sampleman.jpg',
+      resumeUrl: '/student-pastor-resume.pdf',
+      videoUrl: 'https://www.youtube.com/live/jfKfPfyJRdk',
+      placementPreferences: ['Youth Ministry', 'Missions'],
+      lastUpdated: new Date().toISOString(),
+    };
+    
+    return HttpResponse.json({ success: true, profile: approvedProfile });
   }),
 
   // GET /api/files/:fileId
@@ -370,9 +396,9 @@ export const handlers = [
 
   // GET /api/user
   http.get('/api/user', () => {
-    // Return the current user's data
+    // Return the current user's data for john.candidate@email.com
     return HttpResponse.json({
-      email: 'candidate@gmail.com',
+      email: 'john.candidate@email.com',
       role: 'candidate',
     });
   }),

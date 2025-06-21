@@ -10,9 +10,10 @@ export default function CreateJob() {
   const [saving, setSaving] = useState(false);
   const [formData, setFormData] = useState({
     title: '',
-    position: '',
-    employmentType: '' as JobListing['employmentType'] | '',
-    jobUrl: '',
+    ministry_type: '',
+    employment_type: '',
+    job_description: '',
+    about_church: '',
   });
 
   useEffect(() => {
@@ -45,26 +46,19 @@ export default function CreateJob() {
     e.preventDefault();
     setSaving(true);
 
-    if (!formData.title || !formData.position || !formData.employmentType || !formData.jobUrl) {
+    if (!formData.title || !formData.ministry_type || !formData.employment_type || !formData.job_description || !formData.about_church) {
       alert('Please fill in all required fields.');
       setSaving(false);
       return;
     }
 
     const newJob: Partial<JobListing> = {
-      churchId: 'church-1', // Mocked
-      churchName: localStorage.getItem('churchName') || 'Sample Church',
+      church_id: 1, // Mocked
       title: formData.title,
-      position: formData.position,
-      employmentType: formData.employmentType as JobPosting['employmentType'],
-      location: {
-        city: localStorage.getItem('churchCity') || '',
-        state: localStorage.getItem('churchState') || '',
-      },
-      jobUrl: formData.jobUrl,
-      isActive: true,
-      createdAt: new Date().toISOString(),
-      updatedAt: new Date().toISOString(),
+      ministry_type: formData.ministry_type,
+      employment_type: formData.employment_type,
+      job_description: formData.job_description,
+      about_church: formData.about_church,
     };
 
     console.log('Creating simplified job posting:', newJob);
@@ -106,9 +100,7 @@ export default function CreateJob() {
 
         <form onSubmit={handleSubmit} className="bg-white rounded-lg shadow-lg p-8 space-y-6">
           <p className="text-gray-600">
-            Link to an existing job posting on the 
-            {" "}<Link href="https://jobs.efca.org" target="_blank" className="text-efcaAccent hover:underline">EFCA Jobs </Link>{" "}website. 
-            This information will be displayed to candidates.
+            Create a job posting to attract ministry candidates. Provide detailed information about the position and your church.
           </p>
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-2">
@@ -130,8 +122,8 @@ export default function CreateJob() {
             </label>
             <input
               type="text"
-              value={formData.position}
-              onChange={(e) => handleInputChange('position', e.target.value)}
+              value={formData.ministry_type}
+              onChange={(e) => handleInputChange('ministry_type', e.target.value)}
               className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-efcaAccent focus:border-efcaAccent"
               placeholder="e.g., Family ministry"
               required
@@ -143,8 +135,8 @@ export default function CreateJob() {
               Employment Type <span className="text-red-500">*</span>
             </label>
             <select
-              value={formData.employmentType}
-              onChange={(e) => handleInputChange('employmentType', e.target.value)}
+              value={formData.employment_type}
+              onChange={(e) => handleInputChange('employment_type', e.target.value)}
               className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-efcaAccent focus:border-efcaAccent bg-white"
               required
             >
@@ -157,14 +149,28 @@ export default function CreateJob() {
           
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-2">
-              Job Posting URL <span className="text-red-500">*</span>
+              Job Description <span className="text-red-500">*</span>
             </label>
-            <input
-              type="url"
-              value={formData.jobUrl}
-              onChange={(e) => handleInputChange('jobUrl', e.target.value)}
+            <textarea
+              value={formData.job_description}
+              onChange={(e) => handleInputChange('job_description', e.target.value)}
               className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-efcaAccent focus:border-efcaAccent"
-              placeholder="https://jobs.efca.org/jobs/..."
+              placeholder="Describe the role, responsibilities, and requirements..."
+              rows={6}
+              required
+            />
+          </div>
+
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-2">
+              About This Church <span className="text-red-500">*</span>
+            </label>
+            <textarea
+              value={formData.about_church}
+              onChange={(e) => handleInputChange('about_church', e.target.value)}
+              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-efcaAccent focus:border-efcaAccent"
+              placeholder="Tell candidates about your church, mission, values, and community..."
+              rows={4}
               required
             />
           </div>

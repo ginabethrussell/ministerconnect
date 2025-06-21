@@ -154,6 +154,14 @@ export default function CandidateDashboard() {
               >
                 {profile ? 'Update Profile' : 'Create Profile'}
               </Link>
+              {profile?.status === 'approved' && (
+                <Link
+                  href="/candidate/jobs"
+                  className="block w-full px-4 py-2 text-center bg-green-600 text-white rounded font-semibold hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-500 transition-colors"
+                >
+                  View Job Listings
+                </Link>
+              )}
               {profile?.status === 'draft' && (
                 <button
                   onClick={() => router.push('/candidate/profile?submit=true')}
