@@ -6,8 +6,12 @@ This directory contains documentation for the Minister Connect application.
 
 ### Use Case Diagram
 
+The Use Case Diagram shows the three main user types (Candidate, Church, Admin) and their interactions with the system.
+
+![Use Case Diagram](./usecase_diagram.png)
+
 - **Source**: `use-case-diagram.puml` - PlantUML source code
-- **Generated**: `usecase_diagram.png` (or `.svg`) - Generated diagram image
+- **Generated**: `usecase_diagram.png` - Generated diagram image
 
 #### How to regenerate the diagram:
 
@@ -24,27 +28,20 @@ This directory contains documentation for the Minister Connect application.
 
 3. **VS Code Extension**: Install the "PlantUML" extension and open the `.puml` file
 
-## Project Structure
+### Database Schema Diagram
 
-- `use-case-diagram.puml` - PlantUML source code for the use case diagram
-- `usecase_diagram.png` - Generated diagram (add your generated image here)
-- `README.md` - This documentation file
-
-## Notes
-
-- The use case diagram shows the three main user types (Candidate, Church, Admin) and their interactions with the system
-- Update the diagram source code here when making changes to the application's user flows
-- Regenerate the image whenever the source code is updated 
-
-### Database Diagram
+The Database Schema Diagram shows the complete data model and relationships between entities.
 
 ![Database Schema](./db_diagram.png)
 
-- The Database diagram was generated using https://dbdiagram.io/ using the following descriptive code:
+- **Source**: Generated using [dbdiagram.io](https://dbdiagram.io/)
+- **Generated**: `db_diagram.png` - Generated diagram image
 
-```
-// Use DBML to define your database structure
-// Docs: https://dbml.dbdiagram.io/docs
+#### Database Schema Definition:
+
+```sql
+-- Use DBML to define your database structure
+-- Docs: https://dbml.dbdiagram.io/docs
 
 Table users {
   id integer [primary key]
@@ -122,3 +119,16 @@ Table mutual_interests {
   updated_at timestamp
 }
 ```
+
+## Project Structure
+
+- `use-case-diagram.puml` - PlantUML source code for the use case diagram
+- `usecase_diagram.png` - Generated use case diagram
+- `db_diagram.png` - Generated database schema diagram
+- `README.md` - This documentation file
+
+## Notes
+
+- Update diagram source code when making changes to the application's user flows or data model
+- Regenerate images whenever the source code is updated
+- Both diagrams use consistent "churches" terminology to match the application domain
