@@ -110,6 +110,19 @@ export const mockUsers: User[] = [
     created_at: now.toISOString(),
     updated_at: now.toISOString(),
   },
+  {
+    id: 6,
+    email: 'superadminuser@gmail.com',
+    name: 'Super Admin',
+    password: 'password123',
+    role: 'superadmin',
+    church_id: null,
+    status: 'active',
+    requires_password_change: false,
+    last_login: now.toISOString(),
+    created_at: now.toISOString(),
+    updated_at: now.toISOString(),
+  },
 ];
 
 export const mockInviteCodes: InviteCode[] = [

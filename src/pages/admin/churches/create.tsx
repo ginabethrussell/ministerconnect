@@ -124,11 +124,11 @@ export default function CreateChurch() {
   return (
     <div className="min-h-screen bg-efcaGray p-8">
       <div className="max-w-4xl mx-auto">
-        <header className="flex justify-between items-center mb-8">
+        <header className="flex flex-col md:flex-row justify-between md:items-center gap-4 mb-8">
           <h1 className="text-3xl font-bold text-efcaDark">Create New Church</h1>
           <Link
             href="/admin/churches"
-            className="px-4 py-2 bg-gray-600 text-white rounded hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-gray-500 transition-colors"
+            className="px-4 py-2 bg-gray-600 text-white rounded hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-gray-500 transition-colors text-center"
           >
             Back to Churches
           </Link>

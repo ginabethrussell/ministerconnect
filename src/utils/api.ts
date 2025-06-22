@@ -121,4 +121,133 @@ export const API_ENDPOINTS = {
   SUPERADMIN_USERS: '/api/superadmin/users',
   SUPERADMIN_PROFILES: '/api/superadmin/profiles',
   SUPERADMIN_CHURCHES: '/api/superadmin/churches',
-} as const; 
+} as const;
+
+export const getSuperAdminProfiles = async () => {
+  const response = await fetch('/api/superadmin/profiles');
+  return response.json();
+};
+
+export const getMutualInterests = async () => {
+  const response = await fetch('/api/church/mutual-interests');
+  if (!response.ok) {
+    throw new Error('Failed to fetch mutual interests');
+  }
+  return response.json();
+};
+
+export const getAdminJobListings = async () => {
+  const response = await fetch('/api/admin/jobs');
+  if (!response.ok) {
+    throw new Error('Failed to fetch job listings');
+  }
+  return response.json();
+};
+
+export const updateJobListingStatus = async (
+  id: number,
+  status: 'approved' | 'rejected'
+) => {
+  const response = await fetch(`/api/admin/jobs/${id}`, {
+    method: 'PATCH',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({ status }),
+  });
+  if (!response.ok) {
+    throw new Error('Failed to update job listing status');
+  }
+  return response.json();
+};
+
+export const getAdminChurches = async () => {
+  const response = await fetch('/api/admin/churches');
+  if (!response.ok) {
+    throw new Error('Failed to fetch churches');
+  }
+  return response.json();
+};
+
+export const deleteChurch = async (id: number) => {
+  const response = await fetch(`/api/admin/churches/${id}`, {
+    method: 'DELETE',
+  });
+  if (!response.ok) {
+    throw new Error('Failed to delete church');
+  }
+  return response.json();
+};
+
+export const getAdminChurchById = async (id: string) => {
+  const response = await fetch(`/api/admin/churches/${id}`);
+  if (!response.ok) {
+    throw new Error('Failed to fetch church');
+  }
+  return response.json();
+};
+
+export const updateChurch = async (id: number, data: any) => {
+  const response = await fetch(`/api/admin/churches/${id}`, {
+    method: 'PUT',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify(data),
+  });
+  if (!response.ok) {
+    throw new Error('Failed to update church');
+  }
+  return response.json();
+};
+
+export const getAdminInviteCodes = async () => {
+  const response = await fetch('/api/admin/invite-codes');
+  if (!response.ok) {
+    throw new Error('Failed to fetch invite codes');
+  }
+  return response.json();
+};
+
+export const createInviteCode = async (data: { code: string; event: string }) => {
+  const response = await fetch('/api/admin/invite-codes', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify(data),
+  });
+  if (!response.ok) {
+    throw new Error('Failed to create invite code');
+  }
+  return response.json();
+};
+
+export const updateInviteCode = async (id: number, data: { code: string; event: string }) => {
+  const response = await fetch(`/api/admin/invite-codes/${id}`, {
+    method: 'PUT',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify(data),
+  });
+  if (!response.ok) {
+    throw new Error('Failed to update invite code');
+  }
+  return response.json();
+};
+
+export const deleteInviteCode = async (id: number) => {
+  const response = await fetch(`/api/admin/invite-codes/${id}`, {
+    method: 'DELETE',
+  });
+  if (!response.ok) {
+    throw new Error('Failed to delete invite code');
+  }
+  return response.json();
+};
+
+// Church
+export const getChurchDashboard = async () => {
+  // ... existing code ...
+} 

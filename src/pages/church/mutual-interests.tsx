@@ -1,108 +1,10 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import PDFViewer from '../../components/PDFViewer';
-
-interface JobListing {
-  id: string;
-  title: string;
-  position: string;
-  employmentType: string;
-  jobUrl: string;
-}
-
-interface InterestedCandidate {
-  id: string;
-  name: string;
-  email: string;
-  phone: string;
-  status: 'Approved';
-  event: string;
-  createdAt: string;
-  streetAddress: string;
-  city: string;
-  state: string;
-  zipCode: string;
-  resumeUrl: string;
-  videoUrl?: string;
-  pictureUrl: string;
-  jobListingId: string;
-  interestExpressedAt: string;
-}
-
-// Mock data - in real app, this would come from API
-const mockJobListings: JobListing[] = [
-  {
-    id: '1',
-    title: 'Associate Pastor of Family Ministries',
-    position: 'Family ministry',
-    employmentType: 'Full Time with Benefits',
-    jobUrl: 'https://jobs.efca.org/jobs/1047',
-  },
-  {
-    id: '2',
-    title: 'Worship Leader',
-    position: 'Worship & Arts',
-    employmentType: 'Part Time',
-    jobUrl: 'https://jobs.efca.org/jobs/1048',
-  },
-];
-
-const mockInterestedCandidates: InterestedCandidate[] = [
-  {
-    id: '1',
-    name: 'Jane Doe',
-    email: 'jane@example.com',
-    phone: '555-123-4567',
-    status: 'Approved',
-    event: 'Job Fair 2025',
-    createdAt: '2024-06-01',
-    streetAddress: '123 Main St',
-    city: 'Springfield',
-    state: 'IL',
-    zipCode: '62704',
-    resumeUrl: '/student-pastor-resume.pdf',
-    videoUrl: 'https://www.youtube.com/live/w-6-z8w0Zv4?si=KcAy1iRb-Ss4zrPd',
-    pictureUrl: '/sampleman.jpg',
-    jobListingId: '1',
-    interestExpressedAt: '2024-07-22T10:30:00Z',
-  },
-  {
-    id: '2',
-    name: 'John Smith',
-    email: 'john@example.com',
-    phone: '555-987-6543',
-    status: 'Approved',
-    event: 'Old Event',
-    createdAt: '2024-05-20',
-    streetAddress: '456 Oak Ave',
-    city: 'Lincoln',
-    state: 'NE',
-    zipCode: '68508',
-    resumeUrl: '/assistant-pastor-resume.pdf',
-    videoUrl: 'https://www.youtube.com/live/w-6-z8w0Zv4?si=KcAy1iRb-Ss4zrPd',
-    pictureUrl: '/sampleman.jpg',
-    jobListingId: '1',
-    interestExpressedAt: '2024-07-21T14:15:00Z',
-  },
-  {
-    id: '3',
-    name: 'Sarah Johnson',
-    email: 'sarah@example.com',
-    phone: '555-456-7890',
-    status: 'Approved',
-    event: 'Job Fair 2025',
-    createdAt: '2024-06-15',
-    streetAddress: '789 Pine St',
-    city: 'Omaha',
-    state: 'NE',
-    zipCode: '68102',
-    resumeUrl: '/worship-leader-resume.pdf',
-    pictureUrl: '/woman.jpg',
-    jobListingId: '2',
-    interestExpressedAt: '2024-07-20T09:45:00Z',
-  },
-];
+import { getMutualInterests } from '../../utils/api';
+import { MutualInterest, JobListing, Profile } from '../../types';
 
 function getYouTubeEmbedUrl(url: string): string {
+  if (!url) return '';
   const liveMatch = url.match(/youtube\.com\/live\/([\w-]+)/);
   const watchMatch = url.match(/[?&]v=([\w-]+)/);
   let videoId = '';
@@ -116,6 +18,9 @@ function getYouTubeEmbedUrl(url: string): string {
 
 export default function MutualInterests() {
   const [loading, setLoading] = useState(true);
+  const [mutualInterests, setMutualInterests] = useState<
+    { interest: MutualInterest; profile: Profile; jobListing: JobListing }[]
+  >([]);
   const [selectedJob, setSelectedJob] = useState<string>('all');
   const [pdfViewer, setPdfViewer] = useState<{
     isOpen: boolean;
@@ -136,9 +41,28 @@ export default function MutualInterests() {
     title: '',
   });
 
+  useEffect(() => {
+    const fetchMutualInterests = async () => {
+      try {
+        const data = await getMutualInterests();
+        setMutualInterests(data);
+      } catch (error) {
+        console.error('Failed to fetch mutual interests:', error);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchMutualInterests();
+  }, []);
 
-  const filteredCandidates = mockInterestedCandidates.filter(candidate => 
-    selectedJob === 'all' || candidate.jobListingId === selectedJob
+  const jobListings = Array.from(
+    new Map(
+      mutualInterests.map(item => [item.jobListing.id, item.jobListing])
+    ).values()
+  );
+
+  const filteredCandidates = mutualInterests.filter(
+    ({ jobListing }) => selectedJob === 'all' || jobListing.id.toString() === selectedJob
   );
 
   const handleViewResume = (resumeUrl: string, candidateName: string) => {
@@ -157,15 +81,15 @@ export default function MutualInterests() {
     });
   };
 
-  const getJobTitle = (jobId: string) => {
-    const job = mockJobListings.find(j => j.id === jobId);
+  const getJobTitle = (jobId: number) => {
+    const job = jobListings.find(j => j.id === jobId);
     return job ? job.title : 'Unknown Position';
   };
 
-  const getTotalInterests = () => mockInterestedCandidates.length;
+  const getTotalInterests = () => mutualInterests.length;
 
-  const getInterestsByJob = (jobId: string) => 
-    mockInterestedCandidates.filter(c => c.jobListingId === jobId).length;
+  const getInterestsByJob = (jobId: number) =>
+    mutualInterests.filter(c => c.jobListing.id === jobId).length;
 
   // Show loading state
   if (loading) {
@@ -200,14 +124,14 @@ export default function MutualInterests() {
           </div>
           <div className="bg-white rounded-lg shadow-sm p-6">
             <h3 className="text-lg font-semibold text-efcaDark mb-2">Active Listings</h3>
-            <p className="text-3xl font-bold text-efcaAccent">{mockJobListings.length}</p>
+            <p className="text-3xl font-bold text-efcaAccent">{jobListings.length}</p>
             <p className="text-sm text-gray-600">Job positions currently posted</p>
           </div>
           <div className="bg-white rounded-lg shadow-sm p-6">
             <h3 className="text-lg font-semibold text-efcaDark mb-2">Recent Activity</h3>
             <p className="text-3xl font-bold text-efcaAccent">
-              {mockInterestedCandidates.filter(c => {
-                const interestDate = new Date(c.interestExpressedAt);
+              {mutualInterests.filter(c => {
+                const interestDate = new Date(c.interest.created_at);
                 const weekAgo = new Date();
                 weekAgo.setDate(weekAgo.getDate() - 7);
                 return interestDate > weekAgo;
@@ -227,7 +151,7 @@ export default function MutualInterests() {
               className="px-4 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-efcaAccent bg-white"
             >
               <option value="all">All Positions ({getTotalInterests()})</option>
-              {mockJobListings.map(job => (
+              {jobListings.map(job => (
                 <option key={job.id} value={job.id}>
                   {job.title} ({getInterestsByJob(job.id)})
                 </option>
@@ -242,126 +166,69 @@ export default function MutualInterests() {
             <div className="text-center py-8">
               <h3 className="text-lg font-medium text-gray-900 mb-2">No interested candidates</h3>
               <p className="text-gray-600">
-                {selectedJob === 'all' 
-                  ? "No candidates have expressed interest in your job listings yet."
-                  : "No candidates have expressed interest in this position yet."
-                }
+                {selectedJob === 'all'
+                  ? 'No candidates have expressed interest in your job listings yet.'
+                  : 'No candidates have expressed interest in this position yet.'}
               </p>
             </div>
           ) : (
-            <div className="space-y-6">
-              {filteredCandidates.map((candidate) => (
-                <div
-                  key={candidate.id}
-                  className="border border-gray-200 rounded-lg p-6 hover:shadow-md transition-shadow"
-                >
-                  <div className="flex flex-col lg:flex-row gap-6">
-                    {/* Candidate Info */}
-                    <div className="flex-1">
-                      <div className="flex items-start gap-4 mb-4">
-                        {candidate.pictureUrl && (
-                          <img
-                            src={candidate.pictureUrl}
-                            alt={`${candidate.name}'s profile`}
-                            className="h-20 w-20 object-cover rounded-lg border"
-                          />
-                        )}
-                        <div className="flex-1">
-                          <h3 className="text-xl font-semibold text-efcaDark mb-1">
-                            {candidate.name}
-                          </h3>
-                          <p className="text-sm text-gray-600 mb-2">
-                            Interested in: <span className="font-medium">{getJobTitle(candidate.jobListingId)}</span>
-                          </p>
-                          <p className="text-xs text-gray-500">
-                            Interest expressed: {new Date(candidate.interestExpressedAt).toLocaleDateString()}
-                          </p>
-                        </div>
-                      </div>
-
-                      {/* Contact Information */}
-                      <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
-                        <div>
-                          <h4 className="font-medium text-gray-700 mb-2">Contact Information</h4>
-                          <div className="space-y-1 text-sm">
-                            <p><span className="font-medium">Email:</span> {candidate.email}</p>
-                            <p><span className="font-medium">Phone:</span> {candidate.phone}</p>
-                            <p><span className="font-medium">Location:</span> {candidate.city}, {candidate.state}</p>
-                          </div>
-                        </div>
-                        <div>
-                          <h4 className="font-medium text-gray-700 mb-2">Profile Details</h4>
-                          <div className="space-y-1 text-sm">
-                            <p><span className="font-medium">Status:</span> {candidate.status}</p>
-                            <p><span className="font-medium">Event:</span> {candidate.event}</p>
-                            <p><span className="font-medium">Profile Created:</span> {new Date(candidate.createdAt).toLocaleDateString()}</p>
-                          </div>
-                        </div>
-                      </div>
-
-                      {/* Documents */}
-                      <div className="flex gap-4">
-                        {candidate.resumeUrl && (
-                          <div className="flex gap-2">
-                            <a
-                              href={candidate.resumeUrl}
-                              target="_blank"
-                              rel="noopener noreferrer"
-                              className="text-efcaAccent underline text-sm"
-                            >
-                              View Resume
-                            </a>
-                            <button
-                              onClick={() => handleViewResume(candidate.resumeUrl, candidate.name)}
-                              className="text-efcaAccent underline text-sm"
-                            >
-                              Preview
-                            </button>
-                          </div>
-                        )}
-                        {candidate.videoUrl && (
-                          <div className="flex gap-2">
-                            <a
-                              href={candidate.videoUrl}
-                              target="_blank"
-                              rel="noopener noreferrer"
-                              className="text-efcaAccent underline text-sm"
-                            >
-                              View Video
-                            </a>
-                            <button
-                              onClick={() => handleViewVideo(candidate.videoUrl!, candidate.name)}
-                              className="text-efcaAccent underline text-sm"
-                            >
-                              Preview
-                            </button>
-                          </div>
-                        )}
+            <ul className="divide-y divide-gray-200">
+              {filteredCandidates.map(({ profile, interest, jobListing }) => (
+                <li key={profile.id} className="py-6 flex flex-col md:flex-row gap-6">
+                  <div className="w-full md:w-1/4 flex-shrink-0">
+                    <img
+                      src={profile.photo}
+                      alt={`${profile.first_name} ${profile.last_name}`}
+                      className="w-full h-auto object-cover rounded-lg"
+                    />
+                  </div>
+                  <div className="w-full md:w-3/4">
+                    <div className="flex justify-between items-start">
+                      <div>
+                        <h3 className="text-xl font-bold text-efcaDark">{`${profile.first_name} ${profile.last_name}`}</h3>
+                        <p className="text-gray-600">
+                          Interested in:{' '}
+                          <span className="font-semibold">{getJobTitle(jobListing.id)}</span>
+                        </p>
+                        <p className="text-sm text-gray-500 mt-1">
+                          Expressed Interest on:{' '}
+                          {new Date(interest.created_at).toLocaleDateString()}
+                        </p>
                       </div>
                     </div>
 
-                    {/* Action Buttons */}
-                    <div className="flex flex-col gap-2 min-w-[200px]">
-                      <a
-                        href={`mailto:${candidate.email}?subject=Interest in ${getJobTitle(candidate.jobListingId)} Position`}
-                        className="px-4 py-2 bg-efcaAccent text-white rounded font-semibold hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-efcaAccent transition-colors text-center"
-                      >
-                        Send Email
-                      </a>
+                    <div className="mt-4 grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
+                      <div>
+                        <p className="text-gray-700">
+                          <strong className="font-medium">Email:</strong> {profile.email}
+                        </p>
+                        <p className="text-gray-700">
+                          <strong className="font-medium">Location:</strong>{' '}
+                          {`${profile.city}, ${profile.state}`}
+                        </p>
+                      </div>
+                    </div>
+
+                    <div className="mt-4 flex flex-wrap gap-3">
                       <button
-                        onClick={() => {
-                          navigator.clipboard.writeText(`${candidate.name}\nEmail: ${candidate.email}\nPhone: ${candidate.phone}\nPosition: ${getJobTitle(candidate.jobListingId)}`);
-                          alert('Contact information copied to clipboard!');
-                        }}
-                        className="px-4 py-2 border border-gray-300 text-gray-700 rounded font-semibold hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-gray-400 transition-colors"
+                        onClick={() => handleViewResume(profile.resume, `${profile.first_name} ${profile.last_name}`)}
+                        className="px-4 py-2 bg-efcaAccent text-white rounded hover:bg-efcaDark transition"
                       >
-                        Copy Contact Info
+                        View Resume
                       </button>
+                      {profile.video_url && (
+                        <button
+                          onClick={() => handleViewVideo(profile.video_url, `${profile.first_name} ${profile.last_name}`)}
+                          className="px-4 py-2 bg-gray-200 text-gray-800 rounded hover:bg-gray-300 transition"
+                        >
+                          View Video
+                        </button>
+                      )}
                     </div>
                   </div>
-                </div>
+                </li>
               ))}
-            </div>
+            </ul>
           )}
         </section>
       </div>
@@ -375,48 +242,25 @@ export default function MutualInterests() {
 
       {/* Video Preview Modal */}
       {videoViewer.isOpen && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-          <div className="bg-white rounded-lg p-4 w-full max-w-4xl max-h-[90vh] flex flex-col">
+        <div className="fixed inset-0 z-50 bg-black bg-opacity-75 flex items-center justify-center">
+          <div className="bg-white p-4 rounded-lg shadow-xl max-w-4xl w-full">
             <div className="flex justify-between items-center mb-4">
-              <h3 className="text-lg font-semibold">{videoViewer.title}</h3>
-              <button 
-                onClick={() => setVideoViewer(prev => ({ ...prev, isOpen: false }))} 
-                className="text-gray-500 hover:text-gray-700 transition-colors"
+              <h2 className="text-xl font-bold">{videoViewer.title}</h2>
+              <button
+                onClick={() => setVideoViewer({ isOpen: false, url: '', title: '' })}
+                className="text-2xl font-bold"
               >
-                <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M6 18L18 6M6 6l12 12"
-                  />
-                </svg>
+                &times;
               </button>
             </div>
-            <div className="flex-1 overflow-hidden">
-              <iframe 
-                src={getYouTubeEmbedUrl(videoViewer.url)} 
-                className="w-full h-[70vh] border-0" 
-                title={videoViewer.title}
+            <div className="aspect-w-16 aspect-h-9">
+              <iframe
+                src={getYouTubeEmbedUrl(videoViewer.url)}
+                frameBorder="0"
                 allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
                 allowFullScreen
-              />
-            </div>
-            <div className="mt-4 flex justify-end gap-2">
-              <a
-                href={videoViewer.url}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="px-4 py-2 bg-efcaAccent text-white rounded hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-efcaAccent transition-colors"
-              >
-                Open in New Tab
-              </a>
-              <button
-                onClick={() => setVideoViewer(prev => ({ ...prev, isOpen: false }))}
-                className="px-4 py-2 bg-gray-300 text-gray-700 rounded hover:bg-gray-400 focus:outline-none focus:ring-2 focus:ring-gray-400 transition-colors"
-              >
-                Close
-              </button>
+                className="w-full h-full"
+              ></iframe>
             </div>
           </div>
         </div>

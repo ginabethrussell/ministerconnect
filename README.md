@@ -70,7 +70,7 @@ All API endpoints are defined in `src/utils/api.ts` for easy backend integration
 
 ### **Super Admin**
 - Email: `superadminuser@gmail.com`
-- Password: `password`
+- Password: `password123`
 
 ### **Admin**
 - Email: `admin@ministerconnect.com`

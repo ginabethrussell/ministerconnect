@@ -1,41 +1,39 @@
 import React, { useEffect, useState } from 'react';
 import PDFViewer from '../../components/PDFViewer';
+import { getSuperAdminProfiles } from '../../utils/api'; // Using the centralized API
+import { Profile } from '../../types'; // Using the centralized type
 
-interface CandidateProfile {
-  id: string;
-  name: string;
-  email: string;
-  event: string;
-  status: string;
-  createdAt: string;
-  phone?: string;
-  resumeUrl?: string;
-  videoUrl?: string;
-  // Add more fields as needed
+function getYouTubeEmbedUrl(url: string): string {
+  if (!url) return '';
+  const liveMatch = url.match(/youtube\.com\/live\/([\w-]+)/);
+  const watchMatch = url.match(/[?&]v=([\w-]+)/);
+  let videoId = '';
+  if (liveMatch) {
+    videoId = liveMatch[1];
+  } else if (watchMatch) {
+    videoId = watchMatch[1];
+  }
+  return videoId ? `https://www.youtube.com/embed/${videoId}` : url;
 }
 
-// Mock fetch function (replace with real API call or MSW handler)
-const fetchCandidates = async (): Promise<CandidateProfile[]> => {
-  const res = await fetch('/api/candidates?status=pending');
-  return res.json();
-};
-
-const patchCandidateStatus = async (id: string, status: string) => {
-  await fetch(`/api/candidates/${id}`, {
-    method: 'PATCH',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ status }),
-  });
-};
-
 const AdminReview = () => {
-  const [profiles, setProfiles] = useState<CandidateProfile[]>([]);
+  const [profiles, setProfiles] = useState<Profile[]>([]);
   const [sortBy, setSortBy] = useState<'name' | 'createdAt'>('name');
   const [filterEvent, setFilterEvent] = useState<string>('');
   const [filterStatus, setFilterStatus] = useState<string>('all');
   const [loading, setLoading] = useState(true);
   const [actionLoadingId, setActionLoadingId] = useState<string | null>(null);
+  const [events, setEvents] = useState<string[]>([]);
   const [pdfViewer, setPdfViewer] = useState<{
+    isOpen: boolean;
+    url: string;
+    title: string;
+  }>({
+    isOpen: false,
+    url: '',
+    title: '',
+  });
+  const [videoViewer, setVideoViewer] = useState<{
     isOpen: boolean;
     url: string;
     title: string;
@@ -46,40 +44,53 @@ const AdminReview = () => {
   });
 
   useEffect(() => {
-    fetchCandidates().then((data) => {
-      setProfiles(data);
-      setLoading(false);
-    });
+    const fetchProfiles = async () => {
+      try {
+        setLoading(true);
+        const data: Profile[] = await getSuperAdminProfiles();
+        setProfiles(data);
+        // Get unique events for filter dropdown
+        const uniqueEvents = Array.from(new Set(data.map(p => p.email))); // Placeholder for event
+        setEvents(uniqueEvents);
+      } catch (error) {
+        console.error('Failed to fetch profiles:', error);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchProfiles();
   }, []);
-
-  // Get unique events for filter dropdown
-  const events = Array.from(new Set(profiles.map((p) => p.event)));
 
   // Filter profiles based on status and event
   let filtered = profiles;
   if (filterStatus !== 'all') {
-    filtered = filtered.filter((p) => p.status === filterStatus);
+    filtered = filtered.filter(p => p.status === filterStatus);
   }
   if (filterEvent) {
-    filtered = filtered.filter((p) => p.event === filterEvent);
+    // This will need to be adjusted once 'event' is on the Profile type
+    filtered = filtered.filter(p => p.email === filterEvent); // Placeholder
   }
-  
+
   // Sort filtered results
   filtered = [...filtered].sort((a, b) => {
-    if (sortBy === 'name') return a.name.localeCompare(b.name);
-    if (sortBy === 'createdAt') return b.createdAt.localeCompare(a.createdAt);
+    const nameA = `${a.first_name} ${a.last_name}`;
+    const nameB = `${b.first_name} ${b.last_name}`;
+    if (sortBy === 'name') return nameA.localeCompare(nameB);
+    if (sortBy === 'createdAt')
+      return (b.created_at || '').localeCompare(a.created_at || '');
     return 0;
   });
 
-  const handleStatus = async (id: string, status: 'approved' | 'rejected') => {
-    setActionLoadingId(id);
-    await patchCandidateStatus(id, status);
+  const handleStatus = async (id: number, status: 'approved' | 'rejected') => {
+    setActionLoadingId(id.toString());
+    // Replace with actual API call to update status
+    console.log(`Updating profile ${id} to ${status}`);
+    // Simulating API call
+    await new Promise(resolve => setTimeout(resolve, 500));
+    setProfiles(prevProfiles =>
+      prevProfiles.map(p => (p.id === id ? { ...p, status } : p))
+    );
     setActionLoadingId(null);
-    setLoading(true);
-    fetchCandidates().then((data) => {
-      setProfiles(data);
-      setLoading(false);
-    });
   };
 
   const handleViewResume = (resumeUrl: string, candidateName: string) => {
@@ -90,119 +101,242 @@ const AdminReview = () => {
     });
   };
 
+  const handleViewVideo = (videoUrl: string, candidateName: string) => {
+    setVideoViewer({
+      isOpen: true,
+      url: videoUrl,
+      title: `${candidateName}'s Video`,
+    });
+  };
+
   return (
-    <div className="min-h-screen bg-efcaGray p-8">
-      <div className="max-w-6xl mx-auto">
+    <div className="min-h-screen bg-gray-100 p-8">
+      <div className="max-w-7xl mx-auto">
         <header className="flex justify-between items-center mb-8">
-          <h1 className="text-3xl font-bold text-efcaDark">Review Candidate Profiles</h1>
+          <h1 className="text-3xl font-bold text-gray-800">
+            Review Candidate Profiles
+          </h1>
         </header>
-        <section className="bg-white rounded-lg shadow-sm p-6">
-          <div className="flex gap-4 mb-6">
+        <section className="bg-white rounded-lg shadow-md p-6">
+          <div className="flex flex-wrap gap-4 mb-6">
+            {/* Status Filters */}
             <button
               onClick={() => setFilterStatus('all')}
-              className={`px-4 py-2 rounded ${
+              className={`px-4 py-2 rounded-md font-medium text-sm ${
                 filterStatus === 'all'
-                  ? 'bg-efcaAccent text-white'
+                  ? 'bg-blue-600 text-white'
                   : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
               }`}
             >
               All ({profiles.length})
             </button>
             <button
-              onClick={() => setFilterStatus('Pending')}
-              className={`px-4 py-2 rounded ${
-                filterStatus === 'Pending'
-                  ? 'bg-efcaAccent text-white'
+              onClick={() => setFilterStatus('pending')}
+              className={`px-4 py-2 rounded-md font-medium text-sm ${
+                filterStatus === 'pending'
+                  ? 'bg-blue-600 text-white'
                   : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
               }`}
             >
-              Pending ({profiles.filter((p) => p.status === 'Pending').length})
+              Pending ({profiles.filter(p => p.status === 'pending').length})
             </button>
             <button
-              onClick={() => setFilterStatus('Approved')}
-              className={`px-4 py-2 rounded ${
-                filterStatus === 'Approved'
-                  ? 'bg-efcaAccent text-white'
+              onClick={() => setFilterStatus('approved')}
+              className={`px-4 py-2 rounded-md font-medium text-sm ${
+                filterStatus === 'approved'
+                  ? 'bg-blue-600 text-white'
                   : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
               }`}
             >
-              Approved ({profiles.filter((p) => p.status === 'Approved').length})
+              Approved ({profiles.filter(p => p.status === 'approved').length})
             </button>
           </div>
 
           {loading ? (
-            <div className="text-efcaMuted">Loading...</div>
+            <div className="text-center py-10">
+              <p className="text-gray-500">Loading profiles...</p>
+            </div>
           ) : filtered.length === 0 ? (
-            <div className="text-efcaMuted">No candidate profiles found.</div>
+            <div className="text-center py-10">
+              <p className="text-gray-500">No candidate profiles found.</p>
+            </div>
           ) : (
-            <div className="grid gap-4 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3">
-              {filtered.map((profile) => (
-                <div key={profile.id} className="bg-white rounded shadow p-4 flex flex-col h-full">
-                  <div className="font-bold text-lg text-efcaText mb-1">{profile.name}</div>
-                  <div className="text-sm text-gray-600 mb-1 break-all">{profile.email}</div>
-                  <div className="text-xs text-efcaMuted mb-2">Event: {profile.event}</div>
-                  <div className="text-xs text-efcaMuted mb-2">Submitted: {profile.createdAt}</div>
-                  <div className="text-xs text-efcaMuted mb-2">Status: {profile.status}</div>
-                  {profile.phone && (
-                    <div className="text-xs text-gray-500 mb-2">Phone: {profile.phone}</div>
-                  )}
-                  {profile.resumeUrl && (
-                    <div className="flex gap-2 mb-2">
-                      <a
-                        href={profile.resumeUrl}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="text-efcaAccent underline text-xs"
-                      >
-                        View Resume
-                      </a>
-                      <button
-                        onClick={() => handleViewResume(profile.resumeUrl!, profile.name)}
-                        className="text-efcaAccent underline text-xs"
-                      >
-                        Preview
-                      </button>
+            <div className="grid gap-6 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+              {filtered.map(profile => {
+                const fullName = `${profile.first_name} ${profile.last_name}`;
+                return (
+                  <div className="bg-white rounded-lg shadow-md p-6">
+                    <div className="flex items-start gap-4 mb-4">
+                      <img
+                        src={profile.photo}
+                        alt={`${fullName}`}
+                        className="w-16 h-16 rounded-lg object-cover"
+                      />
+                      <div className="flex-1">
+                        <h3 className="text-xl font-bold text-gray-900">{fullName}</h3>
+                        <p
+                          className={`inline-block px-2 py-1 rounded-full text-xs font-medium ${
+                            profile.status === 'approved'
+                              ? 'bg-green-100 text-green-800'
+                              : profile.status === 'rejected'
+                              ? 'bg-red-100 text-red-800'
+                              : 'bg-yellow-100 text-yellow-800'
+                          }`}
+                        >
+                          {profile.status}
+                        </p>
+                      </div>
                     </div>
-                  )}
-                  {profile.videoUrl && (
-                    <a
-                      href={profile.videoUrl}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="text-efcaAccent underline text-xs mb-2"
-                    >
-                      View Video
-                    </a>
-                  )}
-                  <div className="mt-auto flex gap-2 pt-2">
-                    <button
-                      className="btn-primary flex-1 disabled:opacity-50"
-                      disabled={actionLoadingId === profile.id}
-                      onClick={() => handleStatus(profile.id, 'approved')}
-                    >
-                      {actionLoadingId === profile.id ? 'Approving...' : 'Approve'}
-                    </button>
-                    <button
-                      className="btn-secondary flex-1 disabled:opacity-50"
-                      disabled={actionLoadingId === profile.id}
-                      onClick={() => handleStatus(profile.id, 'rejected')}
-                    >
-                      {actionLoadingId === profile.id ? 'Rejecting...' : 'Reject'}
-                    </button>
+
+                    {/* Contact Information Section */}
+                    <div className="mb-6 p-4 bg-gray-50 rounded-lg">
+                      <h4 className="font-semibold text-gray-800 mb-3">Contact Information</h4>
+                      <div className="space-y-2 text-sm">
+                        <div className="flex items-center gap-2">
+                          <span className="font-medium text-gray-600 w-20">Email:</span>
+                          <span className="text-gray-700">{profile.email}</span>
+                        </div>
+                        <div className="flex items-center gap-2">
+                          <span className="font-medium text-gray-600 w-20">Phone:</span>
+                          <span className="text-gray-700">555-123-4567</span>
+                        </div>
+                        <div className="flex items-center gap-2">
+                          <span className="font-medium text-gray-600 w-20">Address:</span>
+                          <span className="text-gray-700">{profile.street_address}</span>
+                        </div>
+                        <div className="flex items-center gap-2">
+                          <span className="font-medium text-gray-600 w-20">Location:</span>
+                          <span className="text-gray-700">{`${profile.city}, ${profile.state} ${profile.zipcode}`}</span>
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* Documents Section */}
+                    <div className="mb-6 p-4 bg-gray-50 rounded-lg">
+                      <h4 className="font-semibold text-gray-800 mb-3">Documents</h4>
+                      <div className="space-y-2">
+                        {profile.resume && (
+                          <div className="flex items-center gap-4 text-sm">
+                            <span className="font-medium text-gray-600 w-16">Resume:</span>
+                            <a
+                              href={profile.resume}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className="text-blue-600 hover:underline font-medium"
+                            >
+                              View
+                            </a>
+                            <button
+                              onClick={() => handleViewResume(profile.resume, fullName)}
+                              className="text-blue-600 hover:underline font-medium"
+                            >
+                              Preview
+                            </button>
+                          </div>
+                        )}
+                        {profile.video_url && (
+                          <div className="flex items-center gap-4 text-sm">
+                            <span className="font-medium text-gray-600 w-16">Video:</span>
+                            <a
+                              href={profile.video_url}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className="text-blue-600 hover:underline font-medium"
+                            >
+                              View
+                            </a>
+                            <button
+                              onClick={() => handleViewVideo(profile.video_url, fullName)}
+                              className="text-blue-600 hover:underline font-medium"
+                            >
+                              Preview
+                            </button>
+                          </div>
+                        )}
+                      </div>
+                    </div>
+
+                    {/* Placement Preferences Section */}
+                    {profile.placement_preferences && profile.placement_preferences.length > 0 && (
+                      <div className="mb-6">
+                        <h4 className="font-semibold text-gray-800 mb-2">Placement Preferences</h4>
+                        <div className="flex flex-wrap gap-2">
+                          {profile.placement_preferences.map((preference, index) => (
+                            <span
+                              key={index}
+                              className="px-3 py-1 bg-blue-100 text-blue-800 rounded-full text-xs font-medium"
+                            >
+                              {preference}
+                            </span>
+                          ))}
+                        </div>
+                      </div>
+                    )}
+
+                    {/* Submission Info */}
+                    <div className="mb-4 text-xs text-gray-500">
+                      <p>Submitted: {new Date(profile.submitted_at).toLocaleDateString()}</p>
+                      <p>Last Updated: {new Date(profile.updated_at).toLocaleDateString()}</p>
+                    </div>
+
+                    {/* Action Buttons */}
+                    {profile.status !== 'approved' && (
+                      <div className="pt-4 border-t border-gray-200 flex gap-2">
+                        <button
+                          onClick={() => handleStatus(profile.id, 'approved')}
+                          disabled={actionLoadingId === profile.id.toString()}
+                          className="flex-1 bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors disabled:opacity-50"
+                        >
+                          {actionLoadingId === profile.id.toString() ? 'Processing...' : 'Approve'}
+                        </button>
+                        <button
+                          onClick={() => handleStatus(profile.id, 'rejected')}
+                          disabled={actionLoadingId === profile.id.toString()}
+                          className="flex-1 bg-red-600 text-white px-4 py-2 rounded hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-500 transition-colors disabled:opacity-50"
+                        >
+                          {actionLoadingId === profile.id.toString() ? 'Processing...' : 'Reject'}
+                        </button>
+                      </div>
+                    )}
                   </div>
-                </div>
-              ))}
+                );
+              })}
             </div>
           )}
         </section>
       </div>
-      
+
       <PDFViewer
         isOpen={pdfViewer.isOpen}
         onClose={() => setPdfViewer(prev => ({ ...prev, isOpen: false }))}
         pdfUrl={pdfViewer.url}
         title={pdfViewer.title}
       />
+
+      {videoViewer.isOpen && (
+        <div className="fixed inset-0 z-50 bg-black bg-opacity-75 flex items-center justify-center p-4">
+          <div className="bg-white p-4 rounded-lg shadow-xl max-w-4xl w-full">
+            <div className="flex justify-between items-center mb-4">
+              <h2 className="text-xl font-bold">{videoViewer.title}</h2>
+              <button
+                onClick={() => setVideoViewer({ isOpen: false, url: '', title: '' })}
+                className="text-2xl font-bold leading-none"
+              >
+                &times;
+              </button>
+            </div>
+            <div className="aspect-w-16 aspect-h-9">
+              <iframe
+                src={getYouTubeEmbedUrl(videoViewer.url)}
+                frameBorder="0"
+                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                allowFullScreen
+                className="w-full h-full"
+              ></iframe>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };
