@@ -27,21 +27,18 @@ const AdminChurches = () => {
   }, []);
 
   const handleDelete = async (id: number) => {
-    if (!confirm('Are you sure you want to delete this church? This action cannot be undone.')) {
-      return;
-    }
-
+    if (!confirm('Are you sure you want to delete this church?')) return;
+    
     try {
       const res = await fetch(`/api/churches/${id}`, { method: 'DELETE' });
-      
       if (res.ok) {
-        setChurches(churches.filter((c) => c.id !== id));
+        setChurches(churches.filter(c => c.id !== id));
       } else {
-        alert('Failed to delete church. Please try again.');
+        const errorData = await res.json();
+        alert(`Error deleting church: ${errorData.message || 'Unknown error'}`);
       }
     } catch (error) {
-      console.error('Error deleting church:', error);
-      alert('Failed to delete church. Please try again.');
+      alert('Network error. Please try again.');
     }
   };
 

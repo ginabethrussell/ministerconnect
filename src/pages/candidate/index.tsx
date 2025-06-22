@@ -23,16 +23,13 @@ export default function CandidateDashboard() {
     const fetchProfile = async () => {
       try {
         const response = await fetch('/api/profile');
-        console.log('response', response);
         const data = await response.json();
-        console.log('data', data);
-        if (data.success) {
+        
+        if (data.success && data.profile) {
           setProfile(data.profile);
-        } else {
-          setError('Failed to load profile');
         }
-      } catch {
-        setError('Error loading profile');
+      } catch (error) {
+        // Handle error silently or show user-friendly message
       } finally {
         setLoading(false);
       }

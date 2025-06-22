@@ -110,7 +110,7 @@ export default function CreateChurch() {
         alert('Church created successfully!');
         router.push('/admin/churches');
       } else {
-        const errorData = await response.json();
+        const errorData: { message?: string } = await response.json();
         alert(`Error creating church: ${errorData.message || 'Unknown error'}`);
       }
     } catch (error) {

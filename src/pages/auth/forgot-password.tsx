@@ -4,15 +4,13 @@ import Link from 'next/link';
 export default function ForgotPassword() {
   const [email, setEmail] = useState('');
   const [loading, setLoading] = useState(false);
-  const [success, setSuccess] = useState(false);
+  const [success, setSuccess] = useState('');
   const [error, setError] = useState('');
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setLoading(true);
     setError('');
-
-    console.log('Submitting forgot password request for:', email);
+    setSuccess('');
 
     try {
       const response = await fetch('/api/auth/forgot-password', {
@@ -23,20 +21,15 @@ export default function ForgotPassword() {
         body: JSON.stringify({ email }),
       });
 
-      console.log('Response status:', response.status);
       const data = await response.json();
-      console.log('Response data:', data);
 
       if (response.ok) {
-        setSuccess(true);
+        setSuccess('If an account with that email exists, a password reset link has been sent.');
       } else {
         setError(data.message || 'Failed to send reset email');
       }
     } catch (err) {
-      console.error('Error in forgot password:', err);
       setError('Network error. Please try again.');
-    } finally {
-      setLoading(false);
     }
   };
 

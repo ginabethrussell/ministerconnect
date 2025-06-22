@@ -43,6 +43,29 @@ npm run dev
 
 The application will be available at `http://localhost:3000`
 
+## Backend Integration Preparation
+
+Before setting up the backend service, the frontend has been prepared with:
+
+- **API Client Configuration**: Centralized API calls in `src/utils/api.ts`
+- **Environment Variables**: Template in `env.example` for backend configuration
+- **Mock API**: MSW handlers for development without backend
+- **Type Safety**: Complete TypeScript interfaces matching backend requirements
+
+### Environment Setup
+
+1. Copy `env.example` to `.env.local`
+2. Set `NEXT_PUBLIC_API_URL` to your backend service URL
+3. Use `npm run dev:backend` to run with backend configuration
+
+### API Integration
+
+The frontend uses a centralized API client that automatically switches between:
+- Mock API (development without backend)
+- Real backend API (when `NEXT_PUBLIC_API_URL` is set)
+
+All API endpoints are defined in `src/utils/api.ts` for easy backend integration.
+
 ## Test Accounts
 
 ### **Super Admin**
@@ -196,180 +219,3 @@ npm start
 ## Folder Structure
 
 ```
-ministerconnect/
-├── public/                # Static assets & MSW worker
-├── src/
-│   ├── components/        # Shared React components
-│   │   ├── ExpressInterestButton.tsx  # Reusable interest button
-│   │   ├── Header.tsx                 # Navigation header
-│   │   ├── Footer.tsx                 # Site footer
-│   │   ├── PasswordInput.tsx          # Password input component
-│   │   └── PDFViewer.tsx              # PDF viewing component
-│   ├── mocks/             # API mocking
-│   │   ├── browser.ts     # MSW browser setup
-│   │   ├── data.ts        # Mock data definitions
-│   │   └── handlers.ts    # API endpoint handlers
-│   ├── pages/             # Next.js pages
-│   │   ├── index.tsx      # Landing page
-│   │   ├── auth/          # Authentication pages
-│   │   │   ├── login.tsx
-│   │   │   ├── register.tsx
-│   │   │   ├── forgot-password.tsx
-│   │   │   ├── reset-password.tsx
-│   │   │   └── force-password-change.tsx
-│   │   ├── candidate/     # Candidate pages
-│   │   │   ├── index.tsx  # Dashboard
-│   │   │   ├── profile.tsx
-│   │   │   └── jobs.tsx   # Job listings
-│   │   ├── church/        # Church pages
-│   │   │   ├── index.tsx  # Dashboard
-│   │   │   ├── search.tsx # Candidate search
-│   │   │   ├── jobs.tsx   # Job management
-│   │   │   ├── jobs/create.tsx
-│   │   │   └── mutual-interests.tsx
-│   │   ├── admin/         # Admin pages
-│   │   │   ├── index.tsx
-│   │   │   ├── review.tsx
-│   │   │   ├── churches.tsx
-│   │   │   ├── codes.tsx
-│   │   │   └── jobs.tsx
-│   │   └── superadmin/    # Super admin pages
-│   │       ├── index.tsx  # Dashboard
-│   │       ├── users.tsx  # User management
-│   │       ├── churches.tsx
-│   │       ├── profiles.tsx
-│   │       └── invite-codes.tsx
-│   ├── styles/            # Tailwind/global CSS
-│   ├── types/             # TypeScript type definitions
-│   └── utils/             # Utility functions
-│       └── pdfUtils.ts    # PDF handling utilities
-├── docs/                  # Documentation
-│   ├── README.md
-│   ├── db_diagram.png
-│   ├── use-case-diagram.puml
-│   ├── usecase_diagram.png
-│   └── user_scenarios/    # Detailed user workflows
-├── screenshots/           # Application screenshots
-├── API_DATA_MODEL.md      # API & data model documentation
-├── tailwind.config.js     # Tailwind config
-├── postcss.config.js      # PostCSS config
-├── tsconfig.json          # TypeScript config
-├── package.json           # Project metadata & scripts
-└── README.md              # This file
-```
-
----
-
-## API & Data Model (Mocked)
-
-See [`API_DATA_MODEL.md`](./API_DATA_MODEL.md) for full details.
-
-### Database Schema
-![Database Schema](docs/db_diagram.png)
-
-**Key Endpoints:**
-
-### Authentication
-- `POST /api/login` — Login user
-- `POST /api/register` — Register candidate
-- `POST /api/validate-invite` — Validate invite code
-- `POST /api/forgot-password` — Request password reset
-- `POST /api/reset-password` — Reset password
-
-### User Management
-- `GET /api/user` — Get current user data
-- `GET /api/candidates` — List candidates (admin/church)
-- `GET /api/churches` — List churches (admin)
-- `GET /api/superadmin/users` — List all users (superadmin)
-- `PUT /api/superadmin/users/:id` — Update user status (superadmin)
-- `POST /api/superadmin/users/:id/reset-password` — Reset user password (superadmin)
-
-### Profiles
-- `GET /api/profile` — Get candidate profile
-- `POST /api/profile` — Update candidate profile
-- `POST /api/profile/upload` — Upload candidate document
-- `GET /api/superadmin/profiles` — List all profiles (superadmin)
-- `POST /api/superadmin/profiles/:id/review` — Approve/reject profile (superadmin)
-
-### Job Listings
-- `GET /api/job-listings` — List job listings
-- `POST /api/job-listings` — Create new job listing
-- `PUT /api/job-listings/:id` — Update job listing
-- `DELETE /api/job-listings/:id` — Delete job listing
-
-### Mutual Interests
-- `GET /api/mutual-interests` — Get mutual interests for current user/church
-- `POST /api/mutual-interests` — Express interest in a job/candidate
-- `DELETE /api/mutual-interests/:id` — Remove interest
-
-### Superadmin Operations
-- `GET /api/superadmin/dashboard` — Get dashboard statistics
-- `GET /api/superadmin/activity` — Get recent activity log
-- `GET /api/superadmin/churches` — List all churches (superadmin)
-- `PUT /api/superadmin/churches/:id` — Update church status (superadmin)
-- `GET /api/superadmin/invite-codes` — List invite codes
-- `POST /api/superadmin/invite-codes` — Create invite code
-- `PUT /api/superadmin/invite-codes/:id` — Update invite code
-- `DELETE /api/superadmin/invite-codes/:id` — Delete invite code
-
-**Core Models:**
-
-- **User**: candidate, church, admin, superadmin roles with status tracking
-- **Church**: Complete church information with job listings count
-- **Profile**: Candidate profiles with resume, video, and approval status
-- **JobListing**: Detailed job postings with ministry type and church information
-- **MutualInterest**: Tracks interest expressions between candidates and churches
-- **InviteCode**: Multi-use registration codes with expiration and usage tracking
-- **PasswordReset**: Secure password reset functionality with audit trail
-- **ActivityLog**: Complete audit trail for all platform activities
-
----
-
-## Key Features Implemented
-
-### **Express Interest System**
-- Candidates can express interest in job listings
-- Churches can express interest in candidate profiles
-- Mutual interest tracking and notifications
-- One-click interest functionality with reusable components
-
-### **Super Admin Platform Management**
-- Complete user management with password reset capabilities
-- Church account oversight and status management
-- Profile review and approval system
-- Advanced invite code management with usage analytics
-- Real-time dashboard with platform statistics
-- Comprehensive activity logging and audit trail
-
-### **Enhanced Job Listings**
-- Detailed job creation with ministry type and church information
-- Rich job descriptions and church background information
-- Job status tracking (pending, approved, rejected)
-- Church-specific job management
-
-### **Profile Management**
-- Complete candidate profile creation and editing
-- Resume and video upload capabilities
-- Profile approval workflow
-- Status tracking for candidates
-
-### **Security & Audit**
-- Role-based access control
-- Password reset functionality with temporary passwords
-- Activity logging for all administrative actions
-- Secure invite code system with expiration
-
----
-
-## Contributing
-
-1. Fork the repository
-2. Create a feature branch (`git checkout -b feature/your-feature`)
-3. Commit your changes
-4. Push to your fork and open a Pull Request
-
----
-
-## License
-
-This project is licensed under the MIT License. See `package.json` for details.
