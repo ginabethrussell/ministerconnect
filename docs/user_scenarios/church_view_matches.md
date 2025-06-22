@@ -14,3 +14,4 @@
 
 ## Postconditions
 - Church sees a list of connected candidates
+

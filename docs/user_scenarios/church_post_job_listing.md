@@ -23,3 +23,4 @@
 ## Postconditions
 - Job listing is available to eligible candidates in their feed
 - Church can view, edit, or deactivate listing from dashboard
+

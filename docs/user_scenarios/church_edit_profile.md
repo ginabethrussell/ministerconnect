@@ -16,3 +16,4 @@
 
 ## Postconditions
 - Profile is updated and visible to candidates
+

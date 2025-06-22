@@ -19,3 +19,4 @@
 
 ## Postconditions
 - Candidate profile is saved and eligible for viewing by churches
+

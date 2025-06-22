@@ -16,3 +16,4 @@
 
 ## Postconditions
 - Candidate has an account and is authenticated
+

@@ -16,3 +16,4 @@
 
 ## Postconditions
 - Church user is authenticated and linked to a church record
+
