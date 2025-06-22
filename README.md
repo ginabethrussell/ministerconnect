@@ -219,3 +219,137 @@ npm start
 ## Folder Structure
 
 ```
+ministerconnect/
+├── docs/                          # Documentation
+│   ├── README.md                  # Additional documentation
+│   ├── db_diagram.png            # Database schema diagram
+│   ├── use-case-diagram.puml     # PlantUML source for use case diagram
+│   ├── usecase_diagram.png       # Generated use case diagram
+│   └── user_scenarios/           # Detailed user workflow documentation
+│       ├── admin_dashboard.md
+│       ├── admin_manage_invite_codes.md
+│       ├── admin_manage_users.md
+│       ├── admin_moderate_listings.md
+│       ├── admin_moderate_profiles.md
+│       ├── candidate_browse_jobs.md
+│       ├── candidate_edit_profile.md
+│       ├── candidate_express_interest.md
+│       ├── candidate_register_login.md
+│       ├── church_edit_profile.md
+│       ├── church_express_interest.md
+│       ├── church_manage_jobs.md
+│       ├── church_post_job_listing.md
+│       ├── church_register_login.md
+│       ├── church_view_matches.md
+│       ├── superadmin_dashboard.md
+│       ├── superadmin_manage_churches.md
+│       ├── superadmin_manage_invite_codes.md
+│       ├── superadmin_manage_profiles.md
+│       ├── superadmin_manage_users.md
+│       ├── user_force_password_change.md
+│       └── user_forgot_password.md
+├── public/                        # Static assets
+│   ├── assistant-pastor-resume.pdf
+│   ├── family.jpg
+│   ├── gldlogo.png
+│   ├── mockServiceWorker.js      # MSW service worker
+│   ├── sampleman.jpg
+│   ├── student-pastor-resume.pdf
+│   └── woman.jpg
+├── screenshots/                   # Application screenshots
+│   ├── admincreatechurch.png
+│   ├── admindashboard.png
+│   ├── admineditchurch.png
+│   ├── adminmanagechurches.png
+│   ├── adminmanageinvitecodes.png
+│   ├── adminreviewjoblistings.png
+│   ├── adminreviewprofiles.png
+│   ├── candidatedashboard.png
+│   ├── candidatejoblistings.png
+│   ├── candidateprofile.png
+│   ├── churchcreatejob.png
+│   ├── churchdashboard.png
+│   ├── churchmanagejobs.png
+│   ├── churchmutualinterests.png
+│   ├── churchsearchcandidates.png
+│   ├── landingpage.png
+│   ├── login.png
+│   ├── register.png
+│   ├── superadmindashboard.png
+│   ├── superadminmanagechurches.png
+│   ├── superadminmanageinvitecodes.png
+│   ├── superadminmanageprofiles.png
+│   └── superadminmanageusers.png
+├── src/                          # Source code
+│   ├── components/               # Reusable React components
+│   │   ├── ExpressInterestButton.tsx
+│   │   ├── Footer.tsx
+│   │   ├── Header.tsx
+│   │   ├── PasswordInput.tsx
+│   │   └── PDFViewer.tsx
+│   ├── mocks/                    # MSW mock service worker files
+│   │   ├── browser.ts           # Browser setup for MSW
+│   │   ├── data.ts              # Mock data definitions
+│   │   └── handlers.ts          # API mock handlers
+│   ├── pages/                    # Next.js pages organized by role
+│   │   ├── _app.tsx             # App wrapper component
+│   │   ├── index.tsx            # Landing page
+│   │   ├── admin/               # Admin role pages
+│   │   │   ├── churches/        # Church management
+│   │   │   │   ├── create.tsx
+│   │   │   │   └── edit.tsx
+│   │   │   ├── churches.tsx
+│   │   │   ├── codes.tsx
+│   │   │   ├── index.tsx
+│   │   │   ├── jobs.tsx
+│   │   │   └── review.tsx
+│   │   ├── auth/                # Authentication pages
+│   │   │   ├── force-password-change.tsx
+│   │   │   ├── forgot-password.tsx
+│   │   │   ├── login.tsx
+│   │   │   ├── register.tsx
+│   │   │   └── reset-password.tsx
+│   │   ├── candidate/           # Candidate role pages
+│   │   │   ├── index.tsx
+│   │   │   ├── jobs.tsx
+│   │   │   └── profile.tsx
+│   │   ├── church/              # Church role pages
+│   │   │   ├── index.tsx
+│   │   │   ├── jobs/            # Job management
+│   │   │   │   └── create.tsx
+│   │   │   ├── jobs.tsx
+│   │   │   ├── mutual-interests.tsx
+│   │   │   └── search.tsx
+│   │   └── superadmin/          # Super admin role pages
+│   │       ├── churches.tsx
+│   │       ├── index.tsx
+│   │       ├── invite-codes.tsx
+│   │       ├── profiles.tsx
+│   │       └── users.tsx
+│   ├── styles/                   # Styling files
+│   │   └── globals.css          # Global CSS styles
+│   ├── types/                    # TypeScript type definitions
+│   │   └── index.ts             # All type interfaces
+│   └── utils/                    # Utility functions
+│       ├── api.ts               # Centralized API client
+│       └── pdfUtils.ts          # PDF handling utilities
+├── API_DATA_MODEL.md            # Detailed API data model documentation
+├── env.example                  # Environment variables template
+├── package-lock.json            # NPM lock file
+├── package.json                 # Project dependencies and scripts
+├── postcss.config.js           # PostCSS configuration
+├── README.md                    # Project documentation
+├── tailwind.config.js          # Tailwind CSS configuration
+└── tsconfig.json               # TypeScript configuration
+```
+
+### Key Directories Explained
+
+- **`src/pages/`**: Next.js pages organized by user role (admin, auth, candidate, church, superadmin)
+- **`src/components/`**: Reusable React components used across multiple pages
+- **`src/mocks/`**: Mock Service Worker (MSW) files for API mocking during development
+- **`src/utils/`**: Utility functions including the centralized API client
+- **`src/types/`**: TypeScript type definitions for all data models
+- **`docs/user_scenarios/`**: Detailed documentation of user workflows for each role
+- **`public/`**: Static assets including images, PDFs, and the MSW service worker
+- **`screenshots/`**: Application screenshots used in documentation
