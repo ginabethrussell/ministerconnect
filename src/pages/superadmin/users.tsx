@@ -64,7 +64,7 @@ export default function SuperAdminUsers() {
 
       if (response.ok) {
         const data = await response.json();
-        setResetPassword(data.temporary_password);
+        setResetPassword(data.reset_token);
       } else {
         const errorData = await response.json();
         alert(`Error resetting password: ${errorData.message || 'Unknown error'}`);
@@ -93,8 +93,9 @@ export default function SuperAdminUsers() {
   };
 
   const copyToClipboard = () => {
-    navigator.clipboard.writeText(resetPassword);
-    alert('Password copied to clipboard!');
+    const resetLink = `${window.location.origin}/auth/reset-password?token=${resetPassword}`;
+    navigator.clipboard.writeText(resetLink);
+    alert('Reset link copied to clipboard!');
   };
 
   return (
@@ -223,7 +224,7 @@ export default function SuperAdminUsers() {
                     Are you sure you want to reset the password for <strong>{selectedUser?.name}</strong> ({selectedUser?.email})?
                   </p>
                   <p className="text-sm text-gray-500 mb-6">
-                    A temporary password will be generated and displayed. The user will need to change it on their next login.
+                    A secure reset token will be generated. The user will receive a reset link via email to set a new password.
                   </p>
                   <div className="flex justify-end space-x-3">
                     <button
@@ -246,27 +247,22 @@ export default function SuperAdminUsers() {
                   <h3 className="text-lg font-semibold text-efcaDark mb-4">
                     Password Reset Complete
                   </h3>
-                  <div className="bg-gray-50 rounded-lg p-4 mb-4">
-                    <p className="text-sm text-gray-600 mb-2">Temporary Password:</p>
-                    <div className="flex items-center space-x-2">
-                      <code className="bg-white px-3 py-2 rounded border font-mono text-sm flex-1">
-                        {resetPassword}
-                      </code>
-                      <button
-                        onClick={copyToClipboard}
-                        className="px-3 py-2 bg-efcaAccent text-white rounded hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-efcaAccent focus:ring-offset-2 transition-colors"
-                      >
-                        Copy
-                      </button>
-                    </div>
+                  <p className="text-gray-600 mb-4">
+                    A secure reset token has been generated for <strong>{selectedUser?.name}</strong>.
+                  </p>
+                  <div className="bg-gray-100 p-3 rounded mb-4">
+                    <p className="text-sm font-mono text-gray-800 break-all">{resetPassword}</p>
                   </div>
-                  <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-3 mb-4">
-                    <p className="text-sm text-yellow-800">
-                      <strong>Important:</strong> Share this temporary password securely with the user. 
-                      They will be required to change it on their next login.
-                    </p>
-                  </div>
-                  <div className="flex justify-end">
+                  <p className="text-sm text-gray-500 mb-4">
+                    Reset Link: <span className="font-mono text-xs break-all">{`${window.location.origin}/auth/reset-password?token=${resetPassword}`}</span>
+                  </p>
+                  <div className="flex justify-end space-x-3">
+                    <button
+                      onClick={copyToClipboard}
+                      className="px-4 py-2 bg-efcaAccent text-white rounded hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-efcaAccent focus:ring-offset-2 transition-colors"
+                    >
+                      Copy Token
+                    </button>
                     <button
                       onClick={closeResetModal}
                       className="px-4 py-2 bg-gray-600 text-white rounded hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-2 transition-colors"

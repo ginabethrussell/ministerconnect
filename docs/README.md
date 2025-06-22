@@ -118,6 +118,16 @@ Table mutual_interests {
   created_at timestamp
   updated_at timestamp
 }
+
+Table password_resets {
+  id integer [primary key]
+  user_id integer [ref: > users.id]
+  reset_by integer [ref: > users.id]
+  reset_token_hash varchar
+  expires_at timestamp
+  used boolean
+  created_at timestamp
+}
 ```
 
 ## Documentation Files

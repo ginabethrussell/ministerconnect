@@ -1216,41 +1216,47 @@ export const handlers = [
     const { id } = params;
     const userId = parseInt(id as string);
     
-    // Generate a temporary password
-    const generateTemporaryPassword = () => {
+    // Generate a secure reset token
+    const generateResetToken = () => {
       const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
       let result = '';
-      for (let i = 0; i < 12; i++) {
+      for (let i = 0; i < 64; i++) {
         result += chars.charAt(Math.floor(Math.random() * chars.length));
       }
       return result;
     };
     
-    const tempPassword = generateTemporaryPassword();
+    const resetToken = generateResetToken();
+    const resetTokenHash = `hashed_${resetToken}`; // In real implementation, use bcrypt.hash()
     
     // In a real implementation, this would:
-    // 1. Hash the temporary password
-    // 2. Update the user's password in the database
-    // 3. Set requires_password_change to true
-    // 4. Create a password reset record
-    // 5. Send email notification to the user
+    // 1. Generate a secure reset token
+    // 2. Hash the reset token for storage
+    // 3. Create a password reset record
+    // 4. Send email with reset link to the user
+    // 5. Log the action for audit trail
     
     // Mock response
     const passwordReset = {
       id: Math.floor(Math.random() * 1000) + 1,
       user_id: userId,
       reset_by: 1, // Superadmin user ID
-      new_password: tempPassword,
-      expires_at: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString(), // 7 days from now
+      reset_token: resetToken, // Only returned in response, not stored in DB
+      reset_token_hash: resetTokenHash, // This is what gets stored in DB
+      expires_at: new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString(), // 24 hours from now
       used: false,
       created_at: new Date().toISOString(),
     };
     
     return HttpResponse.json({
       success: true,
-      message: 'Password reset successfully',
-      temporary_password: tempPassword,
-      password_reset: passwordReset,
+      message: 'Password reset token generated successfully',
+      reset_token: resetToken, // For demo purposes - in production, send via email
+      reset_link: `${process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000'}/auth/reset-password?token=${resetToken}`,
+      password_reset: {
+        ...passwordReset,
+        reset_token: undefined // Don't include token in the stored record
+      },
     });
   }),
 
@@ -1265,8 +1271,8 @@ export const handlers = [
         id: 1,
         user_id: userId,
         reset_by: 1,
-        new_password: 'tempPass123',
-        expires_at: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString(),
+        reset_token_hash: 'hashed_reset_token_1',
+        expires_at: new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString(),
         used: false,
         created_at: new Date().toISOString(),
       },
@@ -1274,7 +1280,7 @@ export const handlers = [
         id: 2,
         user_id: userId,
         reset_by: 1,
-        new_password: 'tempPass456',
+        reset_token_hash: 'hashed_reset_token_2',
         expires_at: new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString(), // Expired
         used: true,
         created_at: new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString(),

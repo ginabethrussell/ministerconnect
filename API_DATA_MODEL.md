@@ -177,9 +177,10 @@ This document describes the core data models and API endpoints for the Minister 
   "id": 1,
   "user_id": 5,
   "reset_by": 1, // User ID who performed the reset
-  "new_password": "tempPass123", // Temporary password generated
-  "expires_at": "2024-01-22T23:59:59.000Z", // When the temporary password expires
-  "used": false, // Whether the user has used the temporary password
+  "reset_token": "a1b2c3d4e5f6789012345678901234567890abcdef1234567890abcdef123456", // Secure reset token (not stored in DB)
+  "reset_token_hash": "hashed_version_of_token", // Hashed version of the token for storage
+  "expires_at": "2024-01-22T23:59:59.000Z", // When the reset token expires
+  "used": false, // Whether the reset token has been used
   "created_at": "2024-01-15T10:30:00.000Z"
 }
 ```
@@ -193,7 +194,8 @@ This document describes the core data models and API endpoints for the Minister 
 - `POST /api/register` — Register candidate
 - `POST /api/validate-invite` — Validate invite code
 - `POST /api/forgot-password` — Request password reset
-- `POST /api/reset-password` — Reset password
+- `POST /api/reset-password` — Reset password using token
+- `POST /api/validate-reset-token` — Validate reset token
 - `POST /api/force-password-change` — Force password change on first login
 
 ### User Management
@@ -234,7 +236,7 @@ This document describes the core data models and API endpoints for the Minister 
 - `POST /api/superadmin/invite-codes` — Create invite code
 - `PUT /api/superadmin/invite-codes/:id` — Update invite code
 - `DELETE /api/superadmin/invite-codes/:id` — Delete invite code
-- `POST /api/superadmin/users/:id/reset-password` — Reset user password (superadmin)
+- `POST /api/superadmin/users/:id/reset-password` — Generate reset token for user (superadmin)
 - `GET /api/superadmin/users/:id/password-resets` — Get password reset history (superadmin)
 
 ### Admin Operations

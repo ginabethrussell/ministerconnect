@@ -107,8 +107,9 @@ export interface PasswordReset {
   id: number;
   user_id: number;
   reset_by: number; // User ID who performed the reset
-  new_password: string; // Temporary password generated
-  expires_at: string; // When the temporary password expires
-  used: boolean; // Whether the user has used the temporary password
+  reset_token: string; // Secure reset token (not stored in DB)
+  reset_token_hash: string; // Hashed version of the token for storage
+  expires_at: string; // When the reset token expires
+  used: boolean; // Whether the reset token has been used
   created_at: string;
 }
