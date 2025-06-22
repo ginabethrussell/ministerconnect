@@ -15,7 +15,7 @@ export default function SuperAdminUsers() {
     { id: 2, name: 'Grace Community Church', email: 'pastor@gracechurch.com', role: 'church', status: 'active', createdAt: '2024-01-10' },
     { id: 3, name: 'Jane Doe', email: 'jane.doe@email.com', role: 'candidate', status: 'pending', createdAt: '2024-01-20' },
     { id: 4, name: 'First Baptist Church', email: 'admin@firstbaptist.com', role: 'church', status: 'active', createdAt: '2024-01-05' },
-    { id: 5, name: 'Mike Johnson', email: 'mike.johnson@email.com', role: 'candidate', status: 'suspended', createdAt: '2024-01-12' },
+    { id: 5, name: 'Mike Johnson', email: 'mike.johnson@email.com', role: 'candidate', status: 'inactive', createdAt: '2024-01-12' },
   ];
 
   const filteredUsers = users.filter(user => {
@@ -29,7 +29,7 @@ export default function SuperAdminUsers() {
     switch (status) {
       case 'active': return 'bg-green-100 text-green-800';
       case 'pending': return 'bg-yellow-100 text-yellow-800';
-      case 'suspended': return 'bg-red-100 text-red-800';
+      case 'inactive': return 'bg-red-100 text-red-800';
       default: return 'bg-gray-100 text-gray-800';
     }
   };
@@ -140,9 +140,9 @@ export default function SuperAdminUsers() {
             </div>
           </div>
 
-          <div className="overflow-x-auto">
+          <div>
             <table className="w-full">
-              <thead>
+              <thead className="hidden md:table-header-group">
                 <tr className="border-b border-gray-200">
                   <th className="text-left py-3 px-4 font-semibold text-efcaDark">User</th>
                   <th className="text-left py-3 px-4 font-semibold text-efcaDark">Role</th>
@@ -153,49 +153,56 @@ export default function SuperAdminUsers() {
               </thead>
               <tbody>
                 {filteredUsers.map((user) => (
-                  <tr key={user.id} className="border-b border-gray-100 hover:bg-gray-50">
-                    <td className="py-4 px-4">
-                      <div>
-                        <p className="font-medium text-efcaDark">{user.name}</p>
-                        <p className="text-sm text-gray-600">{user.email}</p>
+                  <tr key={user.id} className="block md:table-row mb-4 rounded-lg border border-gray-200 p-4 md:mb-0 md:border-0 md:border-b md:border-gray-100 md:p-0 md:hover:bg-gray-50 md:rounded-none">
+                    <td className="block md:table-cell py-2 px-4 md:py-4 md:px-4">
+                      <span className="font-bold md:hidden mr-2">User:</span>
+                      <span>
+                        <p className="font-medium text-efcaDark inline md:block">{user.name}</p>
+                        <p className="text-sm text-gray-600 md:block">{user.email}</p>
+                      </span>
+                    </td>
+                    <td className="block md:table-cell py-2 px-4 md:py-4 md:px-4">
+                      <div className="flex justify-between items-center">
+                        <span className="font-bold md:hidden">Role:</span>
+                        <span className={`px-2 py-1 rounded-full text-xs font-medium ${getRoleColor(user.role)}`}>
+                          {user.role.charAt(0).toUpperCase() + user.role.slice(1)}
+                        </span>
                       </div>
                     </td>
-                    <td className="py-4 px-4">
-                      <span className={`px-2 py-1 rounded-full text-xs font-medium ${getRoleColor(user.role)}`}>
-                        {user.role.charAt(0).toUpperCase() + user.role.slice(1)}
-                      </span>
+                    <td className="block md:table-cell py-2 px-4 md:py-4 md:px-4">
+                      <div className="flex justify-between items-center">
+                        <span className="font-bold md:hidden">Status:</span>
+                        <span className={`px-2 py-1 rounded-full text-xs font-medium ${getStatusColor(user.status)}`}>
+                          {user.status.charAt(0).toUpperCase() + user.status.slice(1)}
+                        </span>
+                      </div>
                     </td>
-                    <td className="py-4 px-4">
-                      <span className={`px-2 py-1 rounded-full text-xs font-medium ${getStatusColor(user.status)}`}>
-                        {user.status.charAt(0).toUpperCase() + user.status.slice(1)}
-                      </span>
+                    <td className="block md:table-cell py-2 px-4 md:py-4 md:px-4 text-sm text-gray-600">
+                      <div className="flex justify-between items-center">
+                        <span className="font-bold md:hidden">Joined:</span>
+                        <span>{new Date(user.createdAt).toLocaleDateString()}</span>
+                      </div>
                     </td>
-                    <td className="py-4 px-4 text-sm text-gray-600">
-                      {new Date(user.createdAt).toLocaleDateString()}
-                    </td>
-                    <td className="py-4 px-4">
-                      <div className="flex space-x-2">
-                        <button className="text-efcaAccent hover:text-blue-700 text-sm font-medium">
-                          View
-                        </button>
-                        <button className="text-gray-600 hover:text-gray-800 text-sm font-medium">
-                          Edit
-                        </button>
-                        <button 
-                          onClick={() => handleResetPassword(user)}
-                          className="text-orange-600 hover:text-orange-800 text-sm font-medium"
-                        >
-                          Reset Password
-                        </button>
-                        {user.status === 'active' ? (
-                          <button className="text-red-600 hover:text-red-800 text-sm font-medium">
-                            Suspend
+                    <td className="block md:table-cell py-2 px-4 md:py-4 md:px-4">
+                      <div className="flex justify-between items-center md:justify-start md:space-x-2">
+                        <span className="font-bold md:hidden">Actions:</span>
+                        <div className="flex space-x-2">
+                          <button 
+                            onClick={() => handleResetPassword(user)}
+                            className="px-3 py-1.5 bg-blue-600 text-white rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:opacity-50 disabled:cursor-not-allowed transition-colors text-sm font-medium"
+                          >
+                            Reset Password
                           </button>
-                        ) : (
-                          <button className="text-green-600 hover:text-green-800 text-sm font-medium">
-                            Activate
-                          </button>
-                        )}
+                          {user.status === 'active' ? (
+                            <button className="px-3 py-1.5 bg-red-600 text-white rounded-md hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-500 disabled:opacity-50 disabled:cursor-not-allowed transition-colors text-sm font-medium w-24 text-center">
+                              Deactivate
+                            </button>
+                          ) : (
+                            <button className="px-3 py-1.5 bg-green-600 text-white rounded-md hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-500 disabled:opacity-50 disabled:cursor-not-allowed transition-colors text-sm font-medium w-24 text-center">
+                              Activate
+                            </button>
+                          )}
+                        </div>
                       </div>
                     </td>
                   </tr>

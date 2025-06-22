@@ -119,12 +119,6 @@ const Header = ({ role, onLogout, profileStatus }: HeaderProps) => {
               <Link href="/superadmin/churches" className={navLinkClass('/superadmin/churches')}>
                 Manage Churches
               </Link>
-              <Link href="/superadmin/profiles" className={navLinkClass('/superadmin/profiles')}>
-                Manage Profiles
-              </Link>
-              <Link href="/superadmin/invite-codes" className={navLinkClass('/superadmin/invite-codes')}>
-                Manage Invite Codes
-              </Link>
             </>
           )}
           {role && (

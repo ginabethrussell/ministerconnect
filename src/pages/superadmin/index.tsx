@@ -55,22 +55,6 @@ export default function SuperAdminDashboard() {
                 <span className="font-medium text-efcaDark">Manage Churches</span>
                 <p className="text-sm text-gray-600">Review and manage church accounts</p>
               </Link>
-              
-              <Link
-                href="/superadmin/profiles"
-                className="block w-full text-left px-4 py-3 bg-gray-50 hover:bg-gray-100 rounded-lg transition-colors"
-              >
-                <span className="font-medium text-efcaDark">Review Profiles</span>
-                <p className="text-sm text-gray-600">Approve or reject candidate profiles</p>
-              </Link>
-              
-              <Link
-                href="/superadmin/invite-codes"
-                className="block w-full text-left px-4 py-3 bg-gray-50 hover:bg-gray-100 rounded-lg transition-colors"
-              >
-                <span className="font-medium text-efcaDark">Invite Codes</span>
-                <p className="text-sm text-gray-600">Generate and manage invite codes</p>
-              </Link>
             </div>
           </div>
 

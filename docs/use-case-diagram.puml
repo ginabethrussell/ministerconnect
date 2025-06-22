@@ -29,8 +29,6 @@ rectangle "Minister Connect App" {
   (Display Application Metrics)
   (ProvidePassword Reset)
   (Provide User Status Management)
-  (Provide Profile Status Management)
-  (Provide Invite Code Status Management)
   (Provide Church Status Management)
 }
 
@@ -56,7 +54,5 @@ SuperAdmin --> (Authenticate User)
 SuperAdmin --> (Display Application Metrics)
 SuperAdmin --> (ProvidePassword Reset)
 SuperAdmin --> (Provide User Status Management)
-SuperAdmin --> (Provide Profile Status Management)
-SuperAdmin --> (Provide Invite Code Status Management)
 SuperAdmin --> (Provide Church Status Management)
 @enduml
