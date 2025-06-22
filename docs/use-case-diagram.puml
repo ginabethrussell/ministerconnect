@@ -1,29 +1,37 @@
-@startuml
+@startuml MinisterConnectUseCaseDiagram
+
 title Minister Connect - Use Case Diagram (System-Centric)
 left to right direction
 
 actor Candidate
 actor Church
 actor Admin
+actor SuperAdmin
 
 rectangle "Minister Connect App" {
 
   (Authenticate User)
+
   (Allow Profile Editing)
-  
   (Present Job Listings)
   (Record Interest in Job Listing)
   
-  (Accept Job Listings from Churches)
-  (Present Candidate Profiles to Churches)
+  (Accept Job Listings)
+  (Present Candidate Profiles)
   (Record Interest in Candidate)
-  
   (Detect and Display Mutual Matches)
-  
+
   (Allow Listing Moderation)
   (Allow Profile Moderation)
   (Manage Invite Code Access)
   (Administer User Accounts)
+
+  (Display Application Metrics)
+  (ProvidePassword Reset)
+  (Provide User Status Management)
+  (Provide Profile Status Management)
+  (Provide Invite Code Status Management)
+  (Provide Church Status Management)
 }
 
 Candidate --> (Authenticate User)
@@ -33,14 +41,22 @@ Candidate --> (Record Interest in Job Listing)
 
 Church --> (Authenticate User)
 Church --> (Allow Profile Editing)
-Church --> (Accept Job Listings from Churches)
-Church --> (Present Candidate Profiles to Churches)
+Church --> (Accept Job Listings)
+Church --> (Present Candidate Profiles)
 Church --> (Record Interest in Candidate)
 Church --> (Detect and Display Mutual Matches)
 
+Admin --> (Authenticate User)
 Admin --> (Allow Listing Moderation)
 Admin --> (Allow Profile Moderation)
 Admin --> (Manage Invite Code Access)
 Admin --> (Administer User Accounts)
 
+SuperAdmin --> (Authenticate User)
+SuperAdmin --> (Display Application Metrics)
+SuperAdmin --> (ProvidePassword Reset)
+SuperAdmin --> (Provide User Status Management)
+SuperAdmin --> (Provide Profile Status Management)
+SuperAdmin --> (Provide Invite Code Status Management)
+SuperAdmin --> (Provide Church Status Management)
 @enduml

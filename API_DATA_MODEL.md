@@ -20,7 +20,9 @@ This document describes the core data models and API endpoints for the Minister 
   "city": "Springfield",
   "state": "IL",
   "zipcode": "62704",
+  "location": "Springfield, IL",
   "status": "active",
+  "job_listings_count": 3,
   "created_at": "2024-01-01T00:00:00.000Z",
   "updated_at": "2024-01-01T00:00:00.000Z"
 }
@@ -34,10 +36,13 @@ This document describes the core data models and API endpoints for the Minister 
 {
   "id": 1,
   "email": "admin@ministerconnect.com",
+  "name": "Super Admin User",
   "password": "password123", // encrypted on the backend
-  "role": "admin", // or "church", "candidate"
+  "role": "superadmin", // or "admin", "church", "candidate"
   "church_id": null,
+  "status": "active", // or "pending", "suspended"
   "requires_password_change": false, // Track if user needs to change password on first login
+  "last_login": "2024-01-15T10:30:00.000Z",
   "created_at": "2024-01-01T00:00:00.000Z",
   "updated_at": "2024-01-01T00:00:00.000Z"
 }
@@ -50,10 +55,13 @@ This document describes the core data models and API endpoints for the Minister 
 ```json
 {
   "id": 1,
-  "code": "SUMMERCONF24",
-  "event": "Summer Conference 2024",
-  "uses": 15,
-  "status": "active",
+  "code": "CHURCH2024",
+  "type": "church", // or "candidate"
+  "max_uses": 10,
+  "used_count": 3,
+  "status": "active", // or "expired", "used"
+  "created_by": 1, // User ID who created this code
+  "expires_at": "2024-12-31T23:59:59.000Z",
   "created_at": "2024-01-01T00:00:00.000Z",
   "updated_at": "2024-01-01T00:00:00.000Z"
 }
@@ -80,6 +88,7 @@ This document describes the core data models and API endpoints for the Minister 
   "resume": "/student-pastor-resume.pdf",
   "video_url": "https://www.youtube.com/live/jfKfPfyJRdk",
   "placement_preferences": ["Youth Ministry", "Missions"],
+  "submitted_at": "2024-01-20T14:30:00.000Z",
   "created_at": "2024-01-01T00:00:00.000Z",
   "updated_at": "2024-01-01T00:00:00.000Z"
 }
@@ -122,6 +131,62 @@ This document describes the core data models and API endpoints for the Minister 
 
 ---
 
+## 7. Activity Log Model
+
+```json
+{
+  "id": 1,
+  "user_id": 1, // User who performed the action (null for system events)
+  "action": "profile_approved", // e.g., "profile_approved", "church_registered", "job_created"
+  "entity_type": "profile", // or "user", "church", "job_listing", "invite_code"
+  "entity_id": 5, // ID of the affected entity
+  "details": "Profile approved for John Smith",
+  "created_at": "2024-01-15T10:30:00.000Z"
+}
+```
+
+---
+
+## 8. Dashboard Statistics Model
+
+```json
+{
+  "total_users": 1247,
+  "active_churches": 89,
+  "job_listings": 156,
+  "pending_reviews": 23,
+  "recent_activity": [
+    {
+      "id": 1,
+      "user_id": 1,
+      "action": "profile_approved",
+      "entity_type": "profile",
+      "entity_id": 5,
+      "details": "Profile approved for John Smith",
+      "created_at": "2024-01-15T10:30:00.000Z"
+    }
+  ]
+}
+```
+
+---
+
+## 9. Password Reset Model
+
+```json
+{
+  "id": 1,
+  "user_id": 5,
+  "reset_by": 1, // User ID who performed the reset
+  "new_password": "tempPass123", // Temporary password generated
+  "expires_at": "2024-01-22T23:59:59.000Z", // When the temporary password expires
+  "used": false, // Whether the user has used the temporary password
+  "created_at": "2024-01-15T10:30:00.000Z"
+}
+```
+
+---
+
 ## API Endpoints
 
 ### Authentication
@@ -136,11 +201,15 @@ This document describes the core data models and API endpoints for the Minister 
 - `GET /api/user` — Get current user data
 - `GET /api/candidates` — List candidates (admin/church)
 - `GET /api/churches` — List churches (admin)
+- `GET /api/users` — List all users (superadmin)
+- `PUT /api/users/:id` — Update user status (superadmin)
 
 ### Profiles
 - `GET /api/profile` — Get candidate profile
 - `POST /api/profile` — Update candidate profile
 - `POST /api/profile/upload` — Upload candidate document
+- `GET /api/profiles` — List all profiles (superadmin)
+- `POST /api/profiles/:id/review` — Approve/reject profile (superadmin)
 
 ### Job Listings
 - `GET /api/job-listings` — List job listings (with optional status filter)
@@ -152,6 +221,22 @@ This document describes the core data models and API endpoints for the Minister 
 - `GET /api/mutual-interests` — Get mutual interests for current user/church
 - `POST /api/mutual-interests` — Express interest in a job/candidate
 - `DELETE /api/mutual-interests/:id` — Remove interest
+
+### Superadmin Operations
+- `GET /api/superadmin/dashboard` — Get dashboard statistics
+- `GET /api/superadmin/activity` — Get recent activity log
+- `GET /api/superadmin/users` — List all users (superadmin)
+- `PUT /api/superadmin/users/:id` — Update user status (superadmin)
+- `GET /api/superadmin/profiles` — List all profiles (superadmin)
+- `POST /api/superadmin/profiles/:id/review` — Approve/reject profile (superadmin)
+- `GET /api/superadmin/churches` — List all churches (superadmin)
+- `PUT /api/superadmin/churches/:id` — Update church status (superadmin)
+- `GET /api/superadmin/invite-codes` — List invite codes
+- `POST /api/superadmin/invite-codes` — Create invite code
+- `PUT /api/superadmin/invite-codes/:id` — Update invite code
+- `DELETE /api/superadmin/invite-codes/:id` — Delete invite code
+- `POST /api/superadmin/users/:id/reset-password` — Reset user password (superadmin)
+- `GET /api/superadmin/users/:id/password-resets` — Get password reset history (superadmin)
 
 ### Admin Operations
 - `POST /api/admin/review` — Admin approves/rejects candidate profile
@@ -168,6 +253,8 @@ This document describes the core data models and API endpoints for the Minister 
 - Update this document as your data model or API evolves.
 - Keep mock data and API responses in sync with this reference for easy backend integration.
 - All timestamps are in ISO 8601 format.
-- Status fields use lowercase values: "pending", "approved", "rejected", "active", "inactive".
+- Status fields use lowercase values: "pending", "approved", "rejected", "active", "inactive", "suspended".
 - Employment types include: "Full Time with Benefits", "Part Time", "Internship".
 - Ministry types are free-form text (e.g., "Youth", "Worship", "Missions", "Children", "Administration").
+- User roles include: "candidate", "church", "admin", "superadmin".
+- Invite code types include: "church", "candidate".

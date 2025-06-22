@@ -281,7 +281,20 @@ export const handlers = [
           },
           message: 'Login successful'
         });
-      } 
+      } else if (email === 'superadminuser@gmail.com' && password === 'password') {
+        // Admin login
+        return HttpResponse.json({
+          success: true,
+          user: {
+            id: 1001,
+            email: 'superadminuser@gmail.com',
+            role: 'superadmin',
+            name: 'Super Admin User',
+            needsPasswordChange: false
+          },
+          message: 'Login successful'
+        });
+      }
     }
     
     return new HttpResponse(
@@ -1194,5 +1207,641 @@ export const handlers = [
     const removedCode = mockInviteCodes.splice(codeIndex, 1)[0];
     
     return HttpResponse.json({ message: 'Invite code deleted successfully', removedCode });
+  }),
+
+  // --- Superadmin Operations Handlers ---
+
+  // POST /api/superadmin/users/:id/reset-password - Reset user password (superadmin)
+  http.post('/api/superadmin/users/:id/reset-password', async ({ params }) => {
+    const { id } = params;
+    const userId = parseInt(id as string);
+    
+    // Generate a temporary password
+    const generateTemporaryPassword = () => {
+      const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+      let result = '';
+      for (let i = 0; i < 12; i++) {
+        result += chars.charAt(Math.floor(Math.random() * chars.length));
+      }
+      return result;
+    };
+    
+    const tempPassword = generateTemporaryPassword();
+    
+    // In a real implementation, this would:
+    // 1. Hash the temporary password
+    // 2. Update the user's password in the database
+    // 3. Set requires_password_change to true
+    // 4. Create a password reset record
+    // 5. Send email notification to the user
+    
+    // Mock response
+    const passwordReset = {
+      id: Math.floor(Math.random() * 1000) + 1,
+      user_id: userId,
+      reset_by: 1, // Superadmin user ID
+      new_password: tempPassword,
+      expires_at: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString(), // 7 days from now
+      used: false,
+      created_at: new Date().toISOString(),
+    };
+    
+    return HttpResponse.json({
+      success: true,
+      message: 'Password reset successfully',
+      temporary_password: tempPassword,
+      password_reset: passwordReset,
+    });
+  }),
+
+  // GET /api/superadmin/users/:id/password-resets - Get password reset history (superadmin)
+  http.get('/api/superadmin/users/:id/password-resets', ({ params }) => {
+    const { id } = params;
+    const userId = parseInt(id as string);
+    
+    // Mock password reset history
+    const passwordResets = [
+      {
+        id: 1,
+        user_id: userId,
+        reset_by: 1,
+        new_password: 'tempPass123',
+        expires_at: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString(),
+        used: false,
+        created_at: new Date().toISOString(),
+      },
+      {
+        id: 2,
+        user_id: userId,
+        reset_by: 1,
+        new_password: 'tempPass456',
+        expires_at: new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString(), // Expired
+        used: true,
+        created_at: new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString(),
+      },
+    ];
+    
+    return HttpResponse.json(passwordResets);
+  }),
+
+  // GET /api/superadmin/dashboard - Get dashboard statistics
+  http.get('/api/superadmin/dashboard', () => {
+    // Mock dashboard statistics
+    const dashboardStats = {
+      total_users: 1247,
+      active_churches: 89,
+      job_listings: 156,
+      pending_reviews: 23,
+      recent_activity: [
+        {
+          id: 1,
+          user_id: 1,
+          action: 'profile_approved',
+          entity_type: 'profile',
+          entity_id: 5,
+          details: 'Profile approved for John Smith',
+          created_at: new Date(Date.now() - 2 * 60 * 60 * 1000).toISOString(), // 2 hours ago
+        },
+        {
+          id: 2,
+          user_id: null,
+          action: 'church_registered',
+          entity_type: 'church',
+          entity_id: 15,
+          details: 'New church registered: Grace Community Church',
+          created_at: new Date(Date.now() - 4 * 60 * 60 * 1000).toISOString(), // 4 hours ago
+        },
+        {
+          id: 3,
+          user_id: 1,
+          action: 'job_created',
+          entity_type: 'job_listing',
+          entity_id: 42,
+          details: 'Job listing created: Associate Pastor - First Baptist',
+          created_at: new Date(Date.now() - 6 * 60 * 60 * 1000).toISOString(), // 6 hours ago
+        },
+      ],
+    };
+    
+    return HttpResponse.json(dashboardStats);
+  }),
+
+  // GET /api/superadmin/activity - Get recent activity log
+  http.get('/api/superadmin/activity', ({ request }) => {
+    const url = new URL(request.url);
+    const limit = parseInt(url.searchParams.get('limit') || '50');
+    
+    // Mock activity log
+    const activityLog = [
+      {
+        id: 1,
+        user_id: 1,
+        action: 'profile_approved',
+        entity_type: 'profile',
+        entity_id: 5,
+        details: 'Profile approved for John Smith',
+        created_at: new Date(Date.now() - 2 * 60 * 60 * 1000).toISOString(),
+      },
+      {
+        id: 2,
+        user_id: null,
+        action: 'church_registered',
+        entity_type: 'church',
+        entity_id: 15,
+        details: 'New church registered: Grace Community Church',
+        created_at: new Date(Date.now() - 4 * 60 * 60 * 1000).toISOString(),
+      },
+      {
+        id: 3,
+        user_id: 1,
+        action: 'password_reset',
+        entity_type: 'user',
+        entity_id: 8,
+        details: 'Password reset for Jane Doe',
+        created_at: new Date(Date.now() - 8 * 60 * 60 * 1000).toISOString(),
+      },
+    ].slice(0, limit);
+    
+    return HttpResponse.json(activityLog);
+  }),
+
+  // GET /api/superadmin/users - List all users (superadmin)
+  http.get('/api/superadmin/users', ({ request }) => {
+    const url = new URL(request.url);
+    const search = url.searchParams.get('search') || '';
+    const role = url.searchParams.get('role') || 'all';
+    
+    // Mock users data
+    const users = [
+      { id: 1, name: 'John Smith', email: 'john.smith@email.com', role: 'candidate', status: 'active', createdAt: '2024-01-15', last_login: '2024-01-20T10:30:00.000Z' },
+      { id: 2, name: 'Grace Community Church', email: 'pastor@gracechurch.com', role: 'church', status: 'active', createdAt: '2024-01-10', last_login: '2024-01-19T14:20:00.000Z' },
+      { id: 3, name: 'Jane Doe', email: 'jane.doe@email.com', role: 'candidate', status: 'pending', createdAt: '2024-01-20', last_login: null },
+      { id: 4, name: 'First Baptist Church', email: 'admin@firstbaptist.com', role: 'church', status: 'active', createdAt: '2024-01-05', last_login: '2024-01-18T09:15:00.000Z' },
+      { id: 5, name: 'Mike Johnson', email: 'mike.johnson@email.com', role: 'candidate', status: 'suspended', createdAt: '2024-01-12', last_login: '2024-01-15T16:45:00.000Z' },
+      { id: 6, name: 'Admin User', email: 'adminuser@gmail.com', role: 'admin', status: 'active', createdAt: '2024-01-01', last_login: '2024-01-20T11:00:00.000Z' },
+      { id: 7, name: 'Super Admin User', email: 'superadminuser@gmail.com', role: 'superadmin', status: 'active', createdAt: '2024-01-01', last_login: '2024-01-20T12:30:00.000Z' },
+    ];
+    
+    // Filter by search term
+    let filteredUsers = users;
+    if (search) {
+      filteredUsers = users.filter(user => 
+        user.name.toLowerCase().includes(search.toLowerCase()) || 
+        user.email.toLowerCase().includes(search.toLowerCase())
+      );
+    }
+    
+    // Filter by role
+    if (role !== 'all') {
+      filteredUsers = filteredUsers.filter(user => user.role === role);
+    }
+    
+    return HttpResponse.json(filteredUsers);
+  }),
+
+  // PUT /api/superadmin/users/:id - Update user status (superadmin)
+  http.put('/api/superadmin/users/:id', async ({ params, request }) => {
+    const { id } = params;
+    const userId = parseInt(id as string);
+    const updateData = await request.json() as any;
+    
+    // Mock users data
+    const users = [
+      { id: 1, name: 'John Smith', email: 'john.smith@email.com', role: 'candidate', status: 'active', createdAt: '2024-01-15', last_login: '2024-01-20T10:30:00.000Z' },
+      { id: 2, name: 'Grace Community Church', email: 'pastor@gracechurch.com', role: 'church', status: 'active', createdAt: '2024-01-10', last_login: '2024-01-19T14:20:00.000Z' },
+      { id: 3, name: 'Jane Doe', email: 'jane.doe@email.com', role: 'candidate', status: 'pending', createdAt: '2024-01-20', last_login: null },
+      { id: 4, name: 'First Baptist Church', email: 'admin@firstbaptist.com', role: 'church', status: 'active', createdAt: '2024-01-05', last_login: '2024-01-18T09:15:00.000Z' },
+      { id: 5, name: 'Mike Johnson', email: 'mike.johnson@email.com', role: 'candidate', status: 'suspended', createdAt: '2024-01-12', last_login: '2024-01-15T16:45:00.000Z' },
+    ];
+    
+    const userIndex = users.findIndex(user => user.id === userId);
+    if (userIndex === -1) {
+      return new HttpResponse(
+        JSON.stringify({ message: 'User not found' }),
+        { status: 404 }
+      );
+    }
+    
+    // Update the user
+    users[userIndex] = {
+      ...users[userIndex],
+      ...updateData,
+      updated_at: new Date().toISOString(),
+    };
+    
+    return HttpResponse.json(users[userIndex]);
+  }),
+
+  // GET /api/superadmin/profiles - List all profiles (superadmin)
+  http.get('/api/superadmin/profiles', ({ request }) => {
+    const url = new URL(request.url);
+    const search = url.searchParams.get('search') || '';
+    const status = url.searchParams.get('status') || 'all';
+    
+    // Mock profiles data
+    const profiles = [
+      { 
+        id: 1, 
+        name: 'John Smith', 
+        email: 'john.smith@email.com', 
+        status: 'pending', 
+        submittedAt: '2024-01-20',
+        hasResume: true
+      },
+      { 
+        id: 2, 
+        name: 'Jane Doe', 
+        email: 'jane.doe@email.com', 
+        status: 'approved', 
+        submittedAt: '2024-01-15',
+        hasResume: true
+      },
+      { 
+        id: 3, 
+        name: 'Mike Johnson', 
+        email: 'mike.johnson@email.com', 
+        status: 'rejected', 
+        submittedAt: '2024-01-18',
+        hasResume: false
+      },
+      { 
+        id: 4, 
+        name: 'Sarah Wilson', 
+        email: 'sarah.wilson@email.com', 
+        status: 'pending', 
+        submittedAt: '2024-01-22',
+        hasResume: true
+      },
+    ];
+    
+    // Filter by search term
+    let filteredProfiles = profiles;
+    if (search) {
+      filteredProfiles = profiles.filter(profile => 
+        profile.name.toLowerCase().includes(search.toLowerCase()) || 
+        profile.email.toLowerCase().includes(search.toLowerCase())
+      );
+    }
+    
+    // Filter by status
+    if (status !== 'all') {
+      filteredProfiles = filteredProfiles.filter(profile => profile.status === status);
+    }
+    
+    return HttpResponse.json(filteredProfiles);
+  }),
+
+  // POST /api/superadmin/profiles/:id/review - Approve/reject profile (superadmin)
+  http.post('/api/superadmin/profiles/:id/review', async ({ params, request }) => {
+    const { id } = params;
+    const profileId = parseInt(id as string);
+    const { status, notes } = await request.json() as { status: 'approved' | 'rejected'; notes?: string };
+    
+    // Mock profiles data
+    const profiles = [
+      { 
+        id: 1, 
+        name: 'John Smith', 
+        email: 'john.smith@email.com', 
+        status: 'pending', 
+        submittedAt: '2024-01-20',
+        hasResume: true
+      },
+      { 
+        id: 2, 
+        name: 'Jane Doe', 
+        email: 'jane.doe@email.com', 
+        status: 'approved', 
+        submittedAt: '2024-01-15',
+        hasResume: true
+      },
+    ];
+    
+    const profileIndex = profiles.findIndex(profile => profile.id === profileId);
+    if (profileIndex === -1) {
+      return new HttpResponse(
+        JSON.stringify({ message: 'Profile not found' }),
+        { status: 404 }
+      );
+    }
+    
+    // Update the profile status
+    profiles[profileIndex].status = status;
+    
+    return HttpResponse.json({
+      success: true,
+      message: `Profile ${status} successfully`,
+      profile: profiles[profileIndex],
+      notes: notes || null,
+    });
+  }),
+
+  // GET /api/superadmin/churches - List all churches (superadmin)
+  http.get('/api/superadmin/churches', ({ request }) => {
+    const url = new URL(request.url);
+    const search = url.searchParams.get('search') || '';
+    const status = url.searchParams.get('status') || 'all';
+    
+    // Mock churches data
+    const churches = [
+      { 
+        id: 1, 
+        name: 'Grace Community Church', 
+        email: 'pastor@gracechurch.com', 
+        phone: '(555) 123-4567',
+        location: 'Springfield, IL',
+        status: 'active', 
+        job_listings_count: 3,
+        createdAt: '2024-01-10' 
+      },
+      { 
+        id: 2, 
+        name: 'First Baptist Church', 
+        email: 'admin@firstbaptist.com', 
+        phone: '(555) 234-5678',
+        location: 'Chicago, IL',
+        status: 'active', 
+        job_listings_count: 2,
+        createdAt: '2024-01-05' 
+      },
+      { 
+        id: 3, 
+        name: 'St. Mary\'s Catholic Church', 
+        email: 'office@stmarys.com', 
+        phone: '(555) 345-6789',
+        location: 'Peoria, IL',
+        status: 'pending', 
+        job_listings_count: 0,
+        createdAt: '2024-01-20' 
+      },
+      { 
+        id: 4, 
+        name: 'Hope Lutheran Church', 
+        email: 'pastor@hopelutheran.com', 
+        phone: '(555) 456-7890',
+        location: 'Rockford, IL',
+        status: 'suspended', 
+        job_listings_count: 1,
+        createdAt: '2024-01-12' 
+      },
+    ];
+    
+    // Filter by search term
+    let filteredChurches = churches;
+    if (search) {
+      filteredChurches = churches.filter(church => 
+        church.name.toLowerCase().includes(search.toLowerCase()) || 
+        church.email.toLowerCase().includes(search.toLowerCase()) ||
+        church.location.toLowerCase().includes(search.toLowerCase())
+      );
+    }
+    
+    // Filter by status
+    if (status !== 'all') {
+      filteredChurches = filteredChurches.filter(church => church.status === status);
+    }
+    
+    return HttpResponse.json(filteredChurches);
+  }),
+
+  // PUT /api/superadmin/churches/:id - Update church status (superadmin)
+  http.put('/api/superadmin/churches/:id', async ({ params, request }) => {
+    const { id } = params;
+    const churchId = parseInt(id as string);
+    const updateData = await request.json() as any;
+    
+    // Mock churches data
+    const churches = [
+      { 
+        id: 1, 
+        name: 'Grace Community Church', 
+        email: 'pastor@gracechurch.com', 
+        phone: '(555) 123-4567',
+        location: 'Springfield, IL',
+        status: 'active', 
+        job_listings_count: 3,
+        createdAt: '2024-01-10' 
+      },
+      { 
+        id: 2, 
+        name: 'First Baptist Church', 
+        email: 'admin@firstbaptist.com', 
+        phone: '(555) 234-5678',
+        location: 'Chicago, IL',
+        status: 'active', 
+        job_listings_count: 2,
+        createdAt: '2024-01-05' 
+      },
+    ];
+    
+    const churchIndex = churches.findIndex(church => church.id === churchId);
+    if (churchIndex === -1) {
+      return new HttpResponse(
+        JSON.stringify({ message: 'Church not found' }),
+        { status: 404 }
+      );
+    }
+    
+    // Update the church
+    churches[churchIndex] = {
+      ...churches[churchIndex],
+      ...updateData,
+      updated_at: new Date().toISOString(),
+    };
+    
+    return HttpResponse.json(churches[churchIndex]);
+  }),
+
+  // GET /api/superadmin/invite-codes - List invite codes (superadmin)
+  http.get('/api/superadmin/invite-codes', ({ request }) => {
+    const url = new URL(request.url);
+    const search = url.searchParams.get('search') || '';
+    const status = url.searchParams.get('status') || 'all';
+    
+    // Mock invite codes data
+    const inviteCodes = [
+      { 
+        id: 1, 
+        code: 'CHURCH2024', 
+        type: 'church', 
+        max_uses: 10,
+        used_count: 3,
+        status: 'active', 
+        created_by: 1,
+        created_at: '2024-01-15',
+        expires_at: '2024-12-31'
+      },
+      { 
+        id: 2, 
+        code: 'CANDIDATE2024', 
+        type: 'candidate', 
+        max_uses: 50,
+        used_count: 50,
+        status: 'expired', 
+        created_by: 1,
+        created_at: '2024-01-10',
+        expires_at: '2024-06-30'
+      },
+      { 
+        id: 3, 
+        code: 'GRACE2024', 
+        type: 'church', 
+        max_uses: 1,
+        used_count: 1,
+        status: 'used', 
+        created_by: 1,
+        created_at: '2024-01-20',
+        expires_at: '2024-12-31'
+      },
+      { 
+        id: 4, 
+        code: 'MINISTRY2024', 
+        type: 'candidate', 
+        max_uses: 25,
+        used_count: 12,
+        status: 'active', 
+        created_by: 1,
+        created_at: '2024-01-18',
+        expires_at: '2024-12-31'
+      },
+    ];
+    
+    // Filter by search term
+    let filteredCodes = inviteCodes;
+    if (search) {
+      filteredCodes = inviteCodes.filter(code => 
+        code.code.toLowerCase().includes(search.toLowerCase()) || 
+        code.type.toLowerCase().includes(search.toLowerCase())
+      );
+    }
+    
+    // Filter by status
+    if (status !== 'all') {
+      filteredCodes = filteredCodes.filter(code => code.status === status);
+    }
+    
+    return HttpResponse.json(filteredCodes);
+  }),
+
+  // POST /api/superadmin/invite-codes - Create invite code (superadmin)
+  http.post('/api/superadmin/invite-codes', async ({ request }) => {
+    const { code, type, max_uses, expires_at } = await request.json() as {
+      code: string;
+      type: 'church' | 'candidate';
+      max_uses: number;
+      expires_at: string;
+    };
+    
+    // Generate new ID
+    const newInviteCode = {
+      id: Math.floor(Math.random() * 1000) + 1,
+      code,
+      type,
+      max_uses,
+      used_count: 0,
+      status: 'active',
+      created_by: 1, // Superadmin user ID
+      created_at: new Date().toISOString(),
+      expires_at,
+    };
+    
+    return HttpResponse.json(newInviteCode, { status: 201 });
+  }),
+
+  // PUT /api/superadmin/invite-codes/:id - Update invite code (superadmin)
+  http.put('/api/superadmin/invite-codes/:id', async ({ params, request }) => {
+    const { id } = params;
+    const inviteCodeId = parseInt(id as string);
+    const updateData = await request.json() as any;
+    
+    // Mock invite codes data
+    const inviteCodes = [
+      { 
+        id: 1, 
+        code: 'CHURCH2024', 
+        type: 'church', 
+        max_uses: 10,
+        used_count: 3,
+        status: 'active', 
+        created_by: 1,
+        created_at: '2024-01-15',
+        expires_at: '2024-12-31'
+      },
+      { 
+        id: 2, 
+        code: 'CANDIDATE2024', 
+        type: 'candidate', 
+        max_uses: 50,
+        used_count: 50,
+        status: 'expired', 
+        created_by: 1,
+        created_at: '2024-01-10',
+        expires_at: '2024-06-30'
+      },
+    ];
+    
+    const codeIndex = inviteCodes.findIndex(code => code.id === inviteCodeId);
+    if (codeIndex === -1) {
+      return new HttpResponse(
+        JSON.stringify({ message: 'Invite code not found' }),
+        { status: 404 }
+      );
+    }
+    
+    // Update the invite code
+    inviteCodes[codeIndex] = {
+      ...inviteCodes[codeIndex],
+      ...updateData,
+      updated_at: new Date().toISOString(),
+    };
+    
+    return HttpResponse.json(inviteCodes[codeIndex]);
+  }),
+
+  // DELETE /api/superadmin/invite-codes/:id - Delete invite code (superadmin)
+  http.delete('/api/superadmin/invite-codes/:id', ({ params }) => {
+    const { id } = params;
+    const inviteCodeId = parseInt(id as string);
+    
+    // Mock invite codes data
+    const inviteCodes = [
+      { 
+        id: 1, 
+        code: 'CHURCH2024', 
+        type: 'church', 
+        max_uses: 10,
+        used_count: 3,
+        status: 'active', 
+        created_by: 1,
+        created_at: '2024-01-15',
+        expires_at: '2024-12-31'
+      },
+      { 
+        id: 2, 
+        code: 'CANDIDATE2024', 
+        type: 'candidate', 
+        max_uses: 50,
+        used_count: 50,
+        status: 'expired', 
+        created_by: 1,
+        created_at: '2024-01-10',
+        expires_at: '2024-06-30'
+      },
+    ];
+    
+    const codeIndex = inviteCodes.findIndex(code => code.id === inviteCodeId);
+    if (codeIndex === -1) {
+      return new HttpResponse(
+        JSON.stringify({ message: 'Invite code not found' }),
+        { status: 404 }
+      );
+    }
+    
+    const removedCode = inviteCodes.splice(codeIndex, 1)[0];
+    
+    return HttpResponse.json({ 
+      message: 'Invite code deleted successfully', 
+      removedCode 
+    });
   }),
 ];

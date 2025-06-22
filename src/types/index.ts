@@ -8,7 +8,9 @@ export interface Church {
   city: string;
   state: string;
   zipcode: string;
-  status: string;
+  location: string; // Formatted location (city, state)
+  status: 'active' | 'pending' | 'suspended';
+  job_listings_count: number; // Number of job listings for this church
   created_at: string;
   updated_at: string;
 }
@@ -16,10 +18,13 @@ export interface Church {
 export interface User {
   id: number;
   email: string;
+  name: string; // Full name of the user
   password?: string; // Password should be optional on the frontend
-  role: 'candidate' | 'church' | 'admin';
+  role: 'candidate' | 'church' | 'admin' | 'superadmin';
   church_id: number | null;
+  status: 'active' | 'pending' | 'suspended'; // User account status
   requires_password_change?: boolean; // Track if user needs to change password on first login
+  last_login: string | null; // Last login timestamp
   created_at: string;
   updated_at: string;
 }
@@ -27,9 +32,12 @@ export interface User {
 export interface InviteCode {
   id: number;
   code: string;
-  event: string;
-  uses: number;
-  status: string;
+  type: 'church' | 'candidate'; // Type of user this code is for
+  max_uses: number; // Maximum number of times this code can be used
+  used_count: number; // Current number of times used
+  status: 'active' | 'expired' | 'used';
+  created_by: number; // User ID who created this code
+  expires_at: string; // Expiration date
   created_at: string;
   updated_at: string;
 }
@@ -50,6 +58,7 @@ export interface Profile {
   resume: string;
   video_url: string;
   placement_preferences: string[];
+  submitted_at: string; // When the profile was submitted for review
   created_at: string;
   updated_at: string;
 }
@@ -75,4 +84,32 @@ export interface MutualInterest {
   expressed_by_user_id: number;
   created_at: string;
   updated_at: string;
+}
+
+export interface ActivityLog {
+  id: number;
+  user_id: number | null; // User who performed the action (null for system events)
+  action: string; // e.g., 'profile_approved', 'church_registered', 'job_created'
+  entity_type: 'user' | 'church' | 'profile' | 'job_listing' | 'invite_code';
+  entity_id: number | null; // ID of the affected entity
+  details: string; // Human-readable description
+  created_at: string;
+}
+
+export interface DashboardStats {
+  total_users: number;
+  active_churches: number;
+  job_listings: number;
+  pending_reviews: number;
+  recent_activity: ActivityLog[];
+}
+
+export interface PasswordReset {
+  id: number;
+  user_id: number;
+  reset_by: number; // User ID who performed the reset
+  new_password: string; // Temporary password generated
+  expires_at: string; // When the temporary password expires
+  used: boolean; // Whether the user has used the temporary password
+  created_at: string;
 }

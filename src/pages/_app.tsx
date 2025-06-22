@@ -20,22 +20,34 @@ const publicPaths = [
   '/auth/forgot-password',
   '/auth/reset-password',
   '/auth/force-password-change',
-  '/pdf-demo',
 ];
 
 // Define role-based paths
 const roleBasedPaths = {
-  applicant: ['/candidate', '/candidate/profile', '/candidate/jobs'],
+  candidate: ['/candidate', '/candidate/profile', '/candidate/jobs'],
   church: [
     '/church',
-    '/church/candidates',
     '/church/jobs',
     '/church/jobs/create',
     '/church/search',
-    '/church/settings',
     '/church/mutual-interests',
   ],
-  admin: ['/admin', '/admin/review', '/admin/churches', '/admin/codes'],
+  admin: [
+    '/admin',
+    '/admin/review',
+    '/admin/churches',
+    '/admin/churches/create',
+    '/admin/churches/edit',
+    '/admin/codes',
+    '/admin/jobs',
+  ],
+  superadmin: [
+    '/superadmin',
+    '/superadmin/users',
+    '/superadmin/profiles',
+    '/superadmin/churches',
+    '/superadmin/invite-codes'
+  ],
 };
 
 export default function App({ Component, pageProps }: AppProps) {
@@ -45,6 +57,7 @@ export default function App({ Component, pageProps }: AppProps) {
 
   useEffect(() => {
     // Check if user is authenticated
+    // TODO: update this to check to see if the user is authenticated
     const isAuthenticated = localStorage.getItem('isAuthenticated') === 'true';
     const userRole = localStorage.getItem('userRole');
     setRole(userRole);
@@ -89,6 +102,7 @@ export default function App({ Component, pageProps }: AppProps) {
 
   const handleLogout = () => {
     if (typeof window !== 'undefined') {
+      // TODO: update this to logout the user
       localStorage.removeItem('userRole');
       localStorage.removeItem('isAuthenticated');
       setRole(null);
