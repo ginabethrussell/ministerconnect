@@ -31,18 +31,9 @@ const Login = () => {
         
         // Check if user needs to change password
         if (data.user.needsPasswordChange) {
-          // Set flag for profile completion if needed
-          if (data.user.needsProfileCompletion) {
-            localStorage.setItem('needsProfileCompletion', 'true');
-          }
           router.push('/auth/force-password-change');
         } else {
-          // Check if profile completion is needed
-          if (data.user.needsProfileCompletion) {
-            router.push('/church/settings?incomplete=true');
-          } else {
-            router.push(`/${data.user.role}`);
-          }
+          router.push(`/${data.user.role}`);
         }
       } else {
         setError(data.message || 'Login failed');

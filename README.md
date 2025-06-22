@@ -73,16 +73,24 @@ All API endpoints are defined in `src/utils/api.ts` for easy backend integration
 - Password: `password`
 
 ### **Admin**
-- Email: `adminuser@gmail.com`
-- Password: `password`
+- Email: `admin@ministerconnect.com`
+- Password: `password123`
 
-### **Church**
-- Email: `churchuser@gmail.com`
-- Password: `password`
+### **Church (Grace Fellowship)**
+- Email: `pastor.bob@gracefellowship.org`
+- Password: `password123`
+
+### **Church (New Hope Community)**
+- Email: `pastor.sarah@newhope.com`
+- Password: `password123`
 
 ### **Candidate (Approved Profile)**
-- Email: `approvedcandidateuser@gmail.com`
-- Password: `password`
+- Email: `john.candidate@email.com`
+- Password: `password123`
+
+### **Candidate (Pending Profile)**
+- Email: `jane.candidate@email.com`
+- Password: `password123`
 
 ## Documentation
 

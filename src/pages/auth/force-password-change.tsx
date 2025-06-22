@@ -51,14 +51,7 @@ export default function ForcePasswordChange() {
         setSuccess(true);
         // Update localStorage to reflect the change
         localStorage.setItem('passwordChanged', 'true');
-        
-        // Check if user also needs to complete profile
-        const needsProfileCompletion = localStorage.getItem('needsProfileCompletion') === 'true';
-        if (needsProfileCompletion) {
-          router.push('/church/settings?incomplete=true');
-        } else {
-          router.push('/church');
-        }
+        router.push('/church');
       } else {
         setError(data.message || 'Failed to change password');
       }

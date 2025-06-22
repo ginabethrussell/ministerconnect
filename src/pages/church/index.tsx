@@ -1,52 +1,6 @@
 import Link from 'next/link';
-import { useEffect, useState } from 'react';
-import { useRouter } from 'next/router';
 
 export default function ChurchDashboard() {
-  const router = useRouter();
-  const [isProfileComplete, setIsProfileComplete] = useState<boolean | null>(null);
-  const [loading, setLoading] = useState(true);
-
-  useEffect(() => {
-    // Check if church profile is complete
-    const checkProfileCompletion = () => {
-      const churchName = localStorage.getItem('churchName');
-      const churchEmail = localStorage.getItem('churchEmail');
-      const churchPhone = localStorage.getItem('churchPhone');
-      const streetAddress = localStorage.getItem('churchStreetAddress');
-      const city = localStorage.getItem('churchCity');
-      const state = localStorage.getItem('churchState');
-      const zipCode = localStorage.getItem('churchZipCode');
-      
-      const isComplete = !!(churchName && churchEmail && churchPhone && streetAddress && city && state && zipCode);
-      setIsProfileComplete(isComplete);
-      setLoading(false);
-      
-      // If profile is not complete, redirect to settings
-      if (!isComplete) {
-        router.push('/church/settings?incomplete=true');
-      }
-    };
-
-    checkProfileCompletion();
-  }, [router]);
-
-  // Show loading state
-  if (loading) {
-    return (
-      <div className="min-h-screen bg-efcaGray flex items-center justify-center">
-        <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-efcaAccent mx-auto mb-4"></div>
-          <p className="text-gray-600">Loading dashboard...</p>
-        </div>
-      </div>
-    );
-  }
-
-  // If profile is not complete, don't render the dashboard
-  if (!isProfileComplete) {
-    return null; // Will redirect to settings
-  }
 
   return (
     <div className="min-h-screen bg-efcaGray p-8">

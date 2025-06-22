@@ -1,6 +1,4 @@
-import React, { useState, useEffect } from 'react';
-import { useRouter } from 'next/router';
-import Link from 'next/link';
+import React, { useState } from 'react';
 import PDFViewer from '../../components/PDFViewer';
 
 interface JobListing {
@@ -117,8 +115,6 @@ function getYouTubeEmbedUrl(url: string): string {
 }
 
 export default function MutualInterests() {
-  const router = useRouter();
-  const [isProfileComplete, setIsProfileComplete] = useState<boolean | null>(null);
   const [loading, setLoading] = useState(true);
   const [selectedJob, setSelectedJob] = useState<string>('all');
   const [pdfViewer, setPdfViewer] = useState<{
@@ -140,29 +136,6 @@ export default function MutualInterests() {
     title: '',
   });
 
-  useEffect(() => {
-    // Check if church profile is complete
-    const checkProfileCompletion = () => {
-      const churchName = localStorage.getItem('churchName');
-      const churchEmail = localStorage.getItem('churchEmail');
-      const churchPhone = localStorage.getItem('churchPhone');
-      const streetAddress = localStorage.getItem('churchStreetAddress');
-      const city = localStorage.getItem('churchCity');
-      const state = localStorage.getItem('churchState');
-      const zipCode = localStorage.getItem('churchZipCode');
-      
-      const isComplete = !!(churchName && churchEmail && churchPhone && streetAddress && city && state && zipCode);
-      setIsProfileComplete(isComplete);
-      setLoading(false);
-      
-      // If profile is not complete, redirect to settings
-      if (!isComplete) {
-        router.push('/church/settings?incomplete=true');
-      }
-    };
-
-    checkProfileCompletion();
-  }, [router]);
 
   const filteredCandidates = mockInterestedCandidates.filter(candidate => 
     selectedJob === 'all' || candidate.jobListingId === selectedJob
@@ -204,11 +177,6 @@ export default function MutualInterests() {
         </div>
       </div>
     );
-  }
-
-  // If profile is not complete, don't render the page
-  if (!isProfileComplete) {
-    return null; // Will redirect to settings
   }
 
   return (

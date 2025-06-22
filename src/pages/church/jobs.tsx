@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from 'react';
-import { useRouter } from 'next/router';
 import Link from 'next/link';
 import { JobListing } from '../../types';
 
@@ -8,25 +7,14 @@ interface JobListingWithStatus extends JobListing {
 }
 
 export default function ChurchJobs() {
-  const router = useRouter();
-  const [isProfileComplete, setIsProfileComplete] = useState<boolean | null>(null);
   const [loading, setLoading] = useState(true);
   const [jobs, setJobs] = useState<JobListingWithStatus[]>([]);
   const [expandedJobs, setExpandedJobs] = useState<number[]>([]);
 
   useEffect(() => {
-    // Profile completion check
-    const churchName = localStorage.getItem('churchName');
-    const isComplete = !!churchName; // Simplified check for this example
-    setIsProfileComplete(isComplete);
     setLoading(false);
-      
-    if (!isComplete) {
-      router.push('/church/settings?incomplete=true');
-    } else {
-      loadJobs();
-    }
-  }, [router]);
+    loadJobs();
+  }, []);
 
   const loadJobs = async () => {
     try {
@@ -93,10 +81,6 @@ export default function ChurchJobs() {
         </div>
       </div>
     );
-  }
-
-  if (!isProfileComplete) {
-    return null;
   }
 
   return (
@@ -199,4 +183,4 @@ export default function ChurchJobs() {
       </div>
     </div>
   );
-} 
+}

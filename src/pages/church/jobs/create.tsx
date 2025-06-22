@@ -1,12 +1,10 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { useRouter } from 'next/router';
 import Link from 'next/link';
 import { JobListing } from '../../../types';
 
 export default function CreateJob() {
   const router = useRouter();
-  const [isProfileComplete, setIsProfileComplete] = useState<boolean | null>(null);
-  const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [formData, setFormData] = useState({
     title: '',
@@ -15,28 +13,6 @@ export default function CreateJob() {
     job_description: '',
     about_church: '',
   });
-
-  useEffect(() => {
-    const checkProfileCompletion = () => {
-      const churchName = localStorage.getItem('churchName');
-      const churchEmail = localStorage.getItem('churchEmail');
-      const churchPhone = localStorage.getItem('churchPhone');
-      const streetAddress = localStorage.getItem('churchStreetAddress');
-      const city = localStorage.getItem('churchCity');
-      const state = localStorage.getItem('churchState');
-      const zipCode = localStorage.getItem('churchZipCode');
-      
-      const isComplete = !!(churchName && churchEmail && churchPhone && streetAddress && city && state && zipCode);
-      setIsProfileComplete(isComplete);
-      setLoading(false);
-      
-      if (!isComplete) {
-        router.push('/church/settings?incomplete=true');
-      }
-    };
-
-    checkProfileCompletion();
-  }, [router]);
 
   const handleInputChange = (field: string, value: string) => {
     setFormData(prev => ({ ...prev, [field]: value }));
@@ -83,21 +59,6 @@ export default function CreateJob() {
       setSaving(false);
     }
   };
-
-  if (loading) {
-    return (
-      <div className="min-h-screen bg-efcaGray flex items-center justify-center">
-        <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-efcaAccent mx-auto mb-4"></div>
-          <p className="text-gray-600">Loading...</p>
-        </div>
-      </div>
-    );
-  }
-
-  if (!isProfileComplete) {
-    return null;
-  }
 
   return (
     <div className="min-h-screen bg-efcaGray p-8">
