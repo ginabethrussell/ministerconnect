@@ -56,8 +56,7 @@ This document describes the core data models and API endpoints for the Minister 
 {
   "id": 1,
   "code": "CHURCH2024",
-  "type": "church", // or "candidate"
-  "max_uses": 10,
+  "event": "Spring 2024 Church Registration",
   "used_count": 3,
   "status": "active", // or "expired", "used"
   "created_by": 1, // User ID who created this code
@@ -257,4 +256,3 @@ This document describes the core data models and API endpoints for the Minister 
 - Employment types include: "Full Time with Benefits", "Part Time", "Internship".
 - Ministry types are free-form text (e.g., "Youth", "Worship", "Missions", "Children", "Administration").
 - User roles include: "candidate", "church", "admin", "superadmin".
-- Invite code types include: "church", "candidate".

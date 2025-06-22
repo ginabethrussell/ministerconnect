@@ -1663,8 +1663,7 @@ export const handlers = [
       { 
         id: 1, 
         code: 'CHURCH2024', 
-        type: 'church', 
-        max_uses: 10,
+        event: 'Spring 2024 Church Registration',
         used_count: 3,
         status: 'active', 
         created_by: 1,
@@ -1674,8 +1673,7 @@ export const handlers = [
       { 
         id: 2, 
         code: 'CANDIDATE2024', 
-        type: 'candidate', 
-        max_uses: 50,
+        event: 'Spring 2024 Candidate Registration',
         used_count: 50,
         status: 'expired', 
         created_by: 1,
@@ -1685,8 +1683,7 @@ export const handlers = [
       { 
         id: 3, 
         code: 'GRACE2024', 
-        type: 'church', 
-        max_uses: 1,
+        event: 'Grace Fellowship Church Registration',
         used_count: 1,
         status: 'used', 
         created_by: 1,
@@ -1696,8 +1693,7 @@ export const handlers = [
       { 
         id: 4, 
         code: 'MINISTRY2024', 
-        type: 'candidate', 
-        max_uses: 25,
+        event: 'Ministry Conference 2024',
         used_count: 12,
         status: 'active', 
         created_by: 1,
@@ -1710,8 +1706,8 @@ export const handlers = [
     let filteredCodes = inviteCodes;
     if (search) {
       filteredCodes = inviteCodes.filter(code => 
-        code.code.toLowerCase().includes(search.toLowerCase()) || 
-        code.type.toLowerCase().includes(search.toLowerCase())
+        code.code.toLowerCase().includes(search.toLowerCase()) ||
+        code.event.toLowerCase().includes(search.toLowerCase())
       );
     }
     
@@ -1725,10 +1721,9 @@ export const handlers = [
 
   // POST /api/superadmin/invite-codes - Create invite code (superadmin)
   http.post('/api/superadmin/invite-codes', async ({ request }) => {
-    const { code, type, max_uses, expires_at } = await request.json() as {
+    const { code, event, expires_at } = await request.json() as {
       code: string;
-      type: 'church' | 'candidate';
-      max_uses: number;
+      event: string;
       expires_at: string;
     };
     
@@ -1736,8 +1731,7 @@ export const handlers = [
     const newInviteCode = {
       id: Math.floor(Math.random() * 1000) + 1,
       code,
-      type,
-      max_uses,
+      event,
       used_count: 0,
       status: 'active',
       created_by: 1, // Superadmin user ID
@@ -1759,8 +1753,7 @@ export const handlers = [
       { 
         id: 1, 
         code: 'CHURCH2024', 
-        type: 'church', 
-        max_uses: 10,
+        event: 'Spring 2024 Church Registration',
         used_count: 3,
         status: 'active', 
         created_by: 1,
@@ -1770,8 +1763,7 @@ export const handlers = [
       { 
         id: 2, 
         code: 'CANDIDATE2024', 
-        type: 'candidate', 
-        max_uses: 50,
+        event: 'Spring 2024 Candidate Registration',
         used_count: 50,
         status: 'expired', 
         created_by: 1,
@@ -1808,8 +1800,7 @@ export const handlers = [
       { 
         id: 1, 
         code: 'CHURCH2024', 
-        type: 'church', 
-        max_uses: 10,
+        event: 'Spring 2024 Church Registration',
         used_count: 3,
         status: 'active', 
         created_by: 1,
@@ -1819,8 +1810,7 @@ export const handlers = [
       { 
         id: 2, 
         code: 'CANDIDATE2024', 
-        type: 'candidate', 
-        max_uses: 50,
+        event: 'Spring 2024 Candidate Registration',
         used_count: 50,
         status: 'expired', 
         created_by: 1,

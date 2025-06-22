@@ -32,8 +32,7 @@ export interface User {
 export interface InviteCode {
   id: number;
   code: string;
-  type: 'church' | 'candidate'; // Type of user this code is for
-  max_uses: number; // Maximum number of times this code can be used
+  event: string; // Human-readable description of the event/purpose
   used_count: number; // Current number of times used
   status: 'active' | 'expired' | 'used';
   created_by: number; // User ID who created this code

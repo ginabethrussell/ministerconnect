@@ -10,8 +10,7 @@ export default function SuperAdminInviteCodes() {
     { 
       id: 1, 
       code: 'CHURCH2024', 
-      type: 'church', 
-      max_uses: 10,
+      event: 'Spring 2024 Church Registration',
       used_count: 3,
       status: 'active', 
       created_by: 'Super Admin',
@@ -21,8 +20,7 @@ export default function SuperAdminInviteCodes() {
     { 
       id: 2, 
       code: 'CANDIDATE2024', 
-      type: 'candidate', 
-      max_uses: 50,
+      event: 'Spring 2024 Candidate Registration',
       used_count: 50,
       status: 'expired', 
       created_by: 'Super Admin',
@@ -32,8 +30,7 @@ export default function SuperAdminInviteCodes() {
     { 
       id: 3, 
       code: 'GRACE2024', 
-      type: 'church', 
-      max_uses: 1,
+      event: 'Grace Fellowship Church Registration',
       used_count: 1,
       status: 'used', 
       created_by: 'Super Admin',
@@ -43,8 +40,7 @@ export default function SuperAdminInviteCodes() {
     { 
       id: 4, 
       code: 'MINISTRY2024', 
-      type: 'candidate', 
-      max_uses: 25,
+      event: 'Ministry Conference 2024',
       used_count: 12,
       status: 'active', 
       created_by: 'Super Admin',
@@ -54,8 +50,8 @@ export default function SuperAdminInviteCodes() {
   ];
 
   const filteredCodes = inviteCodes.filter(code => {
-    const matchesSearch = code.code.toLowerCase().includes(searchTerm.toLowerCase()) || 
-                         code.type.toLowerCase().includes(searchTerm.toLowerCase());
+    const matchesSearch = code.code.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                         code.event.toLowerCase().includes(searchTerm.toLowerCase());
     const matchesStatus = statusFilter === 'all' || code.status === statusFilter;
     return matchesSearch && matchesStatus;
   });
@@ -65,14 +61,6 @@ export default function SuperAdminInviteCodes() {
       case 'active': return 'bg-green-100 text-green-800';
       case 'expired': return 'bg-red-100 text-red-800';
       case 'used': return 'bg-gray-100 text-gray-800';
-      default: return 'bg-gray-100 text-gray-800';
-    }
-  };
-
-  const getTypeColor = (type: string) => {
-    switch (type) {
-      case 'church': return 'bg-purple-100 text-purple-800';
-      case 'candidate': return 'bg-blue-100 text-blue-800';
       default: return 'bg-gray-100 text-gray-800';
     }
   };
@@ -114,7 +102,7 @@ export default function SuperAdminInviteCodes() {
             <div className="flex-1">
               <input
                 type="text"
-                placeholder="Search codes by code or type..."
+                placeholder="Search codes by code or event..."
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
                 className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-efcaAccent focus:border-efcaAccent"
@@ -139,7 +127,7 @@ export default function SuperAdminInviteCodes() {
               <thead>
                 <tr className="border-b border-gray-200">
                   <th className="text-left py-3 px-4 font-semibold text-efcaDark">Code</th>
-                  <th className="text-left py-3 px-4 font-semibold text-efcaDark">Type</th>
+                  <th className="text-left py-3 px-4 font-semibold text-efcaDark">Event</th>
                   <th className="text-left py-3 px-4 font-semibold text-efcaDark">Usage</th>
                   <th className="text-left py-3 px-4 font-semibold text-efcaDark">Status</th>
                   <th className="text-left py-3 px-4 font-semibold text-efcaDark">Created</th>
@@ -157,19 +145,13 @@ export default function SuperAdminInviteCodes() {
                       </div>
                     </td>
                     <td className="py-4 px-4">
-                      <span className={`px-2 py-1 rounded-full text-xs font-medium ${getTypeColor(code.type)}`}>
-                        {code.type.charAt(0).toUpperCase() + code.type.slice(1)}
-                      </span>
+                      <div>
+                        <p className="text-sm text-efcaDark">{code.event}</p>
+                      </div>
                     </td>
                     <td className="py-4 px-4">
                       <div>
-                        <p className="text-sm text-efcaDark">{code.used_count} / {code.max_uses}</p>
-                        <div className="w-full bg-gray-200 rounded-full h-2 mt-1">
-                          <div 
-                            className="bg-efcaAccent h-2 rounded-full" 
-                            style={{ width: `${(code.used_count / code.max_uses) * 100}%` }}
-                          ></div>
-                        </div>
+                        <p className="text-sm text-efcaDark">Used: {code.used_count}</p>
                       </div>
                     </td>
                     <td className="py-4 px-4">
