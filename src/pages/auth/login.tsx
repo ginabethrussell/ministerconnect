@@ -21,14 +21,14 @@ const Login = () => {
       const data = await apiClient.post<{
         access: string;
         refresh: string;
-      }>(API_ENDPOINTS.LOGIN, { email, password });
+      }>(API_ENDPOINTS.LOGIN, { email, password }, false);
 
       // Store JWT tokens
       localStorage.setItem('accessToken', data.access);
       localStorage.setItem('refreshToken', data.refresh);
       localStorage.setItem('isAuthenticated', 'true');
       localStorage.setItem('userEmail', email);
-
+      
       // Fetch current user info after login
       let userInfo;
       try {
@@ -42,23 +42,25 @@ const Login = () => {
 
       setSuccess(true);
 
-      switch (userInfo.groups[0]) {
-        case 'Super Admin':
+      switch(userInfo.groups[0]) {
+        case('Super Admin'):
           router.push('/superadmin');
           break;
-        case 'Admin':
+        case('Admin'):
           router.push('/admin');
           break;
-        case 'Church Group':
+        case('Church User'):
           router.push('/church');
           break;
-        case 'Applicant':
+        case('Candidate'):
           router.push('/candidate');
           break;
         default:
           // add a page to contact the admin - don't know what to do with this user
-          router.push('/candidate');
+          router.push('/candidate')
       } // or wherever you want to redirect after login
+      
+      
     } catch {
       setError('An error occurred during login');
     }

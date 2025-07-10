@@ -8,6 +8,7 @@ const Header = () => {
   const { user, profileStatus, logout } = useUser();
   const router = useRouter();
   const group = user?.groups?.[0] || null;
+  
 
   let roleHref;
   switch (group) {
@@ -17,7 +18,7 @@ const Header = () => {
     case 'Admin':
       roleHref = '/admin';
       break;
-    case 'Church Group':
+    case 'Church User':
       roleHref = '/church';
       break;
     case 'Candidate':
@@ -27,20 +28,18 @@ const Header = () => {
       roleHref = '/';
   }
 
+  console.log(user, group, roleHref)
+
   const handleLogout = () => {
     logout();
     router.push('/');
   };
 
   const navLinkClass = (path: string) =>
-    `block px-3 py-2 rounded-md text-lg font-regular w-[50%] text-center ${
+    `block px-3 py-2 rounded-md text-md font-regular md:w-[50%] text-center ${
       router.pathname === path ? 'bg-efcaAccent text-white' : 'text-white hover:bg-efcaAccent/80'
     }`;
 
-  const mobileNavLinkClass = (path: string) =>
-    `block px-3 py-2 rounded-md text-sm font-medium ${
-      router.pathname === path ? 'bg-efcaAccent text-white' : 'text-white hover:bg-efcaAccent/80'
-    }`;
 
   return (
     <header className="bg-efcaBlue text-white py-4 px-6 shadow">
@@ -74,7 +73,7 @@ const Header = () => {
             )}
           </svg>
         </button>
-        <nav className="hidden md:flex items-center space-x-6">
+        <nav className="h-16 hidden md:flex items-center space-x-6">
           {roleHref === '/candidate' && (
             <>
               <Link href="/candidate" className={navLinkClass('/candidate')}>
@@ -85,7 +84,7 @@ const Header = () => {
               </Link>
               {profileStatus === 'approved' && (
                 <Link href="/candidate/jobs" className={navLinkClass('/candidate/jobs')}>
-                  View Job Listings
+                  Jobs
                 </Link>
               )}
             </>
@@ -96,16 +95,16 @@ const Header = () => {
                 Dashboard
               </Link>
               <Link href="/church/search" className={navLinkClass('/church/search')}>
-                Search Candidates
+                Candidates
               </Link>
               <Link href="/church/jobs" className={navLinkClass('/church/jobs')}>
-                Manage Jobs
+                Jobs
               </Link>
               <Link
                 href="/church/mutual-interests"
                 className={navLinkClass('/church/mutual-interests')}
               >
-                Mutual Interests
+                Interests
               </Link>
             </>
           )}
@@ -115,16 +114,16 @@ const Header = () => {
                 Dashboard
               </Link>
               <Link href="/admin/review" className={navLinkClass('/admin/review')}>
-                Review Candidates
+                Candidates
               </Link>
               <Link href="/admin/jobs" className={navLinkClass('/admin/jobs')}>
-                Review Jobs
+                Jobs
               </Link>
               <Link href="/admin/churches" className={navLinkClass('/admin/churches')}>
-                Manage Churches
+                Churches
               </Link>
               <Link href="/admin/codes" className={navLinkClass('/admin/codes')}>
-                Manage Codes
+                Codes
               </Link>
             </>
           )}
@@ -134,17 +133,17 @@ const Header = () => {
                 Dashboard
               </Link>
               <Link href="/superadmin/users" className={navLinkClass('/superadmin/users')}>
-                Manage Users
+                Users
               </Link>
               <Link href="/superadmin/churches" className={navLinkClass('/superadmin/churches')}>
-                Manage Churches
+                Churches
               </Link>
             </>
           )}
           {user != null && (
             <button
               onClick={handleLogout}
-              className="px-3 py-2 rounded-md text-sm font-medium text-white hover:bg-red-600"
+              className="px-3 py-2 rounded-md text-md font-medium text-white hover:bg-red-600"
             >
               Logout
             </button>
@@ -173,7 +172,7 @@ const Header = () => {
               </Link>
               {profileStatus === 'approved' && (
                 <Link href="/candidate/jobs" className={navLinkClass('/candidate/jobs')}>
-                  View Job Listings
+                  Jobs
                 </Link>
               )}
             </>
@@ -184,16 +183,16 @@ const Header = () => {
                 Dashboard
               </Link>
               <Link href="/church/search" className={navLinkClass('/church/search')}>
-                Search Candidates
+                Candidates
               </Link>
               <Link href="/church/jobs" className={navLinkClass('/church/jobs')}>
-                Manage Jobs
+                Jobs
               </Link>
               <Link
                 href="/church/mutual-interests"
                 className={navLinkClass('/church/mutual-interests')}
               >
-                Mutual Interests
+                Interests
               </Link>
             </>
           )}
@@ -203,16 +202,16 @@ const Header = () => {
                 Dashboard
               </Link>
               <Link href="/admin/review" className={navLinkClass('/admin/review')}>
-                Review Candidates
+                Candidates
               </Link>
               <Link href="/admin/jobs" className={navLinkClass('/admin/jobs')}>
-                Review Jobs
+                Jobs
               </Link>
               <Link href="/admin/churches" className={navLinkClass('/admin/churches')}>
-                Manage Churches
+                Churches
               </Link>
               <Link href="/admin/codes" className={navLinkClass('/admin/codes')}>
-                Manage Codes
+                Codes
               </Link>
             </>
           )}
@@ -222,17 +221,17 @@ const Header = () => {
                 Dashboard
               </Link>
               <Link href="/superadmin/users" className={navLinkClass('/superadmin/users')}>
-                Manage Users
+                Users
               </Link>
               <Link href="/superadmin/churches" className={navLinkClass('/superadmin/churches')}>
-                Manage Churches
+                Churches
               </Link>
             </>
           )}
           {user !== null && (
             <button
               onClick={handleLogout}
-              className="w-[50%] text-center px-3 py-2 rounded-md text-lg font-regular text-white hover:bg-red-600"
+              className="text-center px-3 py-2 rounded-md text-lg font-regular text-white hover:bg-red-600"
             >
               Logout
             </button>
