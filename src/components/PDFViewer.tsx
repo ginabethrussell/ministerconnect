@@ -7,7 +7,12 @@ interface PDFViewerProps {
   title?: string;
 }
 
-const PDFViewer: React.FC<PDFViewerProps> = ({ isOpen, onClose, pdfUrl, title = 'PDF Document' }) => {
+const PDFViewer: React.FC<PDFViewerProps> = ({
+  isOpen,
+  onClose,
+  pdfUrl,
+  title = 'PDF Document',
+}) => {
   if (!isOpen) return null;
 
   return (
@@ -15,10 +20,7 @@ const PDFViewer: React.FC<PDFViewerProps> = ({ isOpen, onClose, pdfUrl, title = 
       <div className="bg-white rounded-lg p-4 w-full max-w-6xl max-h-[90vh] flex flex-col">
         <div className="flex justify-between items-center mb-4">
           <h3 className="text-lg font-semibold">{title}</h3>
-          <button 
-            onClick={onClose} 
-            className="text-gray-500 hover:text-gray-700 transition-colors"
-          >
+          <button onClick={onClose} className="text-gray-500 hover:text-gray-700 transition-colors">
             <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path
                 strokeLinecap="round"
@@ -30,11 +32,7 @@ const PDFViewer: React.FC<PDFViewerProps> = ({ isOpen, onClose, pdfUrl, title = 
           </button>
         </div>
         <div className="flex-1 overflow-hidden">
-          <iframe 
-            src={pdfUrl} 
-            className="w-full h-[80vh] border-0" 
-            title={title}
-          />
+          <iframe src={pdfUrl} className="w-full h-[80vh] border-0" title={title} />
         </div>
         <div className="mt-4 flex justify-end gap-2">
           <a
@@ -57,4 +55,4 @@ const PDFViewer: React.FC<PDFViewerProps> = ({ isOpen, onClose, pdfUrl, title = 
   );
 };
 
-export default PDFViewer; 
+export default PDFViewer;

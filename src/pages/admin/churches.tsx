@@ -26,13 +26,17 @@ const AdminChurches = () => {
   };
 
   const handleDelete = async (id: number) => {
-    if (!confirm('Are you sure you want to delete this church and all associated users? This action cannot be undone.')) {
+    if (
+      !confirm(
+        'Are you sure you want to delete this church and all associated users? This action cannot be undone.'
+      )
+    ) {
       return;
     }
 
     try {
       await deleteChurch(id);
-      setChurches(prevChurches => prevChurches.filter(c => c.id !== id));
+      setChurches((prevChurches) => prevChurches.filter((c) => c.id !== id));
     } catch (error) {
       console.error('Failed to delete church', error);
       alert('Error deleting church. Please try again.');
@@ -57,10 +61,7 @@ const AdminChurches = () => {
       <div className="max-w-7xl mx-auto">
         <header className="flex flex-col md:flex-row justify-between md:items-center gap-4 mb-8">
           <h1 className="text-3xl font-bold text-gray-800">Manage Churches</h1>
-          <Link
-            href="/admin/churches/create"
-            className="btn-primary text-center w-full md:w-auto"
-          >
+          <Link href="/admin/churches/create" className="btn-primary text-center w-full md:w-auto">
             + New Church
           </Link>
         </header>
@@ -74,10 +75,7 @@ const AdminChurches = () => {
             <div className="text-center py-20">
               <p className="text-lg mb-2 text-gray-600">No churches found</p>
               <p className="text-sm text-gray-500 mb-4">Create your first church to get started.</p>
-              <Link
-                href="/admin/churches/create"
-                className="btn-primary"
-              >
+              <Link href="/admin/churches/create" className="btn-primary">
                 + New Church
               </Link>
             </div>
@@ -97,7 +95,7 @@ const AdminChurches = () => {
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-gray-200">
-                    {churches.map(church => (
+                    {churches.map((church) => (
                       <tr key={church.id}>
                         <td className="py-4 px-6">
                           <span className="font-medium text-gray-800">{church.name}</span>
@@ -147,7 +145,7 @@ const AdminChurches = () => {
 
               {/* Mobile Card View */}
               <div className="md:hidden p-4 space-y-4">
-                {churches.map(church => (
+                {churches.map((church) => (
                   <div key={church.id} className="border border-gray-200 rounded-lg p-4 space-y-3">
                     <div className="flex justify-between items-start">
                       <div className="flex-1">
@@ -162,11 +160,13 @@ const AdminChurches = () => {
                         {church.status}
                       </span>
                     </div>
-                    
+
                     <div className="grid grid-cols-2 gap-4 text-sm">
                       <div>
                         <span className="font-medium text-gray-600">Location:</span>
-                        <p className="text-gray-800">{church.city}, {church.state}</p>
+                        <p className="text-gray-800">
+                          {church.city}, {church.state}
+                        </p>
                       </div>
                       <div>
                         <span className="font-medium text-gray-600">Lead User:</span>
@@ -206,4 +206,4 @@ const AdminChurches = () => {
   );
 };
 
-export default AdminChurches; 
+export default AdminChurches;

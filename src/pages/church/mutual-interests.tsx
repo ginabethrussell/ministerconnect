@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import PDFViewer from '../../components/PDFViewer';
 import { getMutualInterests } from '../../utils/api';
-import { MutualInterest, JobListing, Profile } from '../../types';
+import { MutualInterest, JobListing, Profile, InviteCode } from '../../types';
 
 function getYouTubeEmbedUrl(url: string): string {
   if (!url) return '';
@@ -19,7 +19,12 @@ function getYouTubeEmbedUrl(url: string): string {
 export default function MutualInterests() {
   const [loading, setLoading] = useState(true);
   const [mutualInterests, setMutualInterests] = useState<
-    { interest: MutualInterest; profile: Profile; jobListing: JobListing }[]
+    {
+      interest: MutualInterest;
+      profile: Profile;
+      jobListing: JobListing;
+      inviteCode?: InviteCode;
+    }[]
   >([]);
   const [selectedJob, setSelectedJob] = useState<string>('all');
   const [pdfViewer, setPdfViewer] = useState<{
@@ -40,6 +45,7 @@ export default function MutualInterests() {
     url: '',
     title: '',
   });
+  const [copyStatus, setCopyStatus] = useState<{ [key: number]: string }>({});
 
   useEffect(() => {
     const fetchMutualInterests = async () => {
@@ -56,9 +62,7 @@ export default function MutualInterests() {
   }, []);
 
   const jobListings = Array.from(
-    new Map(
-      mutualInterests.map(item => [item.jobListing.id, item.jobListing])
-    ).values()
+    new Map(mutualInterests.map((item) => [item.jobListing.id, item.jobListing])).values()
   );
 
   const filteredCandidates = mutualInterests.filter(
@@ -73,7 +77,8 @@ export default function MutualInterests() {
     });
   };
 
-  const handleViewVideo = (videoUrl: string, candidateName: string) => {
+  const handleViewVideo = (videoUrl: string | null, candidateName: string) => {
+    if (!videoUrl) return;
     setVideoViewer({
       isOpen: true,
       url: videoUrl,
@@ -81,15 +86,25 @@ export default function MutualInterests() {
     });
   };
 
+  const handleCopyContact = (profile: Profile) => {
+    const contactInfo = `Name: ${profile.first_name} ${profile.last_name}\nEmail: ${profile.email}\nPhone: ${profile.phone}`;
+    navigator.clipboard.writeText(contactInfo).then(() => {
+      setCopyStatus((prev) => ({ ...prev, [profile.id]: 'Copied!' }));
+      setTimeout(() => {
+        setCopyStatus((prev) => ({ ...prev, [profile.id]: '' }));
+      }, 2000);
+    });
+  };
+
   const getJobTitle = (jobId: number) => {
-    const job = jobListings.find(j => j.id === jobId);
+    const job = jobListings.find((j) => j.id === jobId);
     return job ? job.title : 'Unknown Position';
   };
 
   const getTotalInterests = () => mutualInterests.length;
 
   const getInterestsByJob = (jobId: number) =>
-    mutualInterests.filter(c => c.jobListing.id === jobId).length;
+    mutualInterests.filter((c) => c.jobListing.id === jobId).length;
 
   // Show loading state
   if (loading) {
@@ -130,12 +145,14 @@ export default function MutualInterests() {
           <div className="bg-white rounded-lg shadow-sm p-6">
             <h3 className="text-lg font-semibold text-efcaDark mb-2">Recent Activity</h3>
             <p className="text-3xl font-bold text-efcaAccent">
-              {mutualInterests.filter(c => {
-                const interestDate = new Date(c.interest.created_at);
-                const weekAgo = new Date();
-                weekAgo.setDate(weekAgo.getDate() - 7);
-                return interestDate > weekAgo;
-              }).length}
+              {
+                mutualInterests.filter((c) => {
+                  const interestDate = new Date(c.interest.created_at);
+                  const weekAgo = new Date();
+                  weekAgo.setDate(weekAgo.getDate() - 7);
+                  return interestDate > weekAgo;
+                }).length
+              }
             </p>
             <p className="text-sm text-gray-600">Interests in the last 7 days</p>
           </div>
@@ -151,7 +168,7 @@ export default function MutualInterests() {
               className="px-4 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-efcaAccent bg-white"
             >
               <option value="all">All Positions ({getTotalInterests()})</option>
-              {jobListings.map(job => (
+              {jobListings.map((job) => (
                 <option key={job.id} value={job.id}>
                   {job.title} ({getInterestsByJob(job.id)})
                 </option>
@@ -172,58 +189,172 @@ export default function MutualInterests() {
               </p>
             </div>
           ) : (
-            <ul className="divide-y divide-gray-200">
-              {filteredCandidates.map(({ profile, interest, jobListing }) => (
-                <li key={profile.id} className="py-6 flex flex-col md:flex-row gap-6">
-                  <div className="w-full md:w-1/4 flex-shrink-0">
-                    <img
-                      src={profile.photo}
-                      alt={`${profile.first_name} ${profile.last_name}`}
-                      className="w-full h-auto object-cover rounded-lg"
-                    />
-                  </div>
-                  <div className="w-full md:w-3/4">
-                    <div className="flex justify-between items-start">
-                      <div>
-                        <h3 className="text-xl font-bold text-efcaDark">{`${profile.first_name} ${profile.last_name}`}</h3>
+            <ul className="space-y-6">
+              {filteredCandidates.map(({ profile, interest, jobListing, inviteCode }) => (
+                <li
+                  key={profile.id}
+                  className="bg-white rounded-lg shadow-sm border border-gray-200 p-6"
+                >
+                  {/* Top Section */}
+                  <div className="flex flex-col md:flex-row gap-6 justify-between">
+                    {/* Candidate Info */}
+                    <div className="flex items-start gap-6 flex-grow">
+                      <div className="w-24 h-24 flex-shrink-0">
+                        {profile.photo ? (
+                          <img
+                            src={profile.photo}
+                            alt={`${profile.first_name} ${profile.last_name}`}
+                            className="w-24 h-24 object-cover rounded-lg"
+                          />
+                        ) : (
+                          <div className="w-24 h-24 rounded-lg bg-gray-200 flex items-center justify-center">
+                            <svg
+                              className="w-10 h-10 text-gray-400"
+                              fill="none"
+                              stroke="currentColor"
+                              viewBox="0 0 24 24"
+                            >
+                              <path
+                                strokeLinecap="round"
+                                strokeLinejoin="round"
+                                strokeWidth={2}
+                                d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"
+                              />
+                            </svg>
+                          </div>
+                        )}
+                      </div>
+                      <div className="flex-grow">
+                        <h3 className="text-2xl font-bold text-efcaDark">{`${profile.first_name} ${profile.last_name}`}</h3>
                         <p className="text-gray-600">
-                          Interested in:{' '}
-                          <span className="font-semibold">{getJobTitle(jobListing.id)}</span>
+                          Interested in: <span className="font-semibold">{jobListing.title}</span>
                         </p>
-                        <p className="text-sm text-gray-500 mt-1">
-                          Expressed Interest on:{' '}
-                          {new Date(interest.created_at).toLocaleDateString()}
+                        <p className="text-sm text-gray-500">
+                          Interest expressed: {new Date(interest.created_at).toLocaleDateString()}
                         </p>
                       </div>
                     </div>
 
-                    <div className="mt-4 grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
-                      <div>
-                        <p className="text-gray-700">
-                          <strong className="font-medium">Email:</strong> {profile.email}
-                        </p>
-                        <p className="text-gray-700">
-                          <strong className="font-medium">Location:</strong>{' '}
-                          {`${profile.city}, ${profile.state}`}
-                        </p>
-                      </div>
-                    </div>
-
-                    <div className="mt-4 flex flex-wrap gap-3">
-                      <button
-                        onClick={() => handleViewResume(profile.resume, `${profile.first_name} ${profile.last_name}`)}
-                        className="px-4 py-2 bg-efcaAccent text-white rounded hover:bg-efcaDark transition"
+                    {/* Action Buttons */}
+                    <div className="w-full md:w-[200px] flex-shrink-0 flex flex-col gap-3">
+                      <a
+                        href={`mailto:${profile.email}`}
+                        className="px-4 py-2 bg-blue-600 text-white text-center rounded-md font-semibold hover:bg-blue-700 transition flex-1"
                       >
-                        View Resume
+                        Send Email
+                      </a>
+                      <button
+                        onClick={() => handleCopyContact(profile)}
+                        className="px-4 py-2 bg-white text-gray-700 border border-gray-300 text-center rounded-md font-semibold hover:bg-gray-50 transition flex-1"
+                      >
+                        {copyStatus[profile.id] || 'Copy Contact Info'}
                       </button>
-                      {profile.video_url && (
-                        <button
-                          onClick={() => handleViewVideo(profile.video_url, `${profile.first_name} ${profile.last_name}`)}
-                          className="px-4 py-2 bg-gray-200 text-gray-800 rounded hover:bg-gray-300 transition"
-                        >
-                          View Video
-                        </button>
+                    </div>
+                  </div>
+
+                  {/* Separator */}
+                  <div className="border-t border-gray-200 my-4"></div>
+
+                  {/* Details Grid */}
+                  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+                    {/* Contact Info */}
+                    <div>
+                      <h4 className="font-semibold text-gray-700 mb-2">Contact Information</h4>
+                      <p className="text-sm text-gray-600">Email: {profile.email}</p>
+                      <p className="text-sm text-gray-600">Phone: {profile.phone}</p>
+                      <p className="text-sm text-gray-600">
+                        Location:{' '}
+                        {`${profile.street_address}, ${profile.city}, ${profile.state} ${profile.zipcode}`}
+                      </p>
+                    </div>
+
+                    {/* Documents & Media */}
+                    <div>
+                      <h4 className="font-semibold text-gray-700 mb-2">Documents & Media</h4>
+                      <div className="text-sm space-y-1">
+                        <div>
+                          <a
+                            href={profile.resume}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="text-efcaAccent hover:underline"
+                          >
+                            View Resume
+                          </a>
+                          <button
+                            onClick={() =>
+                              handleViewResume(
+                                profile.resume,
+                                `${profile.first_name} ${profile.last_name}`
+                              )
+                            }
+                            className="ml-3 text-efcaAccent hover:underline"
+                          >
+                            Preview
+                          </button>
+                        </div>
+                        {profile.video_url && (
+                          <div>
+                            <a
+                              href={profile.video_url}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className="text-efcaAccent hover:underline"
+                            >
+                              View Video
+                            </a>
+                            <button
+                              onClick={() =>
+                                handleViewVideo(
+                                  profile.video_url,
+                                  `${profile.first_name} ${profile.last_name}`
+                                )
+                              }
+                              className="ml-3 text-efcaAccent hover:underline"
+                            >
+                              Preview
+                            </button>
+                          </div>
+                        )}
+                      </div>
+                      {profile.placement_preferences &&
+                        profile.placement_preferences.length > 0 && (
+                          <div className="mt-2">
+                            <h5 className="font-semibold text-gray-700 mb-1">Preferences</h5>
+                            <div className="flex flex-wrap gap-1">
+                              {profile.placement_preferences.map((pref) => (
+                                <span
+                                  key={pref}
+                                  className="bg-gray-100 text-gray-800 text-xs font-medium px-2 py-0.5 rounded-full"
+                                >
+                                  {pref}
+                                </span>
+                              ))}
+                            </div>
+                          </div>
+                        )}
+                    </div>
+
+                    {/* Profile Details */}
+                    <div>
+                      <h4 className="font-semibold text-gray-700 mb-2">Profile Details</h4>
+                      <p className="text-sm text-gray-600">
+                        Status: {profile.status.charAt(0).toUpperCase() + profile.status.slice(1)}
+                      </p>
+                      {inviteCode && (
+                        <p className="text-sm text-gray-600">Event: {inviteCode.event}</p>
                       )}
+                      <p className="text-sm text-gray-600">
+                        Profile Created: {new Date(profile.created_at).toLocaleDateString()}
+                      </p>
+                      {profile.submitted_at && (
+                        <p className="text-sm text-gray-600">
+                          Submitted: {new Date(profile.submitted_at).toLocaleDateString()}
+                        </p>
+                      )}
+                      <p className="text-sm text-gray-600">
+                        Last Updated: {new Date(profile.updated_at).toLocaleDateString()}
+                      </p>
                     </div>
                   </div>
                 </li>
@@ -232,10 +363,10 @@ export default function MutualInterests() {
           )}
         </section>
       </div>
-      
+
       <PDFViewer
         isOpen={pdfViewer.isOpen}
-        onClose={() => setPdfViewer(prev => ({ ...prev, isOpen: false }))}
+        onClose={() => setPdfViewer((prev) => ({ ...prev, isOpen: false }))}
         pdfUrl={pdfViewer.url}
         title={pdfViewer.title}
       />
@@ -267,4 +398,4 @@ export default function MutualInterests() {
       )}
     </div>
   );
-} 
+}

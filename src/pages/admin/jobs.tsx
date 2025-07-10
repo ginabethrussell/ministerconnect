@@ -1,8 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import {
-  getAdminJobListings,
-  updateJobListingStatus,
-} from '../../utils/api';
+import { getAdminJobListings, updateJobListingStatus } from '../../utils/api';
 import { JobListing, Church } from '../../types';
 
 type JobListingWithChurch = JobListing & { church: Church };
@@ -30,18 +27,13 @@ const AdminJobReview = () => {
     }
   };
 
-  const handleStatusUpdate = async (
-    id: number,
-    status: 'approved' | 'rejected'
-  ) => {
+  const handleStatusUpdate = async (id: number, status: 'approved' | 'rejected') => {
     setActionLoadingId(id);
     try {
       await updateJobListingStatus(id, status);
       // Optimistically update the UI
-      setJobListings(prevListings =>
-        prevListings.map(job =>
-          job.id === id ? { ...job, status: status } : job
-        )
+      setJobListings((prevListings) =>
+        prevListings.map((job) => (job.id === id ? { ...job, status: status } : job))
       );
     } catch (error) {
       console.error('Error updating job status:', error);
@@ -77,17 +69,13 @@ const AdminJobReview = () => {
   };
 
   const filteredListings =
-    filterStatus === 'all'
-      ? jobListings
-      : jobListings.filter(j => j.status === filterStatus);
+    filterStatus === 'all' ? jobListings : jobListings.filter((j) => j.status === filterStatus);
 
   return (
     <div className="min-h-screen bg-gray-100 p-8">
       <div className="max-w-7xl mx-auto">
         <header className="flex justify-between items-center mb-8">
-          <h1 className="text-3xl font-bold text-gray-800">
-            Review Job Listings
-          </h1>
+          <h1 className="text-3xl font-bold text-gray-800">Review Job Listings</h1>
         </header>
 
         <section className="bg-white rounded-lg shadow-md">
@@ -111,8 +99,7 @@ const AdminJobReview = () => {
                     : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
                 }`}
               >
-                Pending (
-                {jobListings.filter(j => j.status === 'pending').length})
+                Pending ({jobListings.filter((j) => j.status === 'pending').length})
               </button>
               <button
                 onClick={() => setFilterStatus('approved')}
@@ -122,8 +109,7 @@ const AdminJobReview = () => {
                     : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
                 }`}
               >
-                Approved (
-                {jobListings.filter(j => j.status === 'approved').length})
+                Approved ({jobListings.filter((j) => j.status === 'approved').length})
               </button>
               <button
                 onClick={() => setFilterStatus('rejected')}
@@ -133,8 +119,7 @@ const AdminJobReview = () => {
                     : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
                 }`}
               >
-                Rejected (
-                {jobListings.filter(j => j.status === 'rejected').length})
+                Rejected ({jobListings.filter((j) => j.status === 'rejected').length})
               </button>
             </div>
           </div>
@@ -149,13 +134,11 @@ const AdminJobReview = () => {
             </div>
           ) : (
             <div className="divide-y divide-gray-200">
-              {filteredListings.map(job => (
+              {filteredListings.map((job) => (
                 <div key={job.id} className="p-6">
                   <div className="flex justify-between items-start flex-wrap gap-4">
                     <div className="flex-1">
-                      <h3 className="text-xl font-semibold text-gray-800 mb-2">
-                        {job.title}
-                      </h3>
+                      <h3 className="text-xl font-semibold text-gray-800 mb-2">{job.title}</h3>
                       <div className="flex flex-wrap items-center gap-x-6 gap-y-2 text-sm text-gray-600 mb-3">
                         <span>
                           <strong>Church:</strong> {job.church.name}
@@ -183,18 +166,14 @@ const AdminJobReview = () => {
                             disabled={actionLoadingId === job.id}
                             className="btn-primary-sm"
                           >
-                            {actionLoadingId === job.id
-                              ? 'Approving...'
-                              : 'Approve'}
+                            {actionLoadingId === job.id ? 'Approving...' : 'Approve'}
                           </button>
                           <button
                             onClick={() => handleStatusUpdate(job.id, 'rejected')}
                             disabled={actionLoadingId === job.id}
                             className="btn-danger-sm"
                           >
-                            {actionLoadingId === job.id
-                              ? 'Rejecting...'
-                              : 'Reject'}
+                            {actionLoadingId === job.id ? 'Rejecting...' : 'Reject'}
                           </button>
                         </>
                       )}
@@ -210,9 +189,7 @@ const AdminJobReview = () => {
                   {expandedJob === job.id && (
                     <div className="mt-6 pt-6 border-t border-gray-200 space-y-6 text-sm">
                       <div>
-                        <h4 className="font-semibold text-gray-700 mb-3">
-                          Church Information
-                        </h4>
+                        <h4 className="font-semibold text-gray-700 mb-3">Church Information</h4>
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                           <p>
                             <strong>Name:</strong> {job.church.name}
@@ -238,18 +215,14 @@ const AdminJobReview = () => {
                       </div>
 
                       <div>
-                        <h4 className="font-semibold text-gray-700 mb-3">
-                          Job Description
-                        </h4>
+                        <h4 className="font-semibold text-gray-700 mb-3">Job Description</h4>
                         <div className="prose prose-sm max-w-none bg-gray-50 p-4 rounded-md">
                           {job.job_description}
                         </div>
                       </div>
 
                       <div>
-                        <h4 className="font-semibold text-gray-700 mb-3">
-                          About This Church
-                        </h4>
+                        <h4 className="font-semibold text-gray-700 mb-3">About This Church</h4>
                         <div className="prose prose-sm max-w-none bg-gray-50 p-4 rounded-md">
                           {job.about_church}
                         </div>
@@ -266,4 +239,4 @@ const AdminJobReview = () => {
   );
 };
 
-export default AdminJobReview; 
+export default AdminJobReview;

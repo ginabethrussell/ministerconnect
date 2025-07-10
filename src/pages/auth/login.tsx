@@ -1,7 +1,9 @@
 import React, { useState } from 'react';
 import { useRouter } from 'next/router';
 import Link from 'next/link';
+import { useUser } from '../../context/UserContext';
 import PasswordInput from '../../components/PasswordInput';
+import { apiClient, API_ENDPOINTS, getMe } from '../../utils/api';
 
 const Login = () => {
   const [email, setEmail] = useState('');
@@ -9,35 +11,54 @@ const Login = () => {
   const [error, setError] = useState('');
   const [success, setSuccess] = useState(false);
   const router = useRouter();
+  const { setUser } = useUser();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError('');
     setSuccess(false);
     try {
-      const response = await fetch('/api/auth/login', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email, password }),
-      });
+      const data = await apiClient.post<{
+        access: string;
+        refresh: string;
+      }>(API_ENDPOINTS.LOGIN, { email, password });
 
-      const data = await response.json();
+      // Store JWT tokens
+      localStorage.setItem('accessToken', data.access);
+      localStorage.setItem('refreshToken', data.refresh);
+      localStorage.setItem('isAuthenticated', 'true');
+      localStorage.setItem('userEmail', email);
 
-      if (data.success) {
-        localStorage.setItem('userRole', data.user.role);
-        localStorage.setItem('isAuthenticated', 'true');
-        localStorage.setItem('userEmail', data.user.email);
-        window.dispatchEvent(new Event('roleChanged'));
-        
-        // Check if user needs to change password
-        if (data.user.needsPasswordChange) {
-          router.push('/auth/force-password-change');
-        } else {
-          router.push(`/${data.user.role}`);
-        }
-      } else {
-        setError(data.message || 'Login failed');
+      // Fetch current user info after login
+      let userInfo;
+      try {
+        userInfo = await getMe();
+        setUser(userInfo);
+        localStorage.setItem('userInfo', JSON.stringify(userInfo));
+      } catch (err) {
+        setError('Login succeeded, but failed to fetch user info.');
+        return;
       }
+
+      setSuccess(true);
+
+      switch (userInfo.groups[0]) {
+        case 'Super Admin':
+          router.push('/superadmin');
+          break;
+        case 'Admin':
+          router.push('/admin');
+          break;
+        case 'Church Group':
+          router.push('/church');
+          break;
+        case 'Applicant':
+          router.push('/candidate');
+          break;
+        default:
+          // add a page to contact the admin - don't know what to do with this user
+          router.push('/candidate');
+      } // or wherever you want to redirect after login
     } catch {
       setError('An error occurred during login');
     }

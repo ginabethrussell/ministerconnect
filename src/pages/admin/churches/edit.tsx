@@ -1,11 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/router';
 import Link from 'next/link';
-import {
-  getAdminChurchById,
-  updateChurch,
-  deleteChurch,
-} from '../../../utils/api';
+import { getAdminChurchById, updateChurch, deleteChurch } from '../../../utils/api';
 import { Church, User } from '../../../types';
 import PasswordInput from '../../../components/PasswordInput';
 
@@ -39,17 +35,11 @@ export default function EditChurch() {
   };
 
   const handleChurchDataChange = (field: string, value: string) => {
-    setChurchData(prev =>
-      prev ? { ...prev, [field]: value } : null
-    );
+    setChurchData((prev) => (prev ? { ...prev, [field]: value } : null));
   };
 
-  const handleUserChange = (
-    index: number,
-    field: string,
-    value: string | boolean
-  ) => {
-    setChurchData(prev => {
+  const handleUserChange = (index: number, field: string, value: string | boolean) => {
+    setChurchData((prev) => {
       if (!prev) return null;
       const newUsers = [...prev.users];
       newUsers[index] = { ...newUsers[index], [field]: value };
@@ -58,7 +48,7 @@ export default function EditChurch() {
   };
 
   const addUser = () => {
-    setChurchData(prev => {
+    setChurchData((prev) => {
       if (!prev) return null;
       const newUser: User = {
         id: Date.now(), // Temporary ID for new user
@@ -77,7 +67,7 @@ export default function EditChurch() {
   };
 
   const removeUser = (index: number) => {
-    setChurchData(prev => {
+    setChurchData((prev) => {
       if (!prev || prev.users.length <= 1) return prev;
       return {
         ...prev,
@@ -106,11 +96,7 @@ export default function EditChurch() {
   const handleDeleteChurch = async () => {
     if (!churchData) return;
 
-    if (
-      !confirm(
-        'Are you sure you want to delete this church? This action cannot be undone.'
-      )
-    ) {
+    if (!confirm('Are you sure you want to delete this church? This action cannot be undone.')) {
       return;
     }
 
@@ -147,9 +133,7 @@ export default function EditChurch() {
     <div className="min-h-screen bg-gray-100 p-8">
       <div className="max-w-4xl mx-auto">
         <header className="flex flex-col md:flex-row justify-between md:items-center gap-4 mb-8">
-          <h1 className="text-3xl font-bold text-gray-800">
-            Edit: {churchData.name}
-          </h1>
+          <h1 className="text-3xl font-bold text-gray-800">Edit: {churchData.name}</h1>
           <div className="flex gap-4">
             <Link
               href="/admin/churches"
@@ -160,20 +144,15 @@ export default function EditChurch() {
           </div>
         </header>
 
-        <form
-          onSubmit={handleSubmit}
-          className="bg-white rounded-lg shadow-md p-8 space-y-8"
-        >
+        <form onSubmit={handleSubmit} className="bg-white rounded-lg shadow-md p-8 space-y-8">
           {/* Church Information */}
           <section>
-            <h2 className="text-xl font-semibold text-gray-700 mb-6">
-              Church Information
-            </h2>
+            <h2 className="text-xl font-semibold text-gray-700 mb-6">Church Information</h2>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <input
                 type="text"
                 value={churchData.name}
-                onChange={e => handleChurchDataChange('name', e.target.value)}
+                onChange={(e) => handleChurchDataChange('name', e.target.value)}
                 className="input-field"
                 placeholder="Church Name"
                 required
@@ -181,7 +160,7 @@ export default function EditChurch() {
               <input
                 type="email"
                 value={churchData.email}
-                onChange={e => handleChurchDataChange('email', e.target.value)}
+                onChange={(e) => handleChurchDataChange('email', e.target.value)}
                 className="input-field"
                 placeholder="Church Email"
                 required
@@ -189,7 +168,7 @@ export default function EditChurch() {
               <input
                 type="tel"
                 value={churchData.phone}
-                onChange={e => handleChurchDataChange('phone', e.target.value)}
+                onChange={(e) => handleChurchDataChange('phone', e.target.value)}
                 className="input-field"
                 placeholder="Phone Number"
                 required
@@ -197,18 +176,14 @@ export default function EditChurch() {
               <input
                 type="text"
                 value={churchData.website}
-                onChange={e =>
-                  handleChurchDataChange('website', e.target.value)
-                }
+                onChange={(e) => handleChurchDataChange('website', e.target.value)}
                 className="input-field"
                 placeholder="Website"
               />
               <input
                 type="text"
                 value={churchData.street_address}
-                onChange={e =>
-                  handleChurchDataChange('street_address', e.target.value)
-                }
+                onChange={(e) => handleChurchDataChange('street_address', e.target.value)}
                 className="input-field"
                 placeholder="Street Address"
                 required
@@ -216,7 +191,7 @@ export default function EditChurch() {
               <input
                 type="text"
                 value={churchData.city}
-                onChange={e => handleChurchDataChange('city', e.target.value)}
+                onChange={(e) => handleChurchDataChange('city', e.target.value)}
                 className="input-field"
                 placeholder="City"
                 required
@@ -224,7 +199,7 @@ export default function EditChurch() {
               <input
                 type="text"
                 value={churchData.state}
-                onChange={e => handleChurchDataChange('state', e.target.value)}
+                onChange={(e) => handleChurchDataChange('state', e.target.value)}
                 className="input-field"
                 placeholder="State"
                 required
@@ -232,16 +207,14 @@ export default function EditChurch() {
               <input
                 type="text"
                 value={churchData.zipcode}
-                onChange={e =>
-                  handleChurchDataChange('zipcode', e.target.value)
-                }
+                onChange={(e) => handleChurchDataChange('zipcode', e.target.value)}
                 className="input-field"
                 placeholder="Zip Code"
                 required
               />
               <select
                 value={churchData.status}
-                onChange={e => handleChurchDataChange('status', e.target.value)}
+                onChange={(e) => handleChurchDataChange('status', e.target.value)}
                 className="input-field"
               >
                 <option value="active">Active</option>
@@ -253,31 +226,22 @@ export default function EditChurch() {
 
           {/* User Credentials */}
           <section>
-            <h2 className="text-xl font-semibold text-gray-700 mb-6">
-              User Credentials
-            </h2>
+            <h2 className="text-xl font-semibold text-gray-700 mb-6">User Credentials</h2>
             <div className="space-y-6">
               {churchData.users.map((user, index) => (
-                <div
-                  key={user.id}
-                  className="p-4 border rounded-md bg-gray-50 relative"
-                >
+                <div key={user.id} className="p-4 border rounded-md bg-gray-50 relative">
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <input
                       type="email"
                       value={user.email}
-                      onChange={e =>
-                        handleUserChange(index, 'email', e.target.value)
-                      }
+                      onChange={(e) => handleUserChange(index, 'email', e.target.value)}
                       className="input-field"
                       placeholder="User Email"
                       required
                     />
                     <PasswordInput
                       value={user.password || ''}
-                      onChange={e =>
-                        handleUserChange(index, 'password', e.target.value)
-                      }
+                      onChange={(e) => handleUserChange(index, 'password', e.target.value)}
                       placeholder={user.id ? 'New Password (optional)' : 'Password'}
                     />
                     <div className="flex items-center gap-2">
@@ -285,12 +249,8 @@ export default function EditChurch() {
                         type="checkbox"
                         id={`force-change-${user.id}`}
                         checked={user.requires_password_change}
-                        onChange={e =>
-                          handleUserChange(
-                            index,
-                            'requires_password_change',
-                            e.target.checked
-                          )
+                        onChange={(e) =>
+                          handleUserChange(index, 'requires_password_change', e.target.checked)
                         }
                       />
                       <label htmlFor={`force-change-${user.id}`} className="text-sm">
@@ -310,11 +270,7 @@ export default function EditChurch() {
                 </div>
               ))}
             </div>
-            <button
-              type="button"
-              onClick={addUser}
-              className="mt-4 btn-secondary-sm"
-            >
+            <button type="button" onClick={addUser} className="mt-4 btn-secondary-sm">
               + Add Another User
             </button>
           </section>
@@ -340,4 +296,4 @@ export default function EditChurch() {
       </div>
     </div>
   );
-} 
+}

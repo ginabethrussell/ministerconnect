@@ -5,7 +5,7 @@ import Link from 'next/link';
 export default function ResetPassword() {
   const router = useRouter();
   const { token } = router.query;
-  
+
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
   const [loading, setLoading] = useState(false);
@@ -38,7 +38,7 @@ export default function ResetPassword() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    
+
     if (password !== confirmPassword) {
       setError('Passwords do not match');
       return;
@@ -58,9 +58,9 @@ export default function ResetPassword() {
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ 
-          token, 
-          password 
+        body: JSON.stringify({
+          token,
+          password,
         }),
       });
 
@@ -101,7 +101,8 @@ export default function ResetPassword() {
             <div className="text-center">
               <h2 className="text-2xl font-bold text-efcaDark mb-4">Password Reset Successful</h2>
               <p className="text-gray-600 mb-6">
-                Your password has been successfully reset. You can now log in with your new password.
+                Your password has been successfully reset. You can now log in with your new
+                password.
               </p>
               <Link
                 href="/auth/login"
@@ -143,9 +144,7 @@ export default function ResetPassword() {
         <div className="bg-white rounded-lg shadow-lg p-6">
           <div className="text-center">
             <h2 className="text-2xl font-bold text-efcaDark mb-4">Reset Your Password</h2>
-            <p className="text-gray-600 mb-6">
-              Enter your new password below.
-            </p>
+            <p className="text-gray-600 mb-6">Enter your new password below.</p>
           </div>
 
           <form className="space-y-6" onSubmit={handleSubmit}>
@@ -174,7 +173,10 @@ export default function ResetPassword() {
             </div>
 
             <div>
-              <label htmlFor="confirmPassword" className="block text-sm font-medium text-gray-700 mb-2">
+              <label
+                htmlFor="confirmPassword"
+                className="block text-sm font-medium text-gray-700 mb-2"
+              >
                 Confirm New Password
               </label>
               <input
@@ -201,10 +203,7 @@ export default function ResetPassword() {
           </form>
 
           <div className="mt-6 text-center">
-            <Link
-              href="/auth/login"
-              className="text-efcaAccent hover:text-blue-700 font-medium"
-            >
+            <Link href="/auth/login" className="text-efcaAccent hover:text-blue-700 font-medium">
               Back to Login
             </Link>
           </div>
@@ -212,4 +211,4 @@ export default function ResetPassword() {
       </div>
     </div>
   );
-} 
+}

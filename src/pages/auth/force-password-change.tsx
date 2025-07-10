@@ -4,7 +4,7 @@ import Link from 'next/link';
 
 export default function ForcePasswordChange() {
   const router = useRouter();
-  
+
   const [currentPassword, setCurrentPassword] = useState('');
   const [newPassword, setNewPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
@@ -14,7 +14,7 @@ export default function ForcePasswordChange() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    
+
     if (newPassword !== confirmPassword) {
       setError('New passwords do not match');
       return;
@@ -39,9 +39,9 @@ export default function ForcePasswordChange() {
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ 
+        body: JSON.stringify({
           currentPassword,
-          newPassword 
+          newPassword,
         }),
       });
 
@@ -68,9 +68,12 @@ export default function ForcePasswordChange() {
         <div className="max-w-md w-full space-y-8">
           <div className="bg-white rounded-lg shadow-lg p-6">
             <div className="text-center">
-              <h2 className="text-2xl font-bold text-efcaDark mb-4">Password Changed Successfully</h2>
+              <h2 className="text-2xl font-bold text-efcaDark mb-4">
+                Password Changed Successfully
+              </h2>
               <p className="text-gray-600 mb-6">
-                Your password has been updated. You can now access your account with your new password.
+                Your password has been updated. You can now access your account with your new
+                password.
               </p>
               <button
                 onClick={() => router.push('/church')}
@@ -104,7 +107,10 @@ export default function ForcePasswordChange() {
             )}
 
             <div>
-              <label htmlFor="currentPassword" className="block text-sm font-medium text-gray-700 mb-2">
+              <label
+                htmlFor="currentPassword"
+                className="block text-sm font-medium text-gray-700 mb-2"
+              >
                 Current Password
               </label>
               <input
@@ -139,7 +145,10 @@ export default function ForcePasswordChange() {
             </div>
 
             <div>
-              <label htmlFor="confirmPassword" className="block text-sm font-medium text-gray-700 mb-2">
+              <label
+                htmlFor="confirmPassword"
+                className="block text-sm font-medium text-gray-700 mb-2"
+              >
                 Confirm New Password
               </label>
               <input
@@ -166,12 +175,10 @@ export default function ForcePasswordChange() {
           </form>
 
           <div className="mt-6 text-center">
-            <p className="text-sm text-gray-500">
-              Need help? Contact your administrator.
-            </p>
+            <p className="text-sm text-gray-500">Need help? Contact your administrator.</p>
           </div>
         </div>
       </div>
     </div>
   );
-} 
+}

@@ -1,38 +1,55 @@
 import React, { useState } from 'react';
 import Link from 'next/link';
+import { useUser } from '@/context/UserContext';
 import { useRouter } from 'next/router';
-import Image from 'next/image';
 
-interface HeaderProps {
-  role: string | null;
-  onLogout: () => void;
-  profileStatus?: 'draft' | 'pending' | 'approved' | 'rejected';
-}
-
-const Header = ({ role, onLogout, profileStatus }: HeaderProps) => {
-  const router = useRouter();
+const Header = () => {
   const [menuOpen, setMenuOpen] = useState(false);
+  const { user, profileStatus, logout } = useUser();
+  const router = useRouter();
+  const group = user?.groups?.[0] || null;
+
+  let roleHref;
+  switch (group) {
+    case 'Super Admin':
+      roleHref = '/superadmin';
+      break;
+    case 'Admin':
+      roleHref = '/admin';
+      break;
+    case 'Church Group':
+      roleHref = '/church';
+      break;
+    case 'Candidate':
+      roleHref = '/candidate';
+      break;
+    default:
+      roleHref = '/';
+  }
+
+  const handleLogout = () => {
+    logout();
+    router.push('/');
+  };
 
   const navLinkClass = (path: string) =>
+    `block px-3 py-2 rounded-md text-lg font-regular w-[50%] text-center ${
+      router.pathname === path ? 'bg-efcaAccent text-white' : 'text-white hover:bg-efcaAccent/80'
+    }`;
+
+  const mobileNavLinkClass = (path: string) =>
     `block px-3 py-2 rounded-md text-sm font-medium ${
       router.pathname === path ? 'bg-efcaAccent text-white' : 'text-white hover:bg-efcaAccent/80'
     }`;
 
-  const LogoHref = !role ? '/' : `/${role}`;
-
   return (
     <header className="bg-efcaBlue text-white py-4 px-6 shadow">
       <div className="flex justify-between items-center max-w-7xl mx-auto pl-4">
-        <Link href={LogoHref}>
-          <span
-            className="flex items-center font-bold text-xl uppercase tracking-wide cursor-default opacity-100"
-            aria-disabled="true"
-          >
-            <span className="bg-white rounded-md p-1 mr-4">
-              <Image src="/gldlogo.png" alt="GLD Logo" width={72} height={72} />
-            </span>
-            Minister Connect
-          </span>
+        <Link
+          href={roleHref}
+          className="flex items-center font-bold text-xl uppercase tracking-wide cursor-pointer opacity-100"
+        >
+          <span>MinisterConnect</span>
         </Link>
         <button
           className="md:hidden text-white ml-2"
@@ -58,7 +75,7 @@ const Header = ({ role, onLogout, profileStatus }: HeaderProps) => {
           </svg>
         </button>
         <nav className="hidden md:flex items-center space-x-6">
-          {role === 'candidate' && (
+          {roleHref === '/candidate' && (
             <>
               <Link href="/candidate" className={navLinkClass('/candidate')}>
                 Dashboard
@@ -73,7 +90,7 @@ const Header = ({ role, onLogout, profileStatus }: HeaderProps) => {
               )}
             </>
           )}
-          {role === 'church' && (
+          {roleHref === '/church' && (
             <>
               <Link href="/church" className={navLinkClass('/church')}>
                 Dashboard
@@ -84,12 +101,15 @@ const Header = ({ role, onLogout, profileStatus }: HeaderProps) => {
               <Link href="/church/jobs" className={navLinkClass('/church/jobs')}>
                 Manage Jobs
               </Link>
-              <Link href="/church/mutual-interests" className={navLinkClass('/church/mutual-interests')}>
+              <Link
+                href="/church/mutual-interests"
+                className={navLinkClass('/church/mutual-interests')}
+              >
                 Mutual Interests
               </Link>
             </>
           )}
-          {role === 'admin' && (
+          {roleHref === '/admin' && (
             <>
               <Link href="/admin" className={navLinkClass('/admin')}>
                 Dashboard
@@ -108,7 +128,7 @@ const Header = ({ role, onLogout, profileStatus }: HeaderProps) => {
               </Link>
             </>
           )}
-          {role === 'superadmin' && (
+          {roleHref === '/superadmin' && (
             <>
               <Link href="/superadmin" className={navLinkClass('/superadmin')}>
                 Dashboard
@@ -121,15 +141,15 @@ const Header = ({ role, onLogout, profileStatus }: HeaderProps) => {
               </Link>
             </>
           )}
-          {role && (
+          {user != null && (
             <button
-              onClick={onLogout}
+              onClick={handleLogout}
               className="px-3 py-2 rounded-md text-sm font-medium text-white hover:bg-red-600"
             >
               Logout
             </button>
           )}
-          {!role && (
+          {user === null && (
             <>
               <Link href="/auth/login" className={navLinkClass('/auth/login')}>
                 Login
@@ -142,8 +162,8 @@ const Header = ({ role, onLogout, profileStatus }: HeaderProps) => {
         </nav>
       </div>
       {menuOpen && (
-        <div className="md:hidden px-2 pt-2 pb-3 space-y-1">
-          {role === 'candidate' && (
+        <nav className="md:hidden flex flex-col items-center pt-4 space-y-2">
+          {roleHref === '/candidate' && (
             <>
               <Link href="/candidate" className={navLinkClass('/candidate')}>
                 Dashboard
@@ -158,7 +178,7 @@ const Header = ({ role, onLogout, profileStatus }: HeaderProps) => {
               )}
             </>
           )}
-          {role === 'church' && (
+          {roleHref === '/church' && (
             <>
               <Link href="/church" className={navLinkClass('/church')}>
                 Dashboard
@@ -169,12 +189,15 @@ const Header = ({ role, onLogout, profileStatus }: HeaderProps) => {
               <Link href="/church/jobs" className={navLinkClass('/church/jobs')}>
                 Manage Jobs
               </Link>
-              <Link href="/church/mutual-interests" className={navLinkClass('/church/mutual-interests')}>
+              <Link
+                href="/church/mutual-interests"
+                className={navLinkClass('/church/mutual-interests')}
+              >
                 Mutual Interests
               </Link>
             </>
           )}
-          {role === 'admin' && (
+          {roleHref === '/admin' && (
             <>
               <Link href="/admin" className={navLinkClass('/admin')}>
                 Dashboard
@@ -193,15 +216,28 @@ const Header = ({ role, onLogout, profileStatus }: HeaderProps) => {
               </Link>
             </>
           )}
-          {role && (
+          {roleHref === '/superadmin' && (
+            <>
+              <Link href="/superadmin" className={navLinkClass('/superadmin')}>
+                Dashboard
+              </Link>
+              <Link href="/superadmin/users" className={navLinkClass('/superadmin/users')}>
+                Manage Users
+              </Link>
+              <Link href="/superadmin/churches" className={navLinkClass('/superadmin/churches')}>
+                Manage Churches
+              </Link>
+            </>
+          )}
+          {user !== null && (
             <button
-              onClick={onLogout}
-              className="w-full text-left px-3 py-2 rounded-md text-sm font-medium text-white hover:bg-red-600"
+              onClick={handleLogout}
+              className="w-[50%] text-center px-3 py-2 rounded-md text-lg font-regular text-white hover:bg-red-600"
             >
               Logout
             </button>
           )}
-          {!role && (
+          {user === null && (
             <>
               <Link href="/auth/login" className={navLinkClass('/auth/login')}>
                 Login
@@ -211,7 +247,7 @@ const Header = ({ role, onLogout, profileStatus }: HeaderProps) => {
               </Link>
             </>
           )}
-        </div>
+        </nav>
       )}
     </header>
   );

@@ -15,14 +15,20 @@ export default function CreateJob() {
   });
 
   const handleInputChange = (field: string, value: string) => {
-    setFormData(prev => ({ ...prev, [field]: value }));
+    setFormData((prev) => ({ ...prev, [field]: value }));
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setSaving(true);
 
-    if (!formData.title || !formData.ministry_type || !formData.employment_type || !formData.job_description || !formData.about_church) {
+    if (
+      !formData.title ||
+      !formData.ministry_type ||
+      !formData.employment_type ||
+      !formData.job_description ||
+      !formData.about_church
+    ) {
       alert('Please fill in all required fields.');
       setSaving(false);
       return;
@@ -47,7 +53,9 @@ export default function CreateJob() {
       });
 
       if (response.ok) {
-        alert('Job posting created successfully! It will be reviewed by an administrator before becoming visible to candidates.');
+        alert(
+          'Job posting created successfully! It will be reviewed by an administrator before becoming visible to candidates.'
+        );
         router.push('/church/jobs');
       } else {
         alert('Error creating job posting. Please try again.');
@@ -75,7 +83,8 @@ export default function CreateJob() {
 
         <form onSubmit={handleSubmit} className="bg-white rounded-lg shadow-lg p-8 space-y-6">
           <p className="text-gray-600">
-            Create a job posting to attract ministry candidates. Provide detailed information about the position and your church.
+            Create a job posting to attract ministry candidates. Provide detailed information about
+            the position and your church.
           </p>
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-2">
@@ -115,13 +124,15 @@ export default function CreateJob() {
               className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-efcaAccent focus:border-efcaAccent bg-white"
               required
             >
-              <option value="" disabled>Select an employment type</option>
+              <option value="" disabled>
+                Select an employment type
+              </option>
               <option value="Full Time with Benefits">Full Time with Benefits</option>
               <option value="Part Time">Part Time</option>
               <option value="Internship">Internship</option>
             </select>
           </div>
-          
+
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-2">
               Job Description <span className="text-red-500">*</span>
@@ -169,4 +180,4 @@ export default function CreateJob() {
       </div>
     </div>
   );
-} 
+}

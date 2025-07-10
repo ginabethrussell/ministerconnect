@@ -1,22 +1,28 @@
+import { User } from "../context/UserContext";
 // API client configuration for backend integration
-const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || '';
+const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000';
 
 // Helper function to get full API URL
 export const getApiUrl = (endpoint: string): string => {
-  if (API_BASE_URL) {
-    return `${API_BASE_URL}${endpoint}`;
-  }
-  // Fallback to relative URLs for mock API
-  return endpoint;
+  // Remove leading slash if present to avoid double slashes
+  const cleanEndpoint = endpoint.startsWith('/') ? endpoint.slice(1) : endpoint;
+  return `${API_BASE_URL}/${cleanEndpoint}`;
+};
+
+// Helper function to get auth headers
+const getAuthHeaders = () => {
+  const token = localStorage.getItem('accessToken');
+  return {
+    'Content-Type': 'application/json',
+    ...(token && { Authorization: `Bearer ${token}` }),
+  };
 };
 
 // Generic API client with error handling
 export const apiClient = {
   async get<T>(endpoint: string): Promise<T> {
     const response = await fetch(getApiUrl(endpoint), {
-      headers: {
-        'Content-Type': 'application/json',
-      },
+      headers: getAuthHeaders(),
     });
     
     if (!response.ok) {
@@ -29,9 +35,7 @@ export const apiClient = {
   async post<T>(endpoint: string, data: any): Promise<T> {
     const response = await fetch(getApiUrl(endpoint), {
       method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
+      headers: getAuthHeaders(),
       body: JSON.stringify(data),
     });
     
@@ -45,9 +49,7 @@ export const apiClient = {
   async put<T>(endpoint: string, data: any): Promise<T> {
     const response = await fetch(getApiUrl(endpoint), {
       method: 'PUT',
-      headers: {
-        'Content-Type': 'application/json',
-      },
+      headers: getAuthHeaders(),
       body: JSON.stringify(data),
     });
     
@@ -61,9 +63,7 @@ export const apiClient = {
   async delete<T>(endpoint: string): Promise<T> {
     const response = await fetch(getApiUrl(endpoint), {
       method: 'DELETE',
-      headers: {
-        'Content-Type': 'application/json',
-      },
+      headers: getAuthHeaders(),
     });
     
     if (!response.ok) {
@@ -89,8 +89,24 @@ export const apiClient = {
 
 // API endpoints configuration
 export const API_ENDPOINTS = {
-  // Authentication
-  LOGIN: '/api/auth/login',
+  // Authentication (Django backend)
+  LOGIN: '/api/token/',
+  REFRESH_TOKEN: '/api/token/refresh/',
+  
+  // Churches (Django backend)
+  CREATE_CHURCH: '/api/churches/create/',
+  
+  // Users (Django backend)
+  CREATE_USER: '/api/users/create/',
+  
+  // Invite codes (Django backend)
+  CREATE_INVITE_CODE: '/api/invite-codes/create/',
+  LIST_INVITE_CODES: '/api/invite-codes/',
+  
+  // Applicants (Django backend)
+  APPLICANT_REGISTER: '/api/applicants/register/',
+  
+  // Frontend routes (for MSW/fallback)
   REGISTER: '/api/register',
   FORGOT_PASSWORD: '/api/auth/forgot-password',
   RESET_PASSWORD: '/api/auth/reset-password',
@@ -99,12 +115,13 @@ export const API_ENDPOINTS = {
   // User management
   USER: '/api/user',
   USERS: '/api/users',
+  GET_ME: '/api/user/me/',
   
   // Profiles
   PROFILE: '/api/profile',
   PROFILES: '/api/profiles',
   
-  // Churches
+  // Churches (frontend routes)
   CHURCHES: '/api/churches',
   
   // Job listings
@@ -113,7 +130,7 @@ export const API_ENDPOINTS = {
   // Mutual interests
   MUTUAL_INTERESTS: '/api/mutual-interests',
   
-  // Invite codes
+  // Invite codes (frontend routes)
   INVITE_CODES: '/api/invite-codes',
   
   // Superadmin
@@ -251,3 +268,8 @@ export const deleteInviteCode = async (id: number) => {
 export const getChurchDashboard = async () => {
   // ... existing code ...
 } 
+
+// Fetch current authenticated user info
+export const getMe = async (): Promise<User> => {
+  return apiClient.get(API_ENDPOINTS.GET_ME);
+}; 

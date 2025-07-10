@@ -1,11 +1,4 @@
-import {
-  User,
-  Church,
-  InviteCode,
-  Profile,
-  JobListing,
-  MutualInterest,
-} from '../types';
+import { User, Church, InviteCode, Profile, JobListing, MutualInterest } from '../types';
 
 const now = new Date();
 
@@ -97,7 +90,7 @@ export const mockUsers: User[] = [
     created_at: now.toISOString(),
     updated_at: now.toISOString(),
   },
-    {
+  {
     id: 4,
     email: 'jane.candidate@email.com',
     name: 'Jane Smith',
@@ -116,6 +109,19 @@ export const mockUsers: User[] = [
     name: 'Super Admin',
     password: 'password123',
     role: 'superadmin',
+    church_id: null,
+    status: 'active',
+    requires_password_change: false,
+    last_login: now.toISOString(),
+    created_at: now.toISOString(),
+    updated_at: now.toISOString(),
+  },
+  {
+    id: 7,
+    email: 'nophoto.candidate@email.com',
+    name: 'No Photo',
+    password: 'password123',
+    role: 'candidate',
     church_id: null,
     status: 'active',
     requires_password_change: false,
@@ -156,6 +162,7 @@ export const mockProfiles: Profile[] = [
     first_name: 'John',
     last_name: 'Doe',
     email: 'john.candidate@email.com',
+    phone: '555-555-5555',
     user_id: 3,
     invite_code_id: 1,
     street_address: '789 Candidate Ave',
@@ -176,6 +183,7 @@ export const mockProfiles: Profile[] = [
     first_name: 'Jane',
     last_name: 'Smith',
     email: 'jane.candidate@email.com',
+    phone: '555-555-5556',
     user_id: 4,
     invite_code_id: 2,
     street_address: '101 Profile Pl',
@@ -191,6 +199,27 @@ export const mockProfiles: Profile[] = [
     created_at: now.toISOString(),
     updated_at: now.toISOString(),
   },
+  {
+    id: 3,
+    first_name: 'No',
+    last_name: 'Photo',
+    email: 'nophoto.candidate@email.com',
+    phone: '555-555-5557',
+    user_id: 7,
+    invite_code_id: 1,
+    street_address: '123 Placeholder Lane',
+    city: 'Defaultville',
+    state: 'IL',
+    zipcode: '60000',
+    status: 'approved',
+    photo: null, // No photo
+    resume: '/student-pastor-resume.pdf',
+    video_url: null,
+    placement_preferences: ['Administration', 'Pastoral Care/Counseling'],
+    submitted_at: now.toISOString(),
+    created_at: now.toISOString(),
+    updated_at: now.toISOString(),
+  },
 ];
 
 export const mockJobListings: JobListing[] = [
@@ -200,8 +229,10 @@ export const mockJobListings: JobListing[] = [
     title: 'Youth Pastor',
     ministry_type: 'Youth',
     employment_type: 'Full Time with Benefits',
-    job_description: 'We are seeking a passionate and experienced Youth Pastor to lead our growing youth ministry. The ideal candidate will have a heart for discipling young people, experience in youth ministry, and strong leadership skills. Responsibilities include planning and leading weekly youth services, organizing events and retreats, mentoring youth leaders, and collaborating with parents and church leadership.',
-    about_church: 'Grace Fellowship Church is a vibrant, multi-generational congregation located in Springfield, IL. We are committed to making disciples who make disciples, with a strong emphasis on family ministry and community outreach. Our church values authentic relationships, biblical teaching, and serving our community with the love of Christ.',
+    job_description:
+      'We are seeking a passionate and experienced Youth Pastor to lead our growing youth ministry. The ideal candidate will have a heart for discipling young people, experience in youth ministry, and strong leadership skills. Responsibilities include planning and leading weekly youth services, organizing events and retreats, mentoring youth leaders, and collaborating with parents and church leadership.',
+    about_church:
+      'Grace Fellowship Church is a vibrant, multi-generational congregation located in Springfield, IL. We are committed to making disciples who make disciples, with a strong emphasis on family ministry and community outreach. Our church values authentic relationships, biblical teaching, and serving our community with the love of Christ.',
     status: 'approved',
     created_at: now.toISOString(),
     updated_at: now.toISOString(),
@@ -212,8 +243,10 @@ export const mockJobListings: JobListing[] = [
     title: 'Worship Leader',
     ministry_type: 'Worship',
     employment_type: 'Part Time',
-    job_description: 'We are looking for a gifted Worship Leader to help create meaningful worship experiences for our congregation. The role involves leading worship during Sunday services, rehearsing with the worship team, selecting appropriate songs, and helping to develop other worship leaders. Musical proficiency and a heart for worship are essential.',
-    about_church: 'Grace Fellowship Church is a vibrant, multi-generational congregation located in Springfield, IL. We are committed to making disciples who make disciples, with a strong emphasis on family ministry and community outreach. Our church values authentic relationships, biblical teaching, and serving our community with the love of Christ.',
+    job_description:
+      'We are looking for a gifted Worship Leader to help create meaningful worship experiences for our congregation. The role involves leading worship during Sunday services, rehearsing with the worship team, selecting appropriate songs, and helping to develop other worship leaders. Musical proficiency and a heart for worship are essential.',
+    about_church:
+      'Grace Fellowship Church is a vibrant, multi-generational congregation located in Springfield, IL. We are committed to making disciples who make disciples, with a strong emphasis on family ministry and community outreach. Our church values authentic relationships, biblical teaching, and serving our community with the love of Christ.',
     status: 'pending',
     created_at: now.toISOString(),
     updated_at: now.toISOString(),
@@ -224,8 +257,10 @@ export const mockJobListings: JobListing[] = [
     title: 'Missions Coordinator',
     ministry_type: 'Missions',
     employment_type: 'Full Time with Benefits',
-    job_description: 'New Hope Community Church is seeking a Missions Coordinator to oversee our local and global mission initiatives. This role involves developing mission partnerships, organizing mission trips, coordinating volunteer teams, and helping our congregation engage with our community and the world. Strong organizational skills and a passion for missions are required.',
-    about_church: 'New Hope Community Church is a dynamic, mission-focused congregation in Shelbyville, IL. We are passionate about reaching our community and the world with the gospel through both word and deed. Our church emphasizes authentic community, spiritual growth, and active engagement in God\'s mission.',
+    job_description:
+      'New Hope Community Church is seeking a Missions Coordinator to oversee our local and global mission initiatives. This role involves developing mission partnerships, organizing mission trips, coordinating volunteer teams, and helping our congregation engage with our community and the world. Strong organizational skills and a passion for missions are required.',
+    about_church:
+      "New Hope Community Church is a dynamic, mission-focused congregation in Shelbyville, IL. We are passionate about reaching our community and the world with the gospel through both word and deed. Our church emphasizes authentic community, spiritual growth, and active engagement in God's mission.",
     status: 'approved',
     created_at: now.toISOString(),
     updated_at: now.toISOString(),
@@ -233,11 +268,13 @@ export const mockJobListings: JobListing[] = [
   {
     id: 4,
     church_id: 2,
-    title: 'Children\'s Ministry Director',
+    title: "Children's Ministry Director",
     ministry_type: 'Children',
     employment_type: 'Full Time with Benefits',
-    job_description: 'We are seeking a Children\'s Ministry Director to lead our children\'s programs and create engaging, age-appropriate learning experiences. The role involves curriculum development, volunteer coordination, parent communication, and creating a safe, nurturing environment for children to grow in their faith.',
-    about_church: 'New Hope Community Church is a dynamic, mission-focused congregation in Shelbyville, IL. We are passionate about reaching our community and the world with the gospel through both word and deed. Our church emphasizes authentic community, spiritual growth, and active engagement in God\'s mission.',
+    job_description:
+      "We are seeking a Children's Ministry Director to lead our children's programs and create engaging, age-appropriate learning experiences. The role involves curriculum development, volunteer coordination, parent communication, and creating a safe, nurturing environment for children to grow in their faith.",
+    about_church:
+      "New Hope Community Church is a dynamic, mission-focused congregation in Shelbyville, IL. We are passionate about reaching our community and the world with the gospel through both word and deed. Our church emphasizes authentic community, spiritual growth, and active engagement in God's mission.",
     status: 'pending',
     created_at: now.toISOString(),
     updated_at: now.toISOString(),
@@ -248,9 +285,25 @@ export const mockJobListings: JobListing[] = [
     title: 'Administrative Assistant',
     ministry_type: 'Administration',
     employment_type: 'Part Time',
-    job_description: 'We need an Administrative Assistant to support our church office operations. This role involves managing communications, coordinating events, maintaining records, and providing general administrative support to church staff and leadership.',
-    about_church: 'Grace Fellowship Church is a vibrant, multi-generational congregation located in Springfield, IL. We are committed to making disciples who make disciples, with a strong emphasis on family ministry and community outreach. Our church values authentic relationships, biblical teaching, and serving our community with the love of Christ.',
+    job_description:
+      'We need an Administrative Assistant to support our church office operations. This role involves managing communications, coordinating events, maintaining records, and providing general administrative support to church staff and leadership.',
+    about_church:
+      'Grace Fellowship Church is a vibrant, multi-generational congregation located in Springfield, IL. We are committed to making disciples who make disciples, with a strong emphasis on family ministry and community outreach. Our church values authentic relationships, biblical teaching, and serving our community with the love of Christ.',
     status: 'rejected',
+    created_at: now.toISOString(),
+    updated_at: now.toISOString(),
+  },
+  {
+    id: 6,
+    church_id: 2,
+    title: 'Pastoral Internship',
+    ministry_type: 'Pastoral',
+    employment_type: 'Internship (Part Time)',
+    job_description:
+      'This is a great opportunity for a seminary student or aspiring pastor to gain hands-on ministry experience. The intern will shadow our pastoral staff, assist in sermon preparation, lead small groups, and participate in various ministry areas. This is a paid internship.',
+    about_church:
+      "New Hope Community Church is a dynamic, mission-focused congregation in Shelbyville, IL. We are passionate about reaching our community and the world with the gospel through both word and deed. Our church emphasizes authentic community, spiritual growth, and active engagement in God's mission.",
+    status: 'approved',
     created_at: now.toISOString(),
     updated_at: now.toISOString(),
   },
@@ -284,4 +337,4 @@ export const mockMutualInterests: MutualInterest[] = [
     created_at: now.toISOString(),
     updated_at: now.toISOString(),
   },
-]; 
+];

@@ -46,6 +46,7 @@ export interface Profile {
   first_name: string;
   last_name: string;
   email: string;
+  phone: string;
   user_id: number;
   invite_code_id: number;
   street_address: string;
@@ -53,9 +54,9 @@ export interface Profile {
   state: string;
   zipcode: string;
   status: 'pending' | 'approved' | 'rejected';
-  photo: string;
+  photo: string | null;
   resume: string;
-  video_url: string;
+  video_url: string | null;
   placement_preferences: string[];
   submitted_at: string; // When the profile was submitted for review
   created_at: string;

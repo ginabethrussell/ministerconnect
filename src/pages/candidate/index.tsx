@@ -8,7 +8,7 @@ interface Profile {
   lastName: string;
   email: string;
   status: 'draft' | 'pending' | 'approved' | 'rejected';
-  lastUpdated: string;
+  updated_at: string;
   adminFeedback?: string;
   phone?: string;
 }
@@ -24,7 +24,7 @@ export default function CandidateDashboard() {
       try {
         const response = await fetch('/api/profile');
         const data = await response.json();
-        
+
         if (data.success && data.profile) {
           setProfile(data.profile);
         }
@@ -95,7 +95,9 @@ export default function CandidateDashboard() {
       <div className="max-w-4xl mx-auto">
         <h1 className="text-3xl font-bold text-efcaDark mb-8">Candidate Dashboard</h1>
         <div className="bg-blue-50 border border-blue-200 text-blue-800 rounded-lg p-4 mb-8 text-center">
-          Once your profile has been submitted and approved, you will be able to view open church positions and indicate your interest on individual church job listings. If there is mutual interest, churches will contact you directly.
+          Once your profile has been submitted and approved, you will be able to view open church
+          positions and indicate your interest on individual church job listings. If there is mutual
+          interest, churches will contact you directly.
         </div>
 
         {/* Profile Status Section */}
@@ -130,7 +132,7 @@ export default function CandidateDashboard() {
           )}
           <p className="text-sm text-gray-400 mt-4">
             Last updated:{' '}
-            {profile?.lastUpdated ? new Date(profile.lastUpdated).toLocaleDateString() : 'N/A'}
+            {profile?.updated_at ? new Date(profile.updated_at).toLocaleDateString() : 'N/A'}
           </p>
           <p className="text-xs text-gray-400 mt-1">
             Profiles will be retained for 1 year after your last update.
@@ -181,7 +183,8 @@ export default function CandidateDashboard() {
           <section className="bg-white rounded-lg shadow-sm p-6">
             <h3 className="text-lg font-bold text-efcaDark mb-2">Contact Information</h3>
             <p className="text-gray-500 mb-4">
-              If there is mutual interest, churches will reach out to you directly using your contact information.
+              If there is mutual interest, churches will reach out to you directly using your
+              contact information.
             </p>
             {profile ? (
               <div className="space-y-2">
@@ -245,7 +248,8 @@ export default function CandidateDashboard() {
               <div>
                 <h4 className="font-medium text-efcaDark">View and Indicate Interest</h4>
                 <p className="text-gray-600">
-                  You can view open church positions and indicate your interest on individual job listings.
+                  You can view open church positions and indicate your interest on individual job
+                  listings.
                 </p>
               </div>
             </div>
@@ -256,7 +260,8 @@ export default function CandidateDashboard() {
               <div>
                 <h4 className="font-medium text-efcaDark">Connect for Ministry</h4>
                 <p className="text-gray-600">
-                  If there is mutual interest, churches will reach out to you directly using your contact information.
+                  If there is mutual interest, churches will reach out to you directly using your
+                  contact information.
                 </p>
               </div>
             </div>

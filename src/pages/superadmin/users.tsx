@@ -11,36 +11,81 @@ export default function SuperAdminUsers() {
 
   // Mock data
   const users = [
-    { id: 1, name: 'John Smith', email: 'john.smith@email.com', role: 'candidate', status: 'active', createdAt: '2024-01-15' },
-    { id: 2, name: 'Grace Community Church', email: 'pastor@gracechurch.com', role: 'church', status: 'active', createdAt: '2024-01-10' },
-    { id: 3, name: 'Jane Doe', email: 'jane.doe@email.com', role: 'candidate', status: 'pending', createdAt: '2024-01-20' },
-    { id: 4, name: 'First Baptist Church', email: 'admin@firstbaptist.com', role: 'church', status: 'active', createdAt: '2024-01-05' },
-    { id: 5, name: 'Mike Johnson', email: 'mike.johnson@email.com', role: 'candidate', status: 'inactive', createdAt: '2024-01-12' },
+    {
+      id: 1,
+      name: 'John Smith',
+      email: 'john.smith@email.com',
+      role: 'candidate',
+      status: 'active',
+      createdAt: '2024-01-15',
+    },
+    {
+      id: 2,
+      name: 'Grace Community Church',
+      email: 'pastor@gracechurch.com',
+      role: 'church',
+      status: 'active',
+      createdAt: '2024-01-10',
+    },
+    {
+      id: 3,
+      name: 'Jane Doe',
+      email: 'jane.doe@email.com',
+      role: 'candidate',
+      status: 'pending',
+      createdAt: '2024-01-20',
+    },
+    {
+      id: 4,
+      name: 'First Baptist Church',
+      email: 'admin@firstbaptist.com',
+      role: 'church',
+      status: 'active',
+      createdAt: '2024-01-05',
+    },
+    {
+      id: 5,
+      name: 'Mike Johnson',
+      email: 'mike.johnson@email.com',
+      role: 'candidate',
+      status: 'inactive',
+      createdAt: '2024-01-12',
+    },
   ];
 
-  const filteredUsers = users.filter(user => {
-    const matchesSearch = user.name.toLowerCase().includes(searchTerm.toLowerCase()) || 
-                         user.email.toLowerCase().includes(searchTerm.toLowerCase());
+  const filteredUsers = users.filter((user) => {
+    const matchesSearch =
+      user.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      user.email.toLowerCase().includes(searchTerm.toLowerCase());
     const matchesRole = roleFilter === 'all' || user.role === roleFilter;
     return matchesSearch && matchesRole;
   });
 
   const getStatusColor = (status: string) => {
     switch (status) {
-      case 'active': return 'bg-green-100 text-green-800';
-      case 'pending': return 'bg-yellow-100 text-yellow-800';
-      case 'inactive': return 'bg-red-100 text-red-800';
-      default: return 'bg-gray-100 text-gray-800';
+      case 'active':
+        return 'bg-green-100 text-green-800';
+      case 'pending':
+        return 'bg-yellow-100 text-yellow-800';
+      case 'inactive':
+        return 'bg-red-100 text-red-800';
+      default:
+        return 'bg-gray-100 text-gray-800';
     }
   };
 
   const getRoleColor = (role: string) => {
     switch (role) {
-      case 'candidate': return 'bg-blue-100 text-blue-800';
-      case 'church': return 'bg-purple-100 text-purple-800';
-      case 'admin': return 'bg-orange-100 text-orange-800';
-      case 'superadmin': return 'bg-red-100 text-red-800';
-      default: return 'bg-gray-100 text-gray-800';
+      case 'candidate':
+        return 'bg-blue-100 text-blue-800';
+      case 'church':
+        return 'bg-purple-100 text-purple-800';
+      case 'admin':
+        return 'bg-orange-100 text-orange-800';
+      case 'superadmin':
+        return 'bg-red-100 text-red-800';
+      default:
+        return 'bg-gray-100 text-gray-800';
     }
   };
 
@@ -51,9 +96,9 @@ export default function SuperAdminUsers() {
 
   const confirmResetPassword = async () => {
     if (!selectedUser) return;
-    
+
     setIsResetting(true);
-    
+
     try {
       const response = await fetch(`/api/superadmin/users/${selectedUser.id}/reset-password`, {
         method: 'POST',
@@ -153,7 +198,10 @@ export default function SuperAdminUsers() {
               </thead>
               <tbody>
                 {filteredUsers.map((user) => (
-                  <tr key={user.id} className="block md:table-row mb-4 rounded-lg border border-gray-200 p-4 md:mb-0 md:border-0 md:border-b md:border-gray-100 md:p-0 md:hover:bg-gray-50 md:rounded-none">
+                  <tr
+                    key={user.id}
+                    className="block md:table-row mb-4 rounded-lg border border-gray-200 p-4 md:mb-0 md:border-0 md:border-b md:border-gray-100 md:p-0 md:hover:bg-gray-50 md:rounded-none"
+                  >
                     <td className="block md:table-cell py-2 px-4 md:py-4 md:px-4">
                       <span className="font-bold md:hidden mr-2">User:</span>
                       <span>
@@ -164,7 +212,9 @@ export default function SuperAdminUsers() {
                     <td className="block md:table-cell py-2 px-4 md:py-4 md:px-4">
                       <div className="flex justify-between items-center">
                         <span className="font-bold md:hidden">Role:</span>
-                        <span className={`px-2 py-1 rounded-full text-xs font-medium ${getRoleColor(user.role)}`}>
+                        <span
+                          className={`px-2 py-1 rounded-full text-xs font-medium ${getRoleColor(user.role)}`}
+                        >
                           {user.role.charAt(0).toUpperCase() + user.role.slice(1)}
                         </span>
                       </div>
@@ -172,7 +222,9 @@ export default function SuperAdminUsers() {
                     <td className="block md:table-cell py-2 px-4 md:py-4 md:px-4">
                       <div className="flex justify-between items-center">
                         <span className="font-bold md:hidden">Status:</span>
-                        <span className={`px-2 py-1 rounded-full text-xs font-medium ${getStatusColor(user.status)}`}>
+                        <span
+                          className={`px-2 py-1 rounded-full text-xs font-medium ${getStatusColor(user.status)}`}
+                        >
                           {user.status.charAt(0).toUpperCase() + user.status.slice(1)}
                         </span>
                       </div>
@@ -187,7 +239,7 @@ export default function SuperAdminUsers() {
                       <div className="flex justify-between items-center md:justify-start md:space-x-2">
                         <span className="font-bold md:hidden">Actions:</span>
                         <div className="flex space-x-2">
-                          <button 
+                          <button
                             onClick={() => handleResetPassword(user)}
                             className="px-3 py-1.5 bg-blue-600 text-white rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:opacity-50 disabled:cursor-not-allowed transition-colors text-sm font-medium"
                           >
@@ -224,14 +276,14 @@ export default function SuperAdminUsers() {
             <div className="bg-white rounded-lg p-6 max-w-md w-full mx-4">
               {!resetPassword ? (
                 <>
-                  <h3 className="text-lg font-semibold text-efcaDark mb-4">
-                    Reset Password
-                  </h3>
+                  <h3 className="text-lg font-semibold text-efcaDark mb-4">Reset Password</h3>
                   <p className="text-gray-600 mb-4">
-                    Are you sure you want to reset the password for <strong>{selectedUser?.name}</strong> ({selectedUser?.email})?
+                    Are you sure you want to reset the password for{' '}
+                    <strong>{selectedUser?.name}</strong> ({selectedUser?.email})?
                   </p>
                   <p className="text-sm text-gray-500 mb-6">
-                    A secure reset token will be generated. The user will receive a reset link via email to set a new password.
+                    A secure reset token will be generated. The user will receive a reset link via
+                    email to set a new password.
                   </p>
                   <div className="flex justify-end space-x-3">
                     <button
@@ -255,13 +307,15 @@ export default function SuperAdminUsers() {
                     Password Reset Complete
                   </h3>
                   <p className="text-gray-600 mb-4">
-                    A secure reset token has been generated for <strong>{selectedUser?.name}</strong>.
+                    A secure reset token has been generated for{' '}
+                    <strong>{selectedUser?.name}</strong>.
                   </p>
                   <div className="bg-gray-100 p-3 rounded mb-4">
                     <p className="text-sm font-mono text-gray-800 break-all">{resetPassword}</p>
                   </div>
                   <p className="text-sm text-gray-500 mb-4">
-                    Reset Link: <span className="font-mono text-xs break-all">{`${window.location.origin}/auth/reset-password?token=${resetPassword}`}</span>
+                    Reset Link:{' '}
+                    <span className="font-mono text-xs break-all">{`${window.location.origin}/auth/reset-password?token=${resetPassword}`}</span>
                   </p>
                   <div className="flex justify-end space-x-3">
                     <button
