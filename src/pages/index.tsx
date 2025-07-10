@@ -4,10 +4,12 @@ const HomePage = () => {
   return (
     <div className="min-h-screen flex flex-col items-center justify-center bg-efcaGray font-sans">
       <div className="max-w-xl p-8 bg-white rounded shadow text-center">
-        <h1 className="text-3xl font-bold mb-4 text-efcaBlue">Welcome to EFCA Great Lakes District Minister Connect</h1>
+        <h1 className="text-3xl font-bold mb-4 text-efcaBlue">
+          Welcome to EFCA Great Lakes District Minister Connect
+        </h1>
         <p className="mb-6 text-gray-700">
-          Minister Connect provides job candidates and churches a secure, admin-approved
-          platform for expressing mutual interest.
+          Minister Connect provides job candidates and churches a secure, admin-approved platform
+          for expressing mutual interest.
         </p>
         <div className="space-y-4">
           <Link

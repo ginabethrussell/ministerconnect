@@ -9,6 +9,7 @@ interface JobListingWithStatus extends JobListing {
   church_name: string;
   church_email: string;
   church_phone: string;
+  church_location: string;
 }
 
 export default function CandidateJobs() {
@@ -27,7 +28,7 @@ export default function CandidateJobs() {
         // Check if candidate profile exists and is approved
         const response = await fetch('/api/profile');
         const data = await response.json();
-        
+
         if (data.success && data.profile) {
           setProfile(data.profile);
           if (data.profile.status !== 'approved') {
@@ -47,6 +48,15 @@ export default function CandidateJobs() {
           const jobsData = await jobsResponse.json();
           setJobListings(jobsData);
         }
+
+        // Load user's expressed interests
+        const interestsResponse = await fetch('/api/job-listings/expressed-interests');
+        if (interestsResponse.ok) {
+          const interestsData = await interestsResponse.json();
+          if (interestsData.success) {
+            setExpressedInterest(interestsData.jobIds);
+          }
+        }
       } catch (error) {
         console.error('Failed to load profile or jobs:', error);
         router.push('/candidate');
@@ -59,31 +69,41 @@ export default function CandidateJobs() {
     checkProfileAndLoadJobs();
   }, [router]);
 
-  const filteredJobs = jobListings.filter(job => {
-    const matchesSearch = 
+  const filteredJobs = jobListings.filter((job) => {
+    const matchesSearch =
       job.title.toLowerCase().includes(search.toLowerCase()) ||
       job.ministry_type.toLowerCase().includes(search.toLowerCase()) ||
       job.church_name.toLowerCase().includes(search.toLowerCase());
-    
-    const matchesFilter = 
-      filter === 'all' || 
+
+    const matchesFilter =
+      filter === 'all' ||
       (filter === 'full-time' && job.employment_type.toLowerCase().includes('full')) ||
-      (filter === 'part-time' && job.employment_type.toLowerCase().includes('part'));
-    
+      (filter === 'part-time' && job.employment_type.toLowerCase().includes('part')) ||
+      (filter === 'internship' && job.employment_type.toLowerCase().includes('internship'));
+
     return matchesSearch && matchesFilter;
   });
 
   const handleExpressInterest = async (jobId: number) => {
     try {
-      // Simulate API call to express interest
-      await new Promise(resolve => setTimeout(resolve, 1000));
-      
-      if (expressedInterest.includes(jobId)) {
-        // Remove interest
-        setExpressedInterest(prev => prev.filter(id => id !== jobId));
+      const response = await fetch(`/api/job-listings/${jobId}/express-interest`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      });
+
+      if (response.ok) {
+        const data = await response.json();
+        if (data.expressed) {
+          // Add interest
+          setExpressedInterest((prev) => [...prev, jobId]);
+        } else {
+          // Remove interest
+          setExpressedInterest((prev) => prev.filter((id) => id !== jobId));
+        }
       } else {
-        // Add interest
-        setExpressedInterest(prev => [...prev, jobId]);
+        console.error('Failed to express interest:', response.statusText);
       }
     } catch (error) {
       console.error('Failed to express interest:', error);
@@ -92,10 +112,8 @@ export default function CandidateJobs() {
   };
 
   const toggleJobExpansion = (jobId: number) => {
-    setExpandedJobs(prev => 
-      prev.includes(jobId) 
-        ? prev.filter(id => id !== jobId)
-        : [...prev, jobId]
+    setExpandedJobs((prev) =>
+      prev.includes(jobId) ? prev.filter((id) => id !== jobId) : [...prev, jobId]
     );
   };
 
@@ -119,12 +137,21 @@ export default function CandidateJobs() {
 
         {/* Information Section */}
         <section className="bg-blue-50 border border-blue-200 rounded-lg p-6 my-6">
-          <h3 className="text-lg font-semibold text-blue-800 mb-2">How Expressing Interest Works</h3>
+          <h3 className="text-lg font-semibold text-blue-800 mb-2">
+            How Expressing Interest Works
+          </h3>
           <div className="text-blue-700 space-y-2">
-            <p>• Click "Express Interest" to let churches know you're interested in their position</p>
+            <p>
+              • Click "Express Interest" to let churches know you're interested in their position
+            </p>
             <p>• Churches will be notified of your interest and can view your profile</p>
-            <p>• If there's mutual interest, churches will contact you directly using your profile information</p>
-            <p>• You can express interest in multiple positions and withdraw interest at any time</p>
+            <p>
+              • If there's mutual interest, churches will contact you directly using your profile
+              information
+            </p>
+            <p>
+              • You can express interest in multiple positions and withdraw interest at any time
+            </p>
           </div>
         </section>
 
@@ -149,6 +176,7 @@ export default function CandidateJobs() {
                 <option value="all">All Positions</option>
                 <option value="full-time">Full Time</option>
                 <option value="part-time">Part Time</option>
+                <option value="internship">Internship</option>
               </select>
             </div>
           </div>
@@ -159,14 +187,16 @@ export default function CandidateJobs() {
           {filteredJobs.length === 0 ? (
             <div className="text-center py-8">
               <h3 className="text-lg font-medium text-gray-900 mb-2">No positions found</h3>
-              <p className="text-gray-600">Try adjusting your search criteria or check back later for new opportunities.</p>
+              <p className="text-gray-600">
+                Try adjusting your search criteria or check back later for new opportunities.
+              </p>
             </div>
           ) : (
             <div className="space-y-4">
               {filteredJobs.map((job) => {
                 const hasExpressedInterest = expressedInterest.includes(job.id);
                 const isExpanded = expandedJobs.includes(job.id);
-                
+
                 return (
                   <div
                     key={job.id}
@@ -174,29 +204,21 @@ export default function CandidateJobs() {
                   >
                     <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
                       <div className="flex-1">
-                        <div className="flex items-start justify-between mb-2">
-                          <h3 className="text-xl font-semibold text-efcaDark">
-                            {job.title}
-                          </h3>
-                          <span className="text-sm text-gray-500">
-                            {new Date(job.created_at).toLocaleDateString()}
-                          </span>
-                        </div>
-                        
+                        <h3 className="text-xl font-semibold text-efcaDark mb-2">{job.title}</h3>
+
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
                           <div>
-                            <p className="text-lg font-medium text-gray-800">
-                              {job.church_name}
-                            </p>
+                            <p className="text-lg font-medium text-gray-800">{job.church_name}</p>
                             <p className="text-gray-600">{job.ministry_type}</p>
-                            <p className="text-sm text-gray-500">
-                              {job.church_id === 1 ? 'Springfield, IL' : 'Shelbyville, IL'}
-                            </p>
+                            <p className="text-sm text-gray-500">{job.church_location}</p>
                           </div>
                           <div className="text-right md:text-left">
                             <span className="inline-block px-3 py-1 bg-blue-100 text-blue-800 text-sm font-medium rounded-full">
                               {job.employment_type}
                             </span>
+                            <p className="text-sm text-gray-500 mt-2">
+                              Posted on: {new Date(job.created_at).toLocaleDateString()}
+                            </p>
                           </div>
                         </div>
 
@@ -208,13 +230,15 @@ export default function CandidateJobs() {
                               <p className="text-gray-700 leading-relaxed">{job.job_description}</p>
                             </div>
                             <div>
-                              <h4 className="font-semibold text-gray-800 mb-2">About This Church</h4>
+                              <h4 className="font-semibold text-gray-800 mb-2">
+                                About This Church
+                              </h4>
                               <p className="text-gray-700 leading-relaxed">{job.about_church}</p>
                             </div>
                           </div>
                         )}
                       </div>
-                      
+
                       <div className="flex flex-col gap-2 min-w-[200px]">
                         <ExpressInterestButton
                           id={job.id.toString()}
@@ -224,7 +248,7 @@ export default function CandidateJobs() {
                           size="md"
                           variant="primary"
                         />
-                        
+
                         <button
                           onClick={() => toggleJobExpansion(job.id)}
                           className="px-4 py-2 border border-gray-300 text-gray-700 rounded font-semibold hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-gray-400 transition-colors text-center"
@@ -239,8 +263,7 @@ export default function CandidateJobs() {
             </div>
           )}
         </section>
-
       </div>
     </div>
   );
-} 
+}

@@ -46,10 +46,7 @@ export default function ForgotPassword() {
               <p className="text-sm text-gray-500 mb-6">
                 Click the link in the email to reset your password. The link will expire in 1 hour.
               </p>
-              <Link
-                href="/auth/login"
-                className="text-efcaAccent hover:text-blue-700 font-medium"
-              >
+              <Link href="/auth/login" className="text-efcaAccent hover:text-blue-700 font-medium">
                 Back to Login
               </Link>
             </div>
@@ -104,10 +101,7 @@ export default function ForgotPassword() {
           </form>
 
           <div className="mt-6 text-center">
-            <Link
-              href="/auth/login"
-              className="text-efcaAccent hover:text-blue-700 font-medium"
-            >
+            <Link href="/auth/login" className="text-efcaAccent hover:text-blue-700 font-medium">
               Back to Login
             </Link>
           </div>
@@ -115,4 +109,4 @@ export default function ForgotPassword() {
       </div>
     </div>
   );
-} 
+}

@@ -43,12 +43,13 @@ const AdminDashboard = () => {
         <section className="bg-white rounded-lg shadow-sm p-6 mb-8">
           <h2 className="text-xl font-bold text-efcaDark mb-2">Welcome to Admin Dashboard</h2>
           <p className="text-gray-600 mb-4">
-            Manage the Minister Connect platform by reviewing candidate profiles, job listings, and managing church access. 
-            Use the tools below to maintain platform quality and security.
+            Manage the Minister Connect platform by reviewing candidate profiles, job listings, and
+            managing church access. Use the tools below to maintain platform quality and security.
           </p>
           <div className="bg-blue-50 border border-blue-200 text-blue-800 rounded-lg p-4">
             <p className="text-sm">
-              <strong>Note:</strong> All candidate profiles and job listings require admin approval before becoming visible to other users.
+              <strong>Note:</strong> All candidate profiles and job listings require admin approval
+              before becoming visible to other users.
             </p>
           </div>
         </section>
@@ -79,9 +80,7 @@ const AdminDashboard = () => {
 
         <section className="bg-white rounded-lg shadow-sm p-6">
           <h3 className="text-lg font-bold text-efcaDark mb-2">Quick Actions</h3>
-          <p className="text-gray-600 mb-4">
-            Common admin tasks to help you get started quickly.
-          </p>
+          <p className="text-gray-600 mb-4">Common admin tasks to help you get started quickly.</p>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
             <Link
               href="/admin/review"

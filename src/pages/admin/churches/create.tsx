@@ -26,37 +26,45 @@ export default function CreateChurch() {
       email: '',
       password: '',
       requires_password_change: true,
-    }
+    },
   ]);
 
   const handleChurchDataChange = (field: string, value: string) => {
-    setChurchData(prev => ({ ...prev, [field]: value }));
+    setChurchData((prev) => ({ ...prev, [field]: value }));
   };
 
   const handleUserChange = (index: number, field: string, value: string | boolean) => {
-    setUsers(prev => prev.map((user, i) => 
-      i === index ? { ...user, [field]: value } : user
-    ));
+    setUsers((prev) => prev.map((user, i) => (i === index ? { ...user, [field]: value } : user)));
   };
 
   const addUser = () => {
-    setUsers(prev => [...prev, {
-      email: '',
-      password: '',
-      requires_password_change: true,
-    }]);
+    setUsers((prev) => [
+      ...prev,
+      {
+        email: '',
+        password: '',
+        requires_password_change: true,
+      },
+    ]);
   };
 
   const removeUser = (index: number) => {
     if (users.length > 1) {
-      setUsers(prev => prev.filter((_, i) => i !== index));
+      setUsers((prev) => prev.filter((_, i) => i !== index));
     }
   };
 
   const validateForm = () => {
     // Validate church data
-    if (!churchData.name || !churchData.email || !churchData.phone || 
-        !churchData.street_address || !churchData.city || !churchData.state || !churchData.zipcode) {
+    if (
+      !churchData.name ||
+      !churchData.email ||
+      !churchData.phone ||
+      !churchData.street_address ||
+      !churchData.city ||
+      !churchData.state ||
+      !churchData.zipcode
+    ) {
       alert('Please fill in all required church fields.');
       return false;
     }
@@ -75,7 +83,7 @@ export default function CreateChurch() {
     }
 
     // Check for duplicate emails
-    const emails = users.map(u => u.email);
+    const emails = users.map((u) => u.email);
     const uniqueEmails = new Set(emails);
     if (emails.length !== uniqueEmails.size) {
       alert('All user emails must be unique.');
@@ -87,7 +95,7 @@ export default function CreateChurch() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    
+
     if (!validateForm()) {
       return;
     }
@@ -182,9 +190,7 @@ export default function CreateChurch() {
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Website
-                </label>
+                <label className="block text-sm font-medium text-gray-700 mb-2">Website</label>
                 <input
                   type="url"
                   value={churchData.website}
@@ -264,7 +270,7 @@ export default function CreateChurch() {
                 + Add User
               </button>
             </div>
-            
+
             <div className="space-y-4">
               {users.map((user, index) => (
                 <div key={index} className="border border-gray-200 rounded-lg p-4">
@@ -280,7 +286,7 @@ export default function CreateChurch() {
                       </button>
                     )}
                   </div>
-                  
+
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div>
                       <label className="block text-sm font-medium text-gray-700 mb-2">
@@ -316,7 +322,9 @@ export default function CreateChurch() {
                       <input
                         type="checkbox"
                         checked={user.requires_password_change}
-                        onChange={(e) => handleUserChange(index, 'requires_password_change', e.target.checked)}
+                        onChange={(e) =>
+                          handleUserChange(index, 'requires_password_change', e.target.checked)
+                        }
                         className="rounded border-gray-300 text-efcaAccent focus:ring-efcaAccent"
                       />
                       <span className="ml-2 text-sm text-gray-700">
@@ -349,4 +357,4 @@ export default function CreateChurch() {
       </div>
     </div>
   );
-} 
+}

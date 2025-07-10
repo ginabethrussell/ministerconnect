@@ -15,13 +15,13 @@ export default function ExpressInterestButton({
   onExpressInterest,
   className = '',
   size = 'md',
-  variant = 'primary'
+  variant = 'primary',
 }: ExpressInterestButtonProps) {
   const [isProcessing, setIsProcessing] = useState(false);
 
   const handleClick = async () => {
     if (isProcessing) return;
-    
+
     setIsProcessing(true);
     try {
       await onExpressInterest(id);
@@ -35,7 +35,7 @@ export default function ExpressInterestButton({
   const sizeClasses = {
     sm: 'px-3 py-1.5 text-sm',
     md: 'px-4 py-2',
-    lg: 'px-6 py-3 text-lg'
+    lg: 'px-6 py-3 text-lg',
   };
 
   const variantClasses = {
@@ -44,7 +44,7 @@ export default function ExpressInterestButton({
       : 'bg-efcaAccent text-white hover:bg-blue-700 focus:ring-efcaAccent',
     secondary: hasExpressedInterest
       ? 'bg-green-50 text-green-700 border border-green-300 hover:bg-green-100 focus:ring-green-500'
-      : 'bg-white text-efcaAccent border border-efcaAccent hover:bg-efcaAccent hover:text-white focus:ring-efcaAccent'
+      : 'bg-white text-efcaAccent border border-efcaAccent hover:bg-efcaAccent hover:text-white focus:ring-efcaAccent',
   };
 
   return (
@@ -67,7 +67,11 @@ export default function ExpressInterestButton({
       ) : hasExpressedInterest ? (
         <div className="flex items-center justify-center">
           <svg className="w-4 h-4 mr-1" fill="currentColor" viewBox="0 0 20 20">
-            <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
+            <path
+              fillRule="evenodd"
+              d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
+              clipRule="evenodd"
+            />
           </svg>
           Interest Expressed
         </div>
@@ -76,4 +80,4 @@ export default function ExpressInterestButton({
       )}
     </button>
   );
-} 
+}

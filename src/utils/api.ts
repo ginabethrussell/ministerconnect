@@ -1,96 +1,145 @@
+import { User } from "../context/UserContext";
 // API client configuration for backend integration
-const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || '';
+const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000';
 
 // Helper function to get full API URL
 export const getApiUrl = (endpoint: string): string => {
-  if (API_BASE_URL) {
-    return `${API_BASE_URL}${endpoint}`;
-  }
-  // Fallback to relative URLs for mock API
-  return endpoint;
+  // Remove leading slash if present to avoid double slashes
+  const cleanEndpoint = endpoint.startsWith('/') ? endpoint.slice(1) : endpoint;
+  return `${API_BASE_URL}/${cleanEndpoint}`;
 };
 
-// Generic API client with error handling
+// Helper function to get auth headers
+const getAuthHeaders = () => {
+  const token = localStorage.getItem('accessToken');
+  return {
+    'Content-Type': 'application/json',
+    ...(token && { Authorization: `Bearer ${token}` }),
+  };
+};
+
+export const refreshToken = async () => {
+  const refresh = localStorage.getItem('refreshToken');
+  if (!refresh) throw new Error('No refresh token available');
+  const response = await fetch(getApiUrl(API_ENDPOINTS.REFRESH_TOKEN), {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ refresh }),
+  });
+  if (!response.ok) throw new Error('Failed to refresh token');
+  const data = await response.json();
+  localStorage.setItem('accessToken', data.access);
+  return data.access;
+};
+
+async function fetchWithAuthRetry(input: RequestInfo, init?: RequestInit, retry = true, auth = true) {
+  // Only add Authorization header if auth is true
+  if (auth) {
+    init = init || {};
+    init.headers = { ...getAuthHeaders(), ...(init.headers || {}) };
+  }
+  let response = await fetch(input, init);
+  if (auth && response.status === 401 && retry) {
+    try {
+      await refreshToken();
+      // Update the Authorization header with the new token
+      if (init && init.headers) {
+        (init.headers as any).Authorization = `Bearer ${localStorage.getItem('accessToken')}`;
+      } else if (init) {
+        init.headers = getAuthHeaders();
+      }
+      response = await fetch(input, init);
+    } catch (e) {
+      // Refresh failed, force logout or redirect to login
+      localStorage.removeItem('accessToken');
+      localStorage.removeItem('refreshToken');
+      window.location.href = '/auth/login'; // or your login route
+      throw e;
+    }
+  }
+  return response;
+}
+
+// Generic API client with error handling and token refresh
 export const apiClient = {
-  async get<T>(endpoint: string): Promise<T> {
-    const response = await fetch(getApiUrl(endpoint), {
-      headers: {
-        'Content-Type': 'application/json',
-      },
-    });
-    
+  async get<T>(endpoint: string, auth = true): Promise<T> {
+    const response = await fetchWithAuthRetry(getApiUrl(endpoint), {
+      headers: auth ? getAuthHeaders() : undefined,
+    }, true, auth);
     if (!response.ok) {
       throw new Error(`API Error: ${response.status}`);
     }
-    
     return response.json();
   },
 
-  async post<T>(endpoint: string, data: any): Promise<T> {
-    const response = await fetch(getApiUrl(endpoint), {
+  async post<T>(endpoint: string, data: any, auth = true): Promise<T> {
+    const response = await fetchWithAuthRetry(getApiUrl(endpoint), {
       method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
+      headers: auth ? getAuthHeaders() : { 'Content-Type': 'application/json' },
       body: JSON.stringify(data),
-    });
-    
+    }, true, auth);
     if (!response.ok) {
       throw new Error(`API Error: ${response.status}`);
     }
-    
     return response.json();
   },
 
-  async put<T>(endpoint: string, data: any): Promise<T> {
-    const response = await fetch(getApiUrl(endpoint), {
+  async put<T>(endpoint: string, data: any, auth = true): Promise<T> {
+    const response = await fetchWithAuthRetry(getApiUrl(endpoint), {
       method: 'PUT',
-      headers: {
-        'Content-Type': 'application/json',
-      },
+      headers: auth ? getAuthHeaders() : { 'Content-Type': 'application/json' },
       body: JSON.stringify(data),
-    });
-    
+    }, true, auth);
     if (!response.ok) {
       throw new Error(`API Error: ${response.status}`);
     }
-    
     return response.json();
   },
 
-  async delete<T>(endpoint: string): Promise<T> {
-    const response = await fetch(getApiUrl(endpoint), {
+  async delete<T>(endpoint: string, auth = true): Promise<T> {
+    const response = await fetchWithAuthRetry(getApiUrl(endpoint), {
       method: 'DELETE',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-    });
-    
+      headers: auth ? getAuthHeaders() : undefined,
+    }, true, auth);
     if (!response.ok) {
       throw new Error(`API Error: ${response.status}`);
     }
-    
     return response.json();
   },
 
-  async upload<T>(endpoint: string, formData: FormData): Promise<T> {
-    const response = await fetch(getApiUrl(endpoint), {
+  async upload<T>(endpoint: string, formData: FormData, auth = true): Promise<T> {
+    const response = await fetchWithAuthRetry(getApiUrl(endpoint), {
       method: 'POST',
+      headers: auth ? { ...(localStorage.getItem('accessToken') && { Authorization: `Bearer ${localStorage.getItem('accessToken')}` }) } : undefined,
       body: formData,
-    });
-    
+    }, true, auth);
     if (!response.ok) {
       throw new Error(`API Error: ${response.status}`);
     }
-    
     return response.json();
   },
 };
 
 // API endpoints configuration
 export const API_ENDPOINTS = {
-  // Authentication
-  LOGIN: '/api/auth/login',
+  // Authentication (Django backend)
+  LOGIN: '/api/token/',
+  REFRESH_TOKEN: '/api/token/refresh/',
+  
+  // Churches (Django backend)
+  CREATE_CHURCH: '/api/churches/create/',
+  
+  // Users (Django backend)
+  CREATE_USER: '/api/users/create/',
+  
+  // Invite codes (Django backend)
+  CREATE_INVITE_CODE: '/api/invite-codes/create/',
+  LIST_INVITE_CODES: '/api/invite-codes/',
+  
+  // Applicants (Django backend)
+  APPLICANT_REGISTER: '/api/applicants/register/',
+  
+  // Frontend routes (for MSW/fallback)
   REGISTER: '/api/register',
   FORGOT_PASSWORD: '/api/auth/forgot-password',
   RESET_PASSWORD: '/api/auth/reset-password',
@@ -99,12 +148,13 @@ export const API_ENDPOINTS = {
   // User management
   USER: '/api/user',
   USERS: '/api/users',
+  GET_ME: '/api/user/me/',
   
   // Profiles
   PROFILE: '/api/profile',
   PROFILES: '/api/profiles',
   
-  // Churches
+  // Churches (frontend routes)
   CHURCHES: '/api/churches',
   
   // Job listings
@@ -113,7 +163,7 @@ export const API_ENDPOINTS = {
   // Mutual interests
   MUTUAL_INTERESTS: '/api/mutual-interests',
   
-  // Invite codes
+  // Invite codes (frontend routes)
   INVITE_CODES: '/api/invite-codes',
   
   // Superadmin
@@ -123,131 +173,75 @@ export const API_ENDPOINTS = {
   SUPERADMIN_CHURCHES: '/api/superadmin/churches',
 } as const;
 
+// Superadmin
 export const getSuperAdminProfiles = async () => {
-  const response = await fetch('/api/superadmin/profiles');
-  return response.json();
+  return apiClient.get(API_ENDPOINTS.SUPERADMIN_PROFILES);
 };
 
+// Mutual Interests
 export const getMutualInterests = async () => {
-  const response = await fetch('/api/church/mutual-interests');
-  if (!response.ok) {
-    throw new Error('Failed to fetch mutual interests');
-  }
-  return response.json();
+  return apiClient.get('/api/church/mutual-interests');
 };
 
+// Admin Job Listings
 export const getAdminJobListings = async () => {
-  const response = await fetch('/api/admin/jobs');
-  if (!response.ok) {
-    throw new Error('Failed to fetch job listings');
-  }
-  return response.json();
+  return apiClient.get('/api/admin/jobs');
 };
 
 export const updateJobListingStatus = async (
   id: number,
   status: 'approved' | 'rejected'
 ) => {
-  const response = await fetch(`/api/admin/jobs/${id}`, {
-    method: 'PATCH',
-    headers: {
-      'Content-Type': 'application/json',
-    },
-    body: JSON.stringify({ status }),
-  });
-  if (!response.ok) {
-    throw new Error('Failed to update job listing status');
-  }
-  return response.json();
+  return apiClient.post(`/api/admin/jobs/${id}`, { status });
 };
 
+// Admin Churches
 export const getAdminChurches = async () => {
-  const response = await fetch('/api/admin/churches');
-  if (!response.ok) {
-    throw new Error('Failed to fetch churches');
-  }
-  return response.json();
+  return apiClient.get('/api/admin/churches');
 };
 
 export const deleteChurch = async (id: number) => {
-  const response = await fetch(`/api/admin/churches/${id}`, {
-    method: 'DELETE',
-  });
-  if (!response.ok) {
-    throw new Error('Failed to delete church');
-  }
-  return response.json();
+  return apiClient.delete(`/api/admin/churches/${id}`);
 };
 
 export const getAdminChurchById = async (id: string) => {
-  const response = await fetch(`/api/admin/churches/${id}`);
-  if (!response.ok) {
-    throw new Error('Failed to fetch church');
-  }
-  return response.json();
+  return apiClient.get(`/api/admin/churches/${id}`);
 };
 
 export const updateChurch = async (id: number, data: any) => {
-  const response = await fetch(`/api/admin/churches/${id}`, {
-    method: 'PUT',
-    headers: {
-      'Content-Type': 'application/json',
-    },
-    body: JSON.stringify(data),
-  });
-  if (!response.ok) {
-    throw new Error('Failed to update church');
-  }
-  return response.json();
+  return apiClient.put(`/api/admin/churches/${id}`, data);
 };
 
+// Admin Invite Codes
 export const getAdminInviteCodes = async () => {
-  const response = await fetch('/api/admin/invite-codes');
-  if (!response.ok) {
-    throw new Error('Failed to fetch invite codes');
-  }
-  return response.json();
+  return apiClient.get('/api/admin/invite-codes');
 };
 
 export const createInviteCode = async (data: { code: string; event: string }) => {
-  const response = await fetch('/api/admin/invite-codes', {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-    },
-    body: JSON.stringify(data),
-  });
-  if (!response.ok) {
-    throw new Error('Failed to create invite code');
-  }
-  return response.json();
+  return apiClient.post('/api/admin/invite-codes', data);
 };
 
 export const updateInviteCode = async (id: number, data: { code: string; event: string }) => {
-  const response = await fetch(`/api/admin/invite-codes/${id}`, {
-    method: 'PUT',
-    headers: {
-      'Content-Type': 'application/json',
-    },
-    body: JSON.stringify(data),
-  });
-  if (!response.ok) {
-    throw new Error('Failed to update invite code');
-  }
-  return response.json();
+  return apiClient.put(`/api/admin/invite-codes/${id}`, data);
 };
 
 export const deleteInviteCode = async (id: number) => {
-  const response = await fetch(`/api/admin/invite-codes/${id}`, {
-    method: 'DELETE',
-  });
-  if (!response.ok) {
-    throw new Error('Failed to delete invite code');
-  }
-  return response.json();
+  return apiClient.delete(`/api/admin/invite-codes/${id}`);
 };
 
-// Church
+// Church Dashboard (stub, update as needed)
 export const getChurchDashboard = async () => {
-  // ... existing code ...
-} 
+  // ... implement as needed ...
+};
+
+// Fetch current authenticated user info
+export const getMe = async (): Promise<User> => {
+  return apiClient.get(API_ENDPOINTS.GET_ME);
+}; 
+
+// Example usage for a public endpoint (login):
+export const login = async (data: { username: string; password: string }) => {
+  return apiClient.post(API_ENDPOINTS.LOGIN, data, false); // auth = false
+}; 
+
+

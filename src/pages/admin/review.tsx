@@ -50,7 +50,7 @@ const AdminReview = () => {
         const data: Profile[] = await getSuperAdminProfiles();
         setProfiles(data);
         // Get unique events for filter dropdown
-        const uniqueEvents = Array.from(new Set(data.map(p => p.email))); // Placeholder for event
+        const uniqueEvents = Array.from(new Set(data.map((p) => p.email))); // Placeholder for event
         setEvents(uniqueEvents);
       } catch (error) {
         console.error('Failed to fetch profiles:', error);
@@ -64,11 +64,11 @@ const AdminReview = () => {
   // Filter profiles based on status and event
   let filtered = profiles;
   if (filterStatus !== 'all') {
-    filtered = filtered.filter(p => p.status === filterStatus);
+    filtered = filtered.filter((p) => p.status === filterStatus);
   }
   if (filterEvent) {
     // This will need to be adjusted once 'event' is on the Profile type
-    filtered = filtered.filter(p => p.email === filterEvent); // Placeholder
+    filtered = filtered.filter((p) => p.email === filterEvent); // Placeholder
   }
 
   // Sort filtered results
@@ -76,8 +76,7 @@ const AdminReview = () => {
     const nameA = `${a.first_name} ${a.last_name}`;
     const nameB = `${b.first_name} ${b.last_name}`;
     if (sortBy === 'name') return nameA.localeCompare(nameB);
-    if (sortBy === 'createdAt')
-      return (b.created_at || '').localeCompare(a.created_at || '');
+    if (sortBy === 'createdAt') return (b.created_at || '').localeCompare(a.created_at || '');
     return 0;
   });
 
@@ -86,10 +85,8 @@ const AdminReview = () => {
     // Replace with actual API call to update status
     console.log(`Updating profile ${id} to ${status}`);
     // Simulating API call
-    await new Promise(resolve => setTimeout(resolve, 500));
-    setProfiles(prevProfiles =>
-      prevProfiles.map(p => (p.id === id ? { ...p, status } : p))
-    );
+    await new Promise((resolve) => setTimeout(resolve, 500));
+    setProfiles((prevProfiles) => prevProfiles.map((p) => (p.id === id ? { ...p, status } : p)));
     setActionLoadingId(null);
   };
 
@@ -113,9 +110,7 @@ const AdminReview = () => {
     <div className="min-h-screen bg-gray-100 p-8">
       <div className="max-w-7xl mx-auto">
         <header className="flex justify-between items-center mb-8">
-          <h1 className="text-3xl font-bold text-gray-800">
-            Review Candidate Profiles
-          </h1>
+          <h1 className="text-3xl font-bold text-gray-800">Review Candidate Profiles</h1>
         </header>
         <section className="bg-white rounded-lg shadow-md p-6">
           <div className="flex flex-wrap gap-4 mb-6">
@@ -138,7 +133,7 @@ const AdminReview = () => {
                   : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
               }`}
             >
-              Pending ({profiles.filter(p => p.status === 'pending').length})
+              Pending ({profiles.filter((p) => p.status === 'pending').length})
             </button>
             <button
               onClick={() => setFilterStatus('approved')}
@@ -148,7 +143,7 @@ const AdminReview = () => {
                   : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
               }`}
             >
-              Approved ({profiles.filter(p => p.status === 'approved').length})
+              Approved ({profiles.filter((p) => p.status === 'approved').length})
             </button>
           </div>
 
@@ -162,7 +157,7 @@ const AdminReview = () => {
             </div>
           ) : (
             <div className="grid gap-6 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
-              {filtered.map(profile => {
+              {filtered.map((profile) => {
                 const fullName = `${profile.first_name} ${profile.last_name}`;
                 return (
                   <div className="bg-white rounded-lg shadow-md p-6">
@@ -179,8 +174,8 @@ const AdminReview = () => {
                             profile.status === 'approved'
                               ? 'bg-green-100 text-green-800'
                               : profile.status === 'rejected'
-                              ? 'bg-red-100 text-red-800'
-                              : 'bg-yellow-100 text-yellow-800'
+                                ? 'bg-red-100 text-red-800'
+                                : 'bg-yellow-100 text-yellow-800'
                           }`}
                         >
                           {profile.status}
@@ -308,7 +303,7 @@ const AdminReview = () => {
 
       <PDFViewer
         isOpen={pdfViewer.isOpen}
-        onClose={() => setPdfViewer(prev => ({ ...prev, isOpen: false }))}
+        onClose={() => setPdfViewer((prev) => ({ ...prev, isOpen: false }))}
         pdfUrl={pdfViewer.url}
         title={pdfViewer.title}
       />

@@ -34,15 +34,13 @@ export default function ChurchJobs() {
 
   const handleDeleteJob = (jobId: number) => {
     if (confirm('Are you sure you want to delete this job posting?')) {
-      setJobs(jobs.filter(job => job.id !== jobId));
+      setJobs(jobs.filter((job) => job.id !== jobId));
     }
   };
 
   const toggleJobExpansion = (jobId: number) => {
-    setExpandedJobs(prev => 
-      prev.includes(jobId) 
-        ? prev.filter(id => id !== jobId)
-        : [...prev, jobId]
+    setExpandedJobs((prev) =>
+      prev.includes(jobId) ? prev.filter((id) => id !== jobId) : [...prev, jobId]
     );
   };
 
@@ -103,13 +101,15 @@ export default function ChurchJobs() {
           {jobs.length === 0 ? (
             <div className="text-center py-8">
               <h3 className="text-lg font-medium text-gray-900 mb-2">No jobs posted yet</h3>
-              <p className="text-gray-600 mb-4">Click "Post New Job" to create your first listing.</p>
+              <p className="text-gray-600 mb-4">
+                Click "Post New Job" to create your first listing.
+              </p>
             </div>
           ) : (
             <div className="space-y-4">
-              {jobs.map(job => {
+              {jobs.map((job) => {
                 const isExpanded = expandedJobs.includes(job.id);
-                
+
                 return (
                   <div
                     key={job.id}
@@ -118,18 +118,18 @@ export default function ChurchJobs() {
                     <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
                       <div className="flex-1">
                         <div className="flex items-start justify-between mb-2">
-                          <h3 className="text-xl font-semibold text-efcaDark">
-                            {job.title}
-                          </h3>
+                          <h3 className="text-xl font-semibold text-efcaDark">{job.title}</h3>
                           <span className="text-sm text-gray-500">
                             {new Date(job.created_at).toLocaleDateString()}
                           </span>
                         </div>
-                        
+
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
                           <div>
                             <p className="text-lg font-medium text-gray-800">
-                              {job.church_id === 1 ? 'Grace Fellowship Church' : 'New Hope Community Church'}
+                              {job.church_id === 1
+                                ? 'Grace Fellowship Church'
+                                : 'New Hope Community Church'}
                             </p>
                             <p className="text-gray-600">{job.ministry_type}</p>
                             <p className="text-sm text-gray-500">
@@ -137,7 +137,9 @@ export default function ChurchJobs() {
                             </p>
                           </div>
                           <div className="text-right md:text-left">
-                            <span className={`inline-block px-3 py-1 ${getStatusColor(job.status)} text-sm font-medium rounded-full`}>
+                            <span
+                              className={`inline-block px-3 py-1 ${getStatusColor(job.status)} text-sm font-medium rounded-full`}
+                            >
                               {getStatusMessage(job.status)}
                             </span>
                           </div>
@@ -151,13 +153,15 @@ export default function ChurchJobs() {
                               <p className="text-gray-700 leading-relaxed">{job.job_description}</p>
                             </div>
                             <div>
-                              <h4 className="font-semibold text-gray-800 mb-2">About This Church</h4>
+                              <h4 className="font-semibold text-gray-800 mb-2">
+                                About This Church
+                              </h4>
                               <p className="text-gray-700 leading-relaxed">{job.about_church}</p>
                             </div>
                           </div>
                         )}
                       </div>
-                      
+
                       <div className="flex flex-col gap-2 min-w-[200px]">
                         <button
                           onClick={() => toggleJobExpansion(job.id)}
@@ -165,7 +169,7 @@ export default function ChurchJobs() {
                         >
                           {isExpanded ? 'Show Less' : 'View Details'}
                         </button>
-                        
+
                         <button
                           onClick={() => handleDeleteJob(job.id)}
                           className="px-4 py-2 border border-red-300 text-red-700 rounded font-semibold hover:bg-red-50 focus:outline-none focus:ring-2 focus:ring-red-400 transition-colors text-center"

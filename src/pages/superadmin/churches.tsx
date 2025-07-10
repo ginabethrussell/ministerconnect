@@ -7,62 +7,67 @@ export default function SuperAdminChurches() {
 
   // Mock data
   const churches = [
-    { 
-      id: 1, 
-      name: 'Grace Community Church', 
-      email: 'pastor@gracechurch.com', 
+    {
+      id: 1,
+      name: 'Grace Community Church',
+      email: 'pastor@gracechurch.com',
       phone: '(555) 123-4567',
       location: 'Springfield, IL',
-      status: 'active', 
+      status: 'active',
       jobListings: 3,
-      createdAt: '2024-01-10' 
+      createdAt: '2024-01-10',
     },
-    { 
-      id: 2, 
-      name: 'First Baptist Church', 
-      email: 'admin@firstbaptist.com', 
+    {
+      id: 2,
+      name: 'First Baptist Church',
+      email: 'admin@firstbaptist.com',
       phone: '(555) 234-5678',
       location: 'Chicago, IL',
-      status: 'active', 
+      status: 'active',
       jobListings: 2,
-      createdAt: '2024-01-05' 
+      createdAt: '2024-01-05',
     },
-    { 
-      id: 3, 
-      name: 'St. Mary\'s Catholic Church', 
-      email: 'office@stmarys.com', 
+    {
+      id: 3,
+      name: "St. Mary's Catholic Church",
+      email: 'office@stmarys.com',
       phone: '(555) 345-6789',
       location: 'Peoria, IL',
-      status: 'pending', 
+      status: 'pending',
       jobListings: 0,
-      createdAt: '2024-01-20' 
+      createdAt: '2024-01-20',
     },
-    { 
-      id: 4, 
-      name: 'Hope Lutheran Church', 
-      email: 'pastor@hopelutheran.com', 
+    {
+      id: 4,
+      name: 'Hope Lutheran Church',
+      email: 'pastor@hopelutheran.com',
       phone: '(555) 456-7890',
       location: 'Rockford, IL',
-      status: 'inactive', 
+      status: 'inactive',
       jobListings: 1,
-      createdAt: '2024-01-12' 
+      createdAt: '2024-01-12',
     },
   ];
 
-  const filteredChurches = churches.filter(church => {
-    const matchesSearch = church.name.toLowerCase().includes(searchTerm.toLowerCase()) || 
-                         church.email.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                         church.location.toLowerCase().includes(searchTerm.toLowerCase());
+  const filteredChurches = churches.filter((church) => {
+    const matchesSearch =
+      church.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      church.email.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      church.location.toLowerCase().includes(searchTerm.toLowerCase());
     const matchesStatus = statusFilter === 'all' || church.status === statusFilter;
     return matchesSearch && matchesStatus;
   });
 
   const getStatusColor = (status: string) => {
     switch (status) {
-      case 'active': return 'bg-green-100 text-green-800';
-      case 'pending': return 'bg-yellow-100 text-yellow-800';
-      case 'inactive': return 'bg-red-100 text-red-800';
-      default: return 'bg-gray-100 text-gray-800';
+      case 'active':
+        return 'bg-green-100 text-green-800';
+      case 'pending':
+        return 'bg-yellow-100 text-yellow-800';
+      case 'inactive':
+        return 'bg-red-100 text-red-800';
+      default:
+        return 'bg-gray-100 text-gray-800';
     }
   };
 
@@ -122,7 +127,10 @@ export default function SuperAdminChurches() {
               </thead>
               <tbody>
                 {filteredChurches.map((church) => (
-                  <tr key={church.id} className="block md:table-row mb-4 rounded-lg border border-gray-200 p-4 md:mb-0 md:border-0 md:border-b md:border-gray-100 md:p-0 md:hover:bg-gray-50 md:rounded-none">
+                  <tr
+                    key={church.id}
+                    className="block md:table-row mb-4 rounded-lg border border-gray-200 p-4 md:mb-0 md:border-0 md:border-b md:border-gray-100 md:p-0 md:hover:bg-gray-50 md:rounded-none"
+                  >
                     <td className="block md:table-cell py-2 px-4 md:py-4 md:px-4">
                       <span className="font-bold md:hidden mr-2">Church:</span>
                       <p className="font-medium text-efcaDark">{church.name}</p>
@@ -143,7 +151,9 @@ export default function SuperAdminChurches() {
                     <td className="block md:table-cell py-2 px-4 md:py-4 md:px-4">
                       <div className="flex justify-between items-center">
                         <span className="font-bold md:hidden">Status:</span>
-                        <span className={`px-2 py-1 rounded-full text-xs font-medium ${getStatusColor(church.status)}`}>
+                        <span
+                          className={`px-2 py-1 rounded-full text-xs font-medium ${getStatusColor(church.status)}`}
+                        >
                           {church.status.charAt(0).toUpperCase() + church.status.slice(1)}
                         </span>
                       </div>

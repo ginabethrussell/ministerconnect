@@ -1,7 +1,6 @@
 import Link from 'next/link';
 
 export default function ChurchDashboard() {
-
   return (
     <div className="min-h-screen bg-efcaGray p-8">
       <div className="max-w-2xl mx-auto">
@@ -11,8 +10,8 @@ export default function ChurchDashboard() {
         <section className="bg-white rounded-lg shadow-sm p-6 mb-8">
           <h2 className="text-xl font-bold text-efcaDark mb-2">Welcome to Your Church Dashboard</h2>
           <p className="text-gray-600 mb-4">
-            As a church user, you can post job openings, search for qualified candidates, save your favorites, and
-            contact them directly. Use the links below to get started.
+            As a church user, you can post job openings, search for qualified candidates, save your
+            favorites, and contact them directly. Use the links below to get started.
           </p>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <Link

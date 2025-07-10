@@ -16,19 +16,19 @@ export default function SuperAdminDashboard() {
             <p className="text-3xl font-bold text-efcaAccent">1,247</p>
             <p className="text-sm text-gray-500">+12% from last month</p>
           </div>
-          
+
           <div className="bg-white rounded-lg shadow-md p-6">
             <h3 className="text-lg font-semibold text-efcaDark mb-2">Active Churches</h3>
             <p className="text-3xl font-bold text-efcaAccent">89</p>
             <p className="text-sm text-gray-500">+5% from last month</p>
           </div>
-          
+
           <div className="bg-white rounded-lg shadow-md p-6">
             <h3 className="text-lg font-semibold text-efcaDark mb-2">Job Listings</h3>
             <p className="text-3xl font-bold text-efcaAccent">156</p>
             <p className="text-sm text-gray-500">+8% from last month</p>
           </div>
-          
+
           <div className="bg-white rounded-lg shadow-md p-6">
             <h3 className="text-lg font-semibold text-efcaDark mb-2">Pending Reviews</h3>
             <p className="text-3xl font-bold text-red-500">23</p>
@@ -47,7 +47,7 @@ export default function SuperAdminDashboard() {
                 <span className="font-medium text-efcaDark">Manage Users</span>
                 <p className="text-sm text-gray-600">View and manage all platform users</p>
               </Link>
-              
+
               <Link
                 href="/superadmin/churches"
                 className="block w-full text-left px-4 py-3 bg-gray-50 hover:bg-gray-100 rounded-lg transition-colors"
@@ -68,7 +68,7 @@ export default function SuperAdminDashboard() {
                   <p className="text-xs text-gray-500">Grace Community Church - 2 hours ago</p>
                 </div>
               </div>
-              
+
               <div className="flex items-start space-x-3">
                 <div className="w-2 h-2 bg-blue-500 rounded-full mt-2"></div>
                 <div>
@@ -76,15 +76,17 @@ export default function SuperAdminDashboard() {
                   <p className="text-xs text-gray-500">John Smith - 4 hours ago</p>
                 </div>
               </div>
-              
+
               <div className="flex items-start space-x-3">
                 <div className="w-2 h-2 bg-yellow-500 rounded-full mt-2"></div>
                 <div>
                   <p className="text-sm font-medium text-efcaDark">Job listing created</p>
-                  <p className="text-xs text-gray-500">Associate Pastor - First Baptist - 6 hours ago</p>
+                  <p className="text-xs text-gray-500">
+                    Associate Pastor - First Baptist - 6 hours ago
+                  </p>
                 </div>
               </div>
-              
+
               <div className="flex items-start space-x-3">
                 <div className="w-2 h-2 bg-red-500 rounded-full mt-2"></div>
                 <div>
