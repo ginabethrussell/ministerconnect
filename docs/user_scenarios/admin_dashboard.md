@@ -4,10 +4,12 @@
 **Goal:** Monitor system activity and manage content within admin scope
 
 ## Preconditions
+
 - Admin is authenticated
 - Admin has appropriate permissions
 
 ## Main Flow
+
 1. Admin accesses the main dashboard.
 2. Dashboard displays relevant statistics:
    - Pending profile reviews
@@ -32,14 +34,15 @@
    - View recent activity
 
 ## Postconditions
+
 - Admin has overview of pending tasks
 - Quick access to moderation functions
 - Monitoring of system activity within scope
 - Ability to respond to urgent moderation needs
 
 ## Notes
+
 - Admin dashboard focuses on content moderation tasks
 - Statistics are relevant to admin responsibilities
 - Activity feed shows events within admin scope
-- Quick actions prioritize moderation workflow 
-
+- Quick actions prioritize moderation workflow

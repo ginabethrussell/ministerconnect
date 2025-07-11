@@ -3,6 +3,15 @@ export interface TokenResponse {
   refresh: string;
 }
 
+export interface CandidateRegistrationFormValues {
+  code: string;
+  email: string;
+  firstname: string;
+  lastname: string;
+  password: string;
+  confirmPassword: string;
+}
+
 export interface Church {
   id: number;
   name: string;

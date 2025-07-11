@@ -7,7 +7,8 @@ import {
   mockJobListings,
   mockMutualInterests,
 } from './data';
-import { User, Church, InviteCode, Profile, JobListing, MutualInterest } from '../types';
+import { Church, InviteCode, Profile, JobListing, MutualInterest } from '../types';
+import { User } from '@/context/UserContext';
 
 // Create deep copies of the mock data to prevent mutation during tests
 const users: User[] = JSON.parse(JSON.stringify(mockUsers));
@@ -25,42 +26,6 @@ export const handlers = [
   http.get('/*.json', () => passthrough()),
   http.get('/*.ico', () => passthrough()),
   http.get('/', () => passthrough()),
-
-  // Auth
-  http.post(`${API_PREFIX}/auth/login`, async ({ request }) => {
-    const { email, password } = (await request.json()) as any;
-    const user = users.find((u) => u.email === email && u.password === password);
-
-    if (user) {
-      // Mock storing email in localStorage on login to simulate session
-      localStorage.setItem('user_email', user.email);
-
-      return HttpResponse.json({
-        success: true,
-        token: 'mock-jwt-token',
-        user: {
-          id: user.id,
-          email: user.email,
-          role: user.role,
-          church_id: user.church_id,
-          needsPasswordChange: user.requires_password_change,
-        },
-      });
-    } else {
-      return HttpResponse.json({ success: false, message: 'Invalid credentials' }, { status: 401 });
-    }
-  }),
-
-  http.post(`${API_PREFIX}/auth/validate-invite`, async ({ request }) => {
-    const { code } = (await request.json()) as any;
-    const inviteCode = inviteCodes.find((c) => c.code === code && c.status === 'active');
-
-    if (inviteCode) {
-      return HttpResponse.json({ valid: true });
-    } else {
-      return HttpResponse.json({ valid: false }, { status: 404 });
-    }
-  }),
 
   // Superadmin - Users
   http.get(`${API_PREFIX}/superadmin/users`, ({ request }) => {
@@ -130,7 +95,7 @@ export const handlers = [
     const userEmail = localStorage.getItem('user_email');
     const user = users.find((u) => u.email === userEmail);
 
-    if (!user || user.role !== 'candidate') {
+    if (!user || user.groups[0].toLowerCase() !== 'candidate') {
       return HttpResponse.json({ success: false, message: 'Unauthorized' }, { status: 401 });
     }
 
@@ -184,7 +149,7 @@ export const handlers = [
     const userEmail = localStorage.getItem('user_email');
     const user = users.find((u) => u.email === userEmail);
 
-    if (!user || user.role !== 'candidate') {
+    if (!user || user.groups[0].toLowerCase() !== 'candidate') {
       return HttpResponse.json({ success: false, message: 'Unauthorized' }, { status: 401 });
     }
 
@@ -220,9 +185,7 @@ export const handlers = [
   http.get(`${API_PREFIX}/admin/churches`, ({ request }) => {
     const churchesWithUsers = churches.map((church) => ({
       ...church,
-      users: users
-        .filter((user) => user.church_id === church.id)
-        .map(({ password, ...rest }) => rest),
+      users: users.filter((user) => user.church_id === church.id).map(({ ...rest }) => rest),
     }));
     return HttpResponse.json(churchesWithUsers);
   }),
@@ -234,9 +197,7 @@ export const handlers = [
     if (church) {
       const churchWithUsers = {
         ...church,
-        users: users
-          .filter((user) => user.church_id === church.id)
-          .map(({ password, ...rest }) => rest),
+        users: users.filter((user) => user.church_id === church.id).map(({ ...rest }) => rest),
       };
       return HttpResponse.json(churchWithUsers);
     } else {
@@ -352,7 +313,7 @@ export const handlers = [
       user = users.find((u) => u.email === 'john.candidate@email.com');
     }
 
-    if (!user || user.role !== 'candidate') {
+    if (!user || user.groups[0].toLowerCase() !== 'candidate') {
       return HttpResponse.json({ success: false, message: 'Profile not found' });
     }
 
@@ -413,7 +374,7 @@ export const handlers = [
       return HttpResponse.json({ success: false, message: 'Unauthorized' }, { status: 401 });
 
     const user = users.find((u) => u.email === userEmail);
-    if (!user || user.role !== 'church') {
+    if (!user || user.groups[0] !== 'Church User') {
       return HttpResponse.json({ success: false, message: 'Unauthorized' }, { status: 401 });
     }
 

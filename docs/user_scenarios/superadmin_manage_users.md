@@ -4,10 +4,12 @@
 **Goal:** Complete user account management and oversight
 
 ## Preconditions
+
 - Superadmin is authenticated
 - Superadmin has full system permissions
 
 ## Main Flow
+
 1. Superadmin accesses the user management dashboard.
 2. Superadmin can:
    - View all users in the system with detailed information
@@ -29,13 +31,15 @@
    - Password reset activity
 
 ## Postconditions
+
 - User accounts are properly managed
 - Security is maintained through secure reset tokens
 - Complete audit trail of administrative actions
 - Users can securely reset their passwords
 
 ## Notes
+
 - Superadmins have complete control over all user accounts
 - Password resets use secure tokens instead of temporary passwords
 - All actions are logged in the activity log for audit purposes
-- Reset tokens are single-use and time-limited for security 
+- Reset tokens are single-use and time-limited for security

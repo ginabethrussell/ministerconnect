@@ -9,16 +9,18 @@ const HomePage = () => {
   // site admin to have the proper group assigned to control
   // site access and functionality.
 
-  if(user) return (
-    <div className="min-h-screen flex flex-col items-center justify-center bg-efcaGray font-sans">
-      <div className="max-w-xl p-8 bg-white rounded shadow text-center">
-        <h1 className="text-3xl font-bold mb-4 text-efcaBlue">
-          Welcome to EFCA Great Lakes District Minister Connect
-        </h1>
-        <p className="mb-6 text-gray-700">
-          Hi, {user.name}! You have successfully logged into Minister Connect but we are unable to determine your role as a candidate, church user, or admin.
-        </p>
-        <p>
+  if (user)
+    return (
+      <div className="min-h-screen flex flex-col items-center justify-center bg-efcaGray font-sans">
+        <div className="max-w-xl p-8 bg-white rounded shadow text-center">
+          <h1 className="text-3xl font-bold mb-4 text-efcaBlue">
+            Welcome to EFCA Great Lakes District Minister Connect
+          </h1>
+          <p className="mb-6 text-gray-700">
+            Hi, {user.name}! You have successfully logged into Minister Connect but we are unable to
+            determine your role as a candidate, church user, or admin.
+          </p>
+          <p>
             Please{' '}
             <a
               // TODO: update this to the correct email address
@@ -29,9 +31,9 @@ const HomePage = () => {
             </a>{' '}
             to be granted the correct access.
           </p>
+        </div>
       </div>
-    </div>
-  );
+    );
   // Landing Page for an Anonymous User
   return (
     <div className="min-h-screen flex flex-col items-center justify-center bg-efcaGray font-sans">

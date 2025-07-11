@@ -8,7 +8,6 @@ const Header = () => {
   const { user, profileStatus, logout } = useUser();
   const router = useRouter();
   const group = user?.groups?.[0] || null;
-  
 
   let roleHref;
   switch (group) {
@@ -28,7 +27,7 @@ const Header = () => {
       roleHref = '/';
   }
 
-  console.log(user, group, roleHref)
+  console.log(user, group, roleHref);
 
   const handleLogout = () => {
     logout();
@@ -39,7 +38,6 @@ const Header = () => {
     `block px-3 py-2 rounded-md text-md font-regular md:w-[50%] text-center ${
       router.pathname === path ? 'bg-efcaAccent text-white' : 'text-white hover:bg-efcaAccent/80'
     }`;
-
 
   return (
     <header className="bg-efcaBlue text-white py-4 px-6 shadow">
