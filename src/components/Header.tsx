@@ -27,8 +27,6 @@ const Header = () => {
       roleHref = '/';
   }
 
-  console.log(user, group, roleHref);
-
   const handleLogout = () => {
     logout();
     router.push('/');
