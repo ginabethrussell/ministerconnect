@@ -4,11 +4,13 @@
 **Goal:** Browse and search available ministry job listings
 
 ## Preconditions
+
 - Candidate is authenticated
 - Candidate has an approved profile
 - Job listings are available in the system
 
 ## Main Flow
+
 1. Candidate accesses the job listings page.
 2. Candidate can:
    - View all approved job listings
@@ -33,13 +35,15 @@
    - Church contact information
 
 ## Postconditions
+
 - Candidate can browse available opportunities
 - Interest expressions are tracked
 - System facilitates candidate-church connections
 - Candidate can manage their job search process
 
 ## Notes
+
 - Only approved job listings are visible to candidates
 - System tracks which listings candidates have viewed
 - Interest expressions create potential mutual matches
-- Candidates can manage their job search preferences 
+- Candidates can manage their job search preferences

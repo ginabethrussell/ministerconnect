@@ -1,13 +1,34 @@
 # API & Data Model Documentation
 
-This document describes the core data models and API endpoints for the Minister Connect application. Use this as a reference for frontend mocks and future backend implementation.
+This document describes the core data models and API endpoints for the Minister Connect application. This includes both implemented features and planned features for future development.
 
 ## Database Schema
+
 ![Database Schema](docs/db_diagram.png)
 
 ---
 
-## 1. Churches Model
+## Current Implementation Status
+
+### ✅ Implemented Models & Endpoints
+- User Management (with JWT authentication)
+- Church Management
+- Invite Code System
+- Candidate Registration
+
+### 🚧 Planned Models & Endpoints
+- Profile Management
+- Job Listings
+- Mutual Interests
+- Activity Logging
+- Dashboard Statistics
+- Password Reset System
+
+---
+
+## 1. Churches Model ✅
+
+**Status**: Implemented in backend
 
 ```json
 {
@@ -20,37 +41,48 @@ This document describes the core data models and API endpoints for the Minister 
   "city": "Springfield",
   "state": "IL",
   "zipcode": "62704",
-  "location": "Springfield, IL",
   "status": "active",
-  "job_listings_count": 3,
   "created_at": "2024-01-01T00:00:00.000Z",
   "updated_at": "2024-01-01T00:00:00.000Z"
 }
 ```
 
+**Available Endpoints:**
+- `POST /api/churches/create/` — Create new church (requires authentication)
+
 ---
 
-## 2. Users Model
+## 2. Users Model ✅
+
+**Status**: Implemented in backend
 
 ```json
 {
   "id": 1,
   "email": "admin@ministerconnect.com",
   "name": "Super Admin User",
-  "password": "password123", // encrypted on the backend
-  "role": "superadmin", // or "admin", "church", "candidate"
+  "username": "admin", // Required by Django AbstractUser
   "church_id": null,
-  "status": "active", // or "pending", "suspended"
-  "requires_password_change": false, // Track if user needs to change password on first login
-  "last_login": "2024-01-15T10:30:00.000Z",
+  "status": "active", // "active", "inactive", "pending"
+  "requires_password_change": false,
   "created_at": "2024-01-01T00:00:00.000Z",
   "updated_at": "2024-01-01T00:00:00.000Z"
 }
 ```
 
+**Available Endpoints:**
+- `POST /api/users/create/` — Create new user (requires authentication)
+- `GET /api/user/me/` — Get current user info (requires authentication)
+
+**Authentication Endpoints:**
+- `POST /api/token/` — Obtain JWT token
+- `POST /api/token/refresh/` — Refresh JWT token
+
 ---
 
-## 3. Invite Codes Model
+## 3. Invite Codes Model ✅
+
+**Status**: Implemented in backend
 
 ```json
 {
@@ -58,17 +90,51 @@ This document describes the core data models and API endpoints for the Minister 
   "code": "CHURCH2024",
   "event": "Spring 2024 Church Registration",
   "used_count": 3,
-  "status": "active", // or "expired", "used"
-  "created_by": 1, // User ID who created this code
+  "status": "active", // "active", "expired"
+  "created_by": 1,
+  "created_by_name": "Jane Doe", // Additional field in API response
   "expires_at": "2024-12-31T23:59:59.000Z",
   "created_at": "2024-01-01T00:00:00.000Z",
   "updated_at": "2024-01-01T00:00:00.000Z"
 }
 ```
 
+**Available Endpoints:**
+- `POST /api/invite-codes/create/` — Create invite code (requires authentication)
+- `GET /api/invite-codes/` — List invite codes (requires authentication)
+
 ---
 
-## 4. Profiles Model
+## 4. Candidate Registration ✅
+
+**Status**: Implemented in backend
+
+**Registration Endpoint:**
+- `POST /api/candidates/register/` — Register new candidate (no authentication required)
+
+**Request Body:**
+```json
+{
+  "invite_code": "CANDIDATE2024",
+  "email": "candidate@example.com",
+  "password": "securepassword",
+  "first_name": "Jane",
+  "last_name": "Doe"
+}
+```
+
+**Response:**
+```json
+{
+  "detail": "Registration successful. Please log in."
+}
+```
+
+---
+
+## 5. Profiles Model 🚧
+
+**Status**: Planned for future implementation
 
 ```json
 {
@@ -82,7 +148,7 @@ This document describes the core data models and API endpoints for the Minister 
   "city": "Springfield",
   "state": "IL",
   "zipcode": "62701",
-  "status": "approved", // or "pending", "rejected"
+  "status": "approved", // "pending", "approved", "rejected"
   "photo": "/sampleman.jpg",
   "resume": "/student-pastor-resume.pdf",
   "video_url": "https://www.youtube.com/live/jfKfPfyJRdk",
@@ -93,9 +159,18 @@ This document describes the core data models and API endpoints for the Minister 
 }
 ```
 
+**Planned Endpoints:**
+- `GET /api/profile` — Get candidate profile
+- `POST /api/profile` — Update candidate profile
+- `POST /api/profile/upload` — Upload candidate document
+- `GET /api/profiles` — List all profiles (superadmin)
+- `POST /api/profiles/:id/review` — Approve/reject profile (superadmin)
+
 ---
 
-## 5. Job Listings Model
+## 6. Job Listings Model 🚧
+
+**Status**: Planned for future implementation
 
 ```json
 {
@@ -104,40 +179,55 @@ This document describes the core data models and API endpoints for the Minister 
   "title": "Youth Pastor",
   "ministry_type": "Youth",
   "employment_type": "Full Time with Benefits",
-  "job_description": "We are seeking a passionate and experienced Youth Pastor to lead our growing youth ministry. The ideal candidate will have a heart for discipling young people, experience in youth ministry, and strong leadership skills. Responsibilities include planning and leading weekly youth services, organizing events and retreats, mentoring youth leaders, and collaborating with parents and church leadership.",
-  "about_church": "Grace Fellowship Church is a vibrant, multi-generational congregation located in Springfield, IL. We are committed to making disciples who make disciples, with a strong emphasis on family ministry and community outreach. Our church values authentic relationships, biblical teaching, and serving our community with the love of Christ.",
-  "status": "approved", // or "pending", "rejected"
+  "job_description": "We are seeking a passionate and experienced Youth Pastor to lead our growing youth ministry...",
+  "about_church": "Grace Fellowship Church is a vibrant, multi-generational congregation...",
+  "status": "approved", // "pending", "approved", "rejected"
   "created_at": "2024-01-01T00:00:00.000Z",
   "updated_at": "2024-01-01T00:00:00.000Z"
 }
 ```
 
+**Planned Endpoints:**
+- `GET /api/job-listings` — List job listings (with optional status filter)
+- `POST /api/job-listings` — Create new job listing
+- `PUT /api/job-listings/:id` — Update job listing
+- `DELETE /api/job-listings/:id` — Delete job listing
+
 ---
 
-## 6. Mutual Interests Model
+## 7. Mutual Interests Model 🚧
+
+**Status**: Planned for future implementation
 
 ```json
 {
   "id": 1,
   "job_listing_id": 1,
   "profile_id": 1,
-  "expressed_by": "candidate", // or "church"
+  "expressed_by": "candidate", // "candidate", "church"
   "expressed_by_user_id": 3,
   "created_at": "2024-01-01T00:00:00.000Z",
   "updated_at": "2024-01-01T00:00:00.000Z"
 }
 ```
 
+**Planned Endpoints:**
+- `GET /api/mutual-interests` — Get mutual interests for current user/church
+- `POST /api/mutual-interests` — Express interest in a job/candidate
+- `DELETE /api/mutual-interests/:id` — Remove interest
+
 ---
 
-## 7. Activity Log Model
+## 8. Activity Log Model 🚧
+
+**Status**: Planned for future implementation
 
 ```json
 {
   "id": 1,
   "user_id": 1, // User who performed the action (null for system events)
   "action": "profile_approved", // e.g., "profile_approved", "church_registered", "job_created"
-  "entity_type": "profile", // or "user", "church", "job_listing", "invite_code"
+  "entity_type": "profile", // "user", "church", "profile", "job_listing", "invite_code"
   "entity_id": 5, // ID of the affected entity
   "details": "Profile approved for John Smith",
   "created_at": "2024-01-15T10:30:00.000Z"
@@ -146,7 +236,9 @@ This document describes the core data models and API endpoints for the Minister 
 
 ---
 
-## 8. Dashboard Statistics Model
+## 9. Dashboard Statistics Model 🚧
+
+**Status**: Planned for future implementation
 
 ```json
 {
@@ -168,93 +260,93 @@ This document describes the core data models and API endpoints for the Minister 
 }
 ```
 
+**Planned Endpoints:**
+- `GET /api/superadmin/dashboard` — Get dashboard statistics
+- `GET /api/superadmin/activity` — Get recent activity log
+
 ---
 
-## 9. Password Reset Model
+## 10. Password Reset Model 🚧
+
+**Status**: Planned for future implementation
 
 ```json
 {
   "id": 1,
   "user_id": 5,
   "reset_by": 1, // User ID who performed the reset
-  "reset_token": "a1b2c3d4e5f6789012345678901234567890abcdef1234567890abcdef123456", // Secure reset token (not stored in DB)
-  "reset_token_hash": "hashed_version_of_token", // Hashed version of the token for storage
-  "expires_at": "2024-01-22T23:59:59.000Z", // When the reset token expires
-  "used": false, // Whether the reset token has been used
+  "reset_token": "a1b2c3d4e5f6789012345678901234567890abcdef1234567890abcdef123456",
+  "reset_token_hash": "hashed_version_of_token",
+  "expires_at": "2024-01-22T23:59:59.000Z",
+  "used": false,
   "created_at": "2024-01-15T10:30:00.000Z"
 }
 ```
 
----
-
-## API Endpoints
-
-### Authentication
-- `POST /api/login` — Login user
-- `POST /api/register` — Register candidate
-- `POST /api/validate-invite` — Validate invite code
+**Planned Endpoints:**
 - `POST /api/forgot-password` — Request password reset
 - `POST /api/reset-password` — Reset password using token
 - `POST /api/validate-reset-token` — Validate reset token
 - `POST /api/force-password-change` — Force password change on first login
 
-### User Management
-- `GET /api/user` — Get current user data
+---
+
+## Planned API Endpoints (Not Yet Implemented)
+
+### User Management (Additional)
 - `GET /api/candidates` — List candidates (admin/church)
 - `GET /api/churches` — List churches (admin)
 - `GET /api/users` — List all users (superadmin)
 - `PUT /api/users/:id` — Update user status (superadmin)
 
-### Profiles
-- `GET /api/profile` — Get candidate profile
-- `POST /api/profile` — Update candidate profile
-- `POST /api/profile/upload` — Upload candidate document
-- `GET /api/profiles` — List all profiles (superadmin)
-- `POST /api/profiles/:id/review` — Approve/reject profile (superadmin)
-
-### Job Listings
-- `GET /api/job-listings` — List job listings (with optional status filter)
-- `POST /api/job-listings` — Create new job listing
-- `PUT /api/job-listings/:id` — Update job listing
-- `DELETE /api/job-listings/:id` — Delete job listing
-
-### Mutual Interests
-- `GET /api/mutual-interests` — Get mutual interests for current user/church
-- `POST /api/mutual-interests` — Express interest in a job/candidate
-- `DELETE /api/mutual-interests/:id` — Remove interest
-
-### Superadmin Operations
-- `GET /api/superadmin/dashboard` — Get dashboard statistics
-- `GET /api/superadmin/activity` — Get recent activity log
+### Superadmin Operations 🚧
 - `GET /api/superadmin/users` — List all users (superadmin)
 - `PUT /api/superadmin/users/:id` — Update user status (superadmin)
 - `GET /api/superadmin/profiles` — List all profiles (superadmin)
 - `POST /api/superadmin/profiles/:id/review` — Approve/reject profile (superadmin)
 - `GET /api/superadmin/churches` — List all churches (superadmin)
 - `PUT /api/superadmin/churches/:id` — Update church status (superadmin)
-- `GET /api/superadmin/invite-codes` — List invite codes
-- `POST /api/superadmin/invite-codes` — Create invite code
-- `PUT /api/superadmin/invite-codes/:id` — Update invite code
-- `DELETE /api/superadmin/invite-codes/:id` — Delete invite code
 - `POST /api/superadmin/users/:id/reset-password` — Generate reset token for user (superadmin)
 - `GET /api/superadmin/users/:id/password-resets` — Get password reset history (superadmin)
 
-### Admin Operations
+### Admin Operations 🚧
 - `POST /api/admin/review` — Admin approves/rejects candidate profile
 - `POST /api/admin/review-job` — Admin approves/rejects job listing
-- `GET /api/admin/invite-codes` — List invite codes
-- `POST /api/admin/invite-codes` — Create invite code
-- `PUT /api/admin/invite-codes/:id` — Update invite code
-- `DELETE /api/admin/invite-codes/:id` — Delete invite code
+
+---
+
+## Development Notes
+
+### Current Implementation
+- ✅ JWT Authentication system
+- ✅ User and Church management
+- ✅ Invite code system with usage tracking
+- ✅ Candidate registration with invite code validation
+- ✅ PostgreSQL database with proper constraints
+- ✅ Comprehensive test coverage
+
+### Next Development Phase
+- 🚧 Profile management system
+- 🚧 Job listing creation and management
+- 🚧 Mutual interest tracking
+- 🚧 Admin and superadmin dashboards
+- 🚧 Activity logging system
+- 🚧 Password reset functionality
+
+### API Integration Status
+- Frontend is prepared with TypeScript interfaces for all planned models
+- Mock API handlers exist for development without backend
+- Centralized API client can switch between mock and real backend
+- Environment variable configuration ready for backend integration
 
 ---
 
 ## Notes
 
-- Update this document as your data model or API evolves.
-- Keep mock data and API responses in sync with this reference for easy backend integration.
-- All timestamps are in ISO 8601 format.
-- Status fields use lowercase values: "pending", "approved", "rejected", "active", "inactive", "suspended".
-- Employment types include: "Full Time with Benefits", "Part Time", "Internship".
-- Ministry types are free-form text (e.g., "Youth", "Worship", "Missions", "Children", "Administration").
-- User roles include: "candidate", "church", "admin", "superadmin".
+- Update this document as new features are implemented
+- Keep mock data and API responses in sync with this reference
+- All timestamps are in ISO 8601 format
+- Status fields use lowercase values: "pending", "approved", "rejected", "active", "inactive", "suspended"
+- Employment types include: "Full Time with Benefits", "Part Time", "Internship"
+- Ministry types are free-form text (e.g., "Youth", "Worship", "Missions", "Children", "Administration")
+- User roles include: "candidate", "church", "admin", "superadmin"

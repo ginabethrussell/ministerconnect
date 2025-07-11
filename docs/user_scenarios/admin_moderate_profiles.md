@@ -4,11 +4,13 @@
 **Goal:** Review and moderate candidate profile submissions
 
 ## Preconditions
+
 - Admin is authenticated
 - Admin has profile moderation permissions
 - Candidate profiles are submitted for review
 
 ## Main Flow
+
 1. Admin accesses the profile review dashboard.
 2. Admin can:
    - View pending profile submissions
@@ -29,14 +31,15 @@
    - Integration with activity logging
 
 ## Postconditions
+
 - Profile review decisions are made
 - Candidates are notified of outcomes
 - System maintains quality control
 - Review activities are logged
 
 ## Notes
+
 - Admins have authority to approve/reject profiles
 - All review decisions are logged for audit
 - Profiles can be approved, rejected, or returned for changes
 - System tracks review timestamps and decisions
-

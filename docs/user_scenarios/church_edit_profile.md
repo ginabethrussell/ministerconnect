@@ -4,9 +4,11 @@
 **Goal:** Provide ministry context and contact info
 
 ## Preconditions
+
 - Church is authenticated
 
 ## Main Flow
+
 1. Church user accesses profile page.
 2. System displays form to edit:
    - Church name, email, phone, address, website
@@ -15,5 +17,5 @@
 4. System updates `churches` table.
 
 ## Postconditions
-- Profile is updated and visible to candidates
 
+- Profile is updated and visible to candidates

@@ -51,7 +51,7 @@ export const getRandomPDF = (): PDFFile => {
 };
 
 // Generate mock resume URL for candidates
-export const generateMockResumeUrl = (candidateName: string): string => {
+export const generateMockResumeUrl = (): string => {
   // Use different PDFs based on candidate name or random selection
   const pdfs = PDF_FILES.filter((pdf) => pdf.category === 'resume');
   const randomPdf = pdfs[Math.floor(Math.random() * pdfs.length)];

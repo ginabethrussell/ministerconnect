@@ -4,10 +4,12 @@
 **Goal:** Monitor system-wide activity and statistics
 
 ## Preconditions
+
 - Superadmin is authenticated
 - Superadmin has full system permissions
 
 ## Main Flow
+
 1. Superadmin accesses the main dashboard.
 2. Dashboard displays real-time statistics:
    - Total users in the system
@@ -33,13 +35,15 @@
    - Performance metrics
 
 ## Postconditions
+
 - Superadmin has comprehensive system overview
 - Quick access to all management functions
 - Real-time monitoring of system activity
 - Ability to respond to urgent issues
 
 ## Notes
+
 - Dashboard provides calculated statistics from multiple data sources
 - Activity feed shows recent system events with timestamps
 - All statistics are real-time and reflect current system state
-- Dashboard serves as the central hub for all superadmin activities 
+- Dashboard serves as the central hub for all superadmin activities

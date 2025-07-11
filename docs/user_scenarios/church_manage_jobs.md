@@ -4,11 +4,13 @@
 **Goal:** Create, edit, and manage job listings for their church
 
 ## Preconditions
+
 - Church is authenticated
 - Church account is active
 - Church has permission to post job listings
 
 ## Main Flow
+
 1. Church accesses the job management dashboard.
 2. Church can:
    - View all their job listings
@@ -37,13 +39,15 @@
    - Integration with candidate matching
 
 ## Postconditions
+
 - Job listings are created and managed
 - Churches can track listing status
 - System maintains quality control through review process
 - Churches can respond to candidate interest
 
 ## Notes
+
 - All job listings require admin approval before going live
 - Churches can edit listings while pending
 - Rejected listings include feedback for improvement
-- System tracks all job listing activity 
+- System tracks all job listing activity

@@ -4,10 +4,12 @@
 **Goal:** Reset password when forgotten
 
 ## Preconditions
+
 - User has a valid account in the system
 - User cannot remember their password
 
 ## Main Flow
+
 1. User navigates to the login page.
 2. User clicks "Forgot Password" link.
 3. User enters their email address.
@@ -27,12 +29,14 @@
    - Logs the password reset activity
 
 ## Postconditions
+
 - User can log in with new password
 - Reset token is invalidated after use
 - Password reset is logged for security audit
 
 ## Notes
+
 - Reset tokens are single-use and expire after 1 hour
 - Same success message shown regardless of email existence (security)
 - New passwords must meet minimum security requirements
-- All password resets are logged for audit purposes 
+- All password resets are logged for audit purposes

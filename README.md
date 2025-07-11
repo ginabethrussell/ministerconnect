@@ -1,10 +1,11 @@
 # Minister Connect
 
-A multi-role Next.js application for connecting ministry candidates with churches, featuring role-based access for candidates, churches, admins, and super admins. Built with React, TypeScript, Tailwind CSS, and MSW for frontend development and API mocking.
+A multi-role Next.js application for connecting ministry candidates with churches, featuring role-based access for candidates, churches, admins, and super admins. Built with React, TypeScript, Tailwind CSS, and MSW for frontend development, with a Django REST API backend.
 
 ## Features
 
 ### **For Candidates**
+
 - **Profile Management**: Create and edit detailed ministry profiles with resume upload
 - **Job Listings**: Browse available ministry positions with detailed job descriptions
 - **Express Interest**: Show interest in specific job listings with one-click functionality
@@ -12,6 +13,7 @@ A multi-role Next.js application for connecting ministry candidates with churche
 - **Document Upload**: Upload resumes and ministry videos
 
 ### **For Churches**
+
 - **Job Posting**: Create detailed job listings with ministry type, employment details, and church information
 - **Candidate Search**: Browse and search through approved candidate profiles
 - **Express Interest**: Show interest in promising candidates
@@ -19,12 +21,14 @@ A multi-role Next.js application for connecting ministry candidates with churche
 - **Church Profile Management**: Complete church profile with contact and location information
 
 ### **For Admins**
+
 - **Content Moderation**: Review and approve/reject candidate profiles and job listings
 - **User Management**: Monitor platform users and manage accounts
 - **Invite Code Management**: Generate and manage registration invite codes
 - **Church Oversight**: Review and manage church accounts
 
 ### **For Super Admins**
+
 - **Complete Platform Management**: Full administrative control over the entire platform
 - **User Management**: View, edit, and manage all user accounts (candidates, churches, admins)
 - **Password Reset**: Reset passwords for any user with secure temporary password generation
@@ -36,59 +40,101 @@ A multi-role Next.js application for connecting ministry candidates with churche
 
 ## Quick Start
 
+### Frontend Only (Development with Mock API)
+
 ```bash
+cd ministerconnect
 npm install
 npm run dev
 ```
 
 The application will be available at `http://localhost:3000`
 
-## Backend Integration Preparation
+### Full Stack (Frontend + Backend)
 
-Before setting up the backend service, the frontend has been prepared with:
+1. **Start the Backend:**
+   ```bash
+   cd ministerconnect_backend
+   python3 -m venv env
+   source env/bin/activate
+   pip install -r requirements.txt
+   python manage.py migrate
+   python manage.py runserver
+   ```
 
-- **API Client Configuration**: Centralized API calls in `src/utils/api.ts`
-- **Environment Variables**: Template in `env.example` for backend configuration
-- **Mock API**: MSW handlers for development without backend
-- **Type Safety**: Complete TypeScript interfaces matching backend requirements
+2. **Start the Frontend:**
+   ```bash
+   cd ministerconnect
+   cp env.example .env.local
+   # Edit .env.local to set NEXT_PUBLIC_API_URL=http://localhost:8000
+   npm install
+   npm run dev
+   ```
+
+## Backend Integration
+
+The application now includes a fully functional Django REST API backend with:
+
+- **JWT Authentication**: Secure token-based authentication
+- **PostgreSQL Database**: Robust data storage
+- **User Management**: Complete user creation and management
+- **Church Management**: Church profile creation and management
+- **Invite Code System**: Registration code generation and tracking
+- **Candidate Registration**: Secure candidate onboarding
 
 ### Environment Setup
 
-1. Copy `env.example` to `.env.local`
-2. Set `NEXT_PUBLIC_API_URL` to your backend service URL
-3. Use `npm run dev:backend` to run with backend configuration
+1. **Frontend Environment:**
+   ```bash
+   cd ministerconnect
+   cp env.example .env.local
+   # Set NEXT_PUBLIC_API_URL=http://localhost:8000 for backend integration
+   ```
+
+2. **Backend Environment:**
+   ```bash
+   cd ministerconnect_backend
+   # Create .env file with SECRET_KEY and database settings
+   ```
 
 ### API Integration
 
 The frontend uses a centralized API client that automatically switches between:
+
 - Mock API (development without backend)
 - Real backend API (when `NEXT_PUBLIC_API_URL` is set)
 
-All API endpoints are defined in `src/utils/api.ts` for easy backend integration.
+All API endpoints are defined in `src/utils/api.ts` and match the Django backend implementation.
 
 ## Test Accounts
 
 ### **Super Admin**
+
 - Email: `superadminuser@gmail.com`
 - Password: `password123`
 
 ### **Admin**
+
 - Email: `admin@ministerconnect.com`
 - Password: `password123`
 
 ### **Church (Grace Fellowship)**
+
 - Email: `pastor.bob@gracefellowship.org`
 - Password: `password123`
 
 ### **Church (New Hope Community)**
+
 - Email: `pastor.sarah@newhope.com`
 - Password: `password123`
 
 ### **Candidate (Approved Profile)**
+
 - Email: `john.candidate@email.com`
 - Password: `password123`
 
 ### **Candidate (Pending Profile)**
+
 - Email: `jane.candidate@email.com`
 - Password: `password123`
 
@@ -98,89 +144,120 @@ All API endpoints are defined in `src/utils/api.ts` for easy backend integration
 - **API Data Model**: See `API_DATA_MODEL.md` for detailed data structure information
 - **User Scenarios**: See `docs/user_scenarios/` for detailed user workflows
 - **Documentation**: See `docs/README.md` for additional documentation
+- **Backend Documentation**: See `ministerconnect_backend/README.md` for backend setup and API details
 
 ### Use Case Diagram
+
 ![Use Case Diagram](docs/usecase_diagram.png)
 
 ## User Journey Screenshots
 
 ### Landing Page
+
 ![Landing Page](screenshots/landingpage.png)
 
 ### Login Page
+
 ![Login](screenshots/login.png)
 
 ### Register Page
+
 ![Register](screenshots/register.png)
 
 ### Candidate Dashboard
+
 ![Candidate Dashboard](screenshots/candidatedashboard.png)
 
 ### Candidate Profile Form
+
 ![Candidate Profile Form](screenshots/candidateprofile.png)
 
 ### Candidate Job Listings
+
 ![Candidate Job Listings](screenshots/candidatejoblistings.png)
 
 ### Church Dashboard
+
 ![Church Dashboard](screenshots/churchdashboard.png)
 
 ### Church Create Job Listing
+
 ![Church Create Job Listing](screenshots/churchcreatejob.png)
 
 ### Church Manage Jobs
+
 ![Church Manage Jobs](screenshots/churchmanagejobs.png)
 
 ### Church Candidate Search
+
 ![Church Candidate Search](screenshots/churchsearchcandidates.png)
 
 ### Church Mutual Interests
+
 ![Church Mutual Interests](screenshots/churchmutualinterests.png)
 
 ### Admin Dashboard
+
 ![Admin Dashboard](screenshots/admindashboard.png)
 
 ### Admin Review Profiles
+
 ![Admin Review Profiles](screenshots/adminreviewprofiles.png)
 
 ### Admin Church Management
+
 ![Admin Manage Churches](screenshots/adminmanagechurches.png)
 
 ### Admin Create Church
+
 ![Admin Create Church](screenshots/admincreatechurch.png)
 
 ### Admin Edit Church
+
 ![Admin Edit Church](screenshots/admineditchurch.png)
 
 ### Admin Review Job Listings
+
 ![Admin Review Job Listings](screenshots/adminreviewjoblistings.png)
 
 ### Admin Manage Invite Codes
+
 ![Admin Manage Invite Codes](screenshots/adminmanageinvitecodes.png)
 
 ### Super Admin Dashboard
+
 ![Super Admin Dashboard](screenshots/superadmindashboard.png)
 
 ### Super Admin User Management
+
 ![Super Admin User Management](screenshots/superadminmanageusers.png)
 
-
 ### Super Admin Profile Management
+
 ![Super Admin Manage Profiles](screenshots/superadminmanageprofiles.png)
 
 ### Super Admin Church Management
+
 ![Super Admin Manage Churches](screenshots/superadminmanagechurches.png)
 
 ### Super Admin Invite Code Management
+
 ![Super Admin Manage Invite Codes](screenshots/superadminmanageinvitecodes.png)
 
 ## Tech Stack
 
+### Frontend
 - [Next.js](https://nextjs.org/) (v15+)
 - [React](https://react.dev/) (v19+)
 - [TypeScript](https://www.typescriptlang.org/)
 - [Tailwind CSS](https://tailwindcss.com/)
 - [MSW (Mock Service Worker)](https://mswjs.io/)
+
+### Backend
+- [Django](https://www.djangoproject.com/) (v5.x)
+- [Django REST Framework](https://www.django-rest-framework.org/)
+- [PostgreSQL](https://www.postgresql.org/)
+- [JWT Authentication](https://django-rest-framework-simplejwt.readthedocs.io/)
 
 ---
 
@@ -189,37 +266,54 @@ All API endpoints are defined in `src/utils/api.ts` for easy backend integration
 ### Prerequisites
 
 - Node.js (v18+ recommended)
+- Python 3.8+
+- PostgreSQL
 - Yarn or npm
 
 ### Installation
 
-1. Clone the repository:
+1. **Clone the repository:**
    ```bash
    git clone <repository-url>
+   cd ministerconnect-app
+   ```
+
+2. **Set up the Backend:**
+   ```bash
+   cd ministerconnect_backend
+   python3 -m venv env
+   source env/bin/activate
+   pip install -r requirements.txt
+   
+   # Set up PostgreSQL database
+   # Create .env file with SECRET_KEY
+   python manage.py migrate
+   python manage.py runserver
+   ```
+
+3. **Set up the Frontend:**
+   ```bash
    cd ministerconnect
-   ```
-2. Install dependencies:
-   ```bash
-   yarn install
-   # or
    npm install
-   ```
-3. Start the development server:
-   ```bash
-   yarn dev
-   # or
+   cp env.example .env.local
+   # Edit .env.local to set NEXT_PUBLIC_API_URL=http://localhost:8000
    npm run dev
    ```
+
    The app will be available at [http://localhost:3000](http://localhost:3000).
 
 ### Building for Production
 
 ```bash
-yarn build
-yarn start
-# or
+# Frontend
+cd ministerconnect
 npm run build
 npm start
+
+# Backend
+cd ministerconnect_backend
+python manage.py collectstatic
+python manage.py runserver
 ```
 
 ---

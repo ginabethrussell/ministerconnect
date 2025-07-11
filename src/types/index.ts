@@ -1,3 +1,17 @@
+export interface TokenResponse {
+  access: string;
+  refresh: string;
+}
+
+export interface CandidateRegistrationFormValues {
+  code: string;
+  email: string;
+  firstname: string;
+  lastname: string;
+  password: string;
+  confirmPassword: string;
+}
+
 export interface Church {
   id: number;
   name: string;
@@ -11,20 +25,6 @@ export interface Church {
   location: string; // Formatted location (city, state)
   status: 'active' | 'pending' | 'suspended';
   job_listings_count: number; // Number of job listings for this church
-  created_at: string;
-  updated_at: string;
-}
-
-export interface User {
-  id: number;
-  email: string;
-  name: string; // Full name of the user
-  password?: string; // Password should be optional on the frontend
-  role: 'candidate' | 'church' | 'admin' | 'superadmin';
-  church_id: number | null;
-  status: 'active' | 'pending' | 'suspended'; // User account status
-  requires_password_change?: boolean; // Track if user needs to change password on first login
-  last_login: string | null; // Last login timestamp
   created_at: string;
   updated_at: string;
 }

@@ -4,10 +4,12 @@
 **Goal:** Create a job opportunity listing visible to candidates
 
 ## Preconditions
+
 - Church is authenticated
 - Church profile is complete and active
 
 ## Main Flow
+
 1. Church logs in and navigates to “Post a Job” screen.
 2. Church completes a form with:
    - Title
@@ -21,6 +23,6 @@
    - Sets listing status to `active`
 
 ## Postconditions
+
 - Job listing is available to eligible candidates in their feed
 - Church can view, edit, or deactivate listing from dashboard
-

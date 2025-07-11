@@ -3,7 +3,7 @@ import { useRouter } from 'next/router';
 import Link from 'next/link';
 import { useUser } from '../../context/UserContext';
 import PasswordInput from '../../components/PasswordInput';
-import { apiClient, API_ENDPOINTS, getMe } from '../../utils/api';
+import { login, getMe } from '../../utils/api';
 
 const Login = () => {
   const [email, setEmail] = useState('');
@@ -18,17 +18,14 @@ const Login = () => {
     setError('');
     setSuccess(false);
     try {
-      const data = await apiClient.post<{
-        access: string;
-        refresh: string;
-      }>(API_ENDPOINTS.LOGIN, { email, password }, false);
+      const data = await login({ email, password });
 
       // Store JWT tokens
       localStorage.setItem('accessToken', data.access);
       localStorage.setItem('refreshToken', data.refresh);
       localStorage.setItem('isAuthenticated', 'true');
       localStorage.setItem('userEmail', email);
-      
+
       // Fetch current user info after login
       let userInfo;
       try {
@@ -42,25 +39,23 @@ const Login = () => {
 
       setSuccess(true);
 
-      switch(userInfo.groups[0]) {
-        case('Super Admin'):
+      switch (userInfo.groups[0]) {
+        case 'Super Admin':
           router.push('/superadmin');
           break;
-        case('Admin'):
+        case 'Admin':
           router.push('/admin');
           break;
-        case('Church User'):
+        case 'Church User':
           router.push('/church');
           break;
-        case('Candidate'):
+        case 'Candidate':
           router.push('/candidate');
           break;
         default:
           // add a page to contact the admin - don't know what to do with this user
-          router.push('/candidate')
+          router.push('/');
       } // or wherever you want to redirect after login
-      
-      
     } catch {
       setError('An error occurred during login');
     }

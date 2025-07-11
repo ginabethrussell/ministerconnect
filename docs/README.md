@@ -18,10 +18,11 @@ The Use Case Diagram shows the three main user types (Candidate, Church, Admin) 
 1. **Online (Recommended)**: Copy the contents of `use-case-diagram.puml` and paste it into [PlantUML Online Editor](http://www.plantuml.com/plantuml/uml/)
 
 2. **Local (requires Java + PlantUML)**:
+
    ```bash
    # Install PlantUML (requires Java)
    npm install -g plantuml
-   
+
    # Generate diagram
    plantuml -tpng docs/use-case-diagram.puml
    ```
