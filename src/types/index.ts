@@ -1,6 +1,6 @@
 export interface TokenResponse {
   access: string;
-  token: string;
+  refresh: string;
 }
 
 export interface Church {
