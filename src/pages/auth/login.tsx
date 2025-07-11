@@ -17,8 +17,9 @@ const Login = () => {
     e.preventDefault();
     setError('');
     setSuccess(false);
+    const sanitizedEmail = email.trim().toLowerCase()
     try {
-      const data = await login({ email, password });
+      const data = await login({ email: sanitizedEmail, password });
 
       // Store JWT tokens
       localStorage.setItem('accessToken', data.access);
