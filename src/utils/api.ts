@@ -1,3 +1,4 @@
+import { TokenResponse } from "@/types";
 import { User } from "../context/UserContext";
 // API client configuration for backend integration
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000';
@@ -240,7 +241,7 @@ export const getMe = async (): Promise<User> => {
 }; 
 
 // Example usage for a public endpoint (login):
-export const login = async (data: { username: string; password: string }) => {
+export const login = async (data: { email: string; password: string }): Promise<TokenResponse> => {
   return apiClient.post(API_ENDPOINTS.LOGIN, data, false); // auth = false
 }; 
 
