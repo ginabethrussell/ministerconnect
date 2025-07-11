@@ -47,7 +47,7 @@ const AdminReview = () => {
     const fetchProfiles = async () => {
       try {
         setLoading(true);
-        const data: Profile[] = await getSuperAdminProfiles();
+        const data = (await getSuperAdminProfiles()) as Profile[];
         setProfiles(data);
         // Get unique events for filter dropdown
         const uniqueEvents = Array.from(new Set(data.map((p) => p.email))); // Placeholder for event
@@ -163,7 +163,7 @@ const AdminReview = () => {
                   <div className="bg-white rounded-lg shadow-md p-6">
                     <div className="flex items-start gap-4 mb-4">
                       <img
-                        src={profile.photo}
+                        src={profile.photo ?? undefined}
                         alt={`${fullName}`}
                         className="w-16 h-16 rounded-lg object-cover"
                       />
@@ -222,7 +222,7 @@ const AdminReview = () => {
                               View
                             </a>
                             <button
-                              onClick={() => handleViewResume(profile.resume, fullName)}
+                              onClick={() => handleViewResume(profile.resume || '', fullName)}
                               className="text-blue-600 hover:underline font-medium"
                             >
                               Preview
@@ -241,7 +241,7 @@ const AdminReview = () => {
                               View
                             </a>
                             <button
-                              onClick={() => handleViewVideo(profile.video_url, fullName)}
+                              onClick={() => handleViewVideo(profile.video_url || '', fullName)}
                               className="text-blue-600 hover:underline font-medium"
                             >
                               Preview
