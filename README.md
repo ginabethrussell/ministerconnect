@@ -464,3 +464,9 @@ ministerconnect/
   - Trim and lowercase all emails before saving or comparing.
   - Trim and titlecase all first and last names before saving.
 - The frontend is encouraged to sanitize data as well, but the backend enforces these rules for consistency and data integrity.
+
+## Password Reset (MVP Workflow)
+
+For the MVP, password resets are handled manually by the site administrator. If you forget your password, please contact the admin at [ginabeth.russell@gmail.com](mailto:ginabeth.russell@gmail.com?subject=Minister%20Connect%20Password%20Reset%20Request) to request a password reset. The admin will reset your password and provide you with a temporary password.
+
+Automated password reset via email will be implemented in a future release.
