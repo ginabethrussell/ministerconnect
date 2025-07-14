@@ -2,7 +2,11 @@ import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/router';
 import Link from 'next/link';
 import { registerCandidate } from '../../utils/api';
-import { handleRegistrationErrorResponse, RegistrationError, sanitizeRegistrationFormValues } from '@/utils/helpers';
+import {
+  handleRegistrationErrorResponse,
+  RegistrationError,
+  sanitizeRegistrationFormValues,
+} from '@/utils/helpers';
 import PasswordInput from '../../components/PasswordInput';
 
 const initialRegistrationFormValues = {

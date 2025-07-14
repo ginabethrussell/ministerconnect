@@ -4,6 +4,7 @@ import Link from 'next/link';
 import { useUser } from '../../context/UserContext';
 import PasswordInput from '../../components/PasswordInput';
 import { login, getMe } from '../../utils/api';
+import { getUserDashboardRoute } from '@/utils/helpers';
 
 const Login = () => {
   const [email, setEmail] = useState('');
@@ -17,7 +18,7 @@ const Login = () => {
     e.preventDefault();
     setError('');
     setSuccess(false);
-    const sanitizedEmail = email.trim().toLowerCase()
+    const sanitizedEmail = email.trim().toLowerCase();
     try {
       const data = await login({ email: sanitizedEmail, password });
 
@@ -37,26 +38,11 @@ const Login = () => {
         setError('Login succeeded, but failed to fetch user info.');
         return;
       }
-
       setSuccess(true);
-
-      switch (userInfo.groups[0]) {
-        case 'Super Admin':
-          router.push('/superadmin');
-          break;
-        case 'Admin':
-          router.push('/admin');
-          break;
-        case 'Church User':
-          router.push('/church');
-          break;
-        case 'Candidate':
-          router.push('/candidate');
-          break;
-        default:
-          // add a page to contact the admin - don't know what to do with this user
-          router.push('/');
-      } // or wherever you want to redirect after login
+      if (userInfo.requires_password_change) {
+        router.push('/auth/reset-password');
+      }
+      router.push(getUserDashboardRoute(userInfo));
     } catch {
       setError('An error occurred during login');
     }

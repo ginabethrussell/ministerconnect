@@ -2,31 +2,50 @@ import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/router';
 import Link from 'next/link';
 
-export default function ForcePasswordChange() {
+export default function ResetPasswordLink() {
   const router = useRouter();
+  const { token } = router.query;
 
-  const [currentPassword, setCurrentPassword] = useState('');
-  const [newPassword, setNewPassword] = useState('');
+  const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState('');
   const [success, setSuccess] = useState(false);
+  const [error, setError] = useState('');
+  const [tokenValid, setTokenValid] = useState(false);
+  const [validating, setValidating] = useState(true);
+
+  // Validate token on page load
+  useEffect(() => {
+    if (token) {
+      validateToken();
+    }
+  }, [token]);
+
+  const validateToken = async () => {
+    try {
+      const response = await fetch(`/api/auth/validate-reset-token?token=${token}`);
+      if (response.ok) {
+        setTokenValid(true);
+      } else {
+        setError('Invalid or expired reset link. Please request a new one.');
+      }
+    } catch (err) {
+      setError('Failed to validate reset link.');
+    } finally {
+      setValidating(false);
+    }
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    if (newPassword !== confirmPassword) {
-      setError('New passwords do not match');
+    if (password !== confirmPassword) {
+      setError('Passwords do not match');
       return;
     }
 
-    if (newPassword.length < 8) {
-      setError('New password must be at least 8 characters long');
-      return;
-    }
-
-    if (newPassword === currentPassword) {
-      setError('New password must be different from current password');
+    if (password.length < 8) {
+      setError('Password must be at least 8 characters long');
       return;
     }
 
@@ -34,14 +53,14 @@ export default function ForcePasswordChange() {
     setError('');
 
     try {
-      const response = await fetch('/api/auth/force-password-change', {
+      const response = await fetch('/api/auth/reset-password', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          currentPassword,
-          newPassword,
+          token,
+          password,
         }),
       });
 
@@ -49,11 +68,8 @@ export default function ForcePasswordChange() {
 
       if (response.ok) {
         setSuccess(true);
-        // Update localStorage to reflect the change
-        localStorage.setItem('passwordChanged', 'true');
-        router.push('/church');
       } else {
-        setError(data.message || 'Failed to change password');
+        setError(data.message || 'Failed to reset password');
       }
     } catch (err) {
       setError('Network error. Please try again.');
@@ -62,25 +78,59 @@ export default function ForcePasswordChange() {
     }
   };
 
+  if (validating) {
+    return (
+      <div className="min-h-screen bg-efcaGray flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
+        <div className="max-w-md w-full space-y-8">
+          <div className="bg-white rounded-lg shadow-lg p-6">
+            <div className="text-center">
+              <h2 className="text-2xl font-bold text-efcaDark mb-4">Validating Reset Link</h2>
+              <p className="text-gray-600">Please wait...</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
   if (success) {
     return (
       <div className="min-h-screen bg-efcaGray flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
         <div className="max-w-md w-full space-y-8">
           <div className="bg-white rounded-lg shadow-lg p-6">
             <div className="text-center">
-              <h2 className="text-2xl font-bold text-efcaDark mb-4">
-                Password Changed Successfully
-              </h2>
+              <h2 className="text-2xl font-bold text-efcaDark mb-4">Password Reset Successful</h2>
               <p className="text-gray-600 mb-6">
-                Your password has been updated. You can now access your account with your new
+                Your password has been successfully reset. You can now log in with your new
                 password.
               </p>
-              <button
-                onClick={() => router.push('/church')}
+              <Link
+                href="/auth/login"
                 className="inline-block bg-efcaAccent text-white py-2 px-4 rounded-lg hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-efcaAccent focus:ring-offset-2 transition-colors"
               >
-                Go to Dashboard
-              </button>
+                Go to Login
+              </Link>
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  if (!tokenValid) {
+    return (
+      <div className="min-h-screen bg-efcaGray flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
+        <div className="max-w-md w-full space-y-8">
+          <div className="bg-white rounded-lg shadow-lg p-6">
+            <div className="text-center">
+              <h2 className="text-2xl font-bold text-efcaDark mb-4">Invalid Reset Link</h2>
+              <p className="text-gray-600 mb-6">{error}</p>
+              <Link
+                href="/auth/forgot-password"
+                className="inline-block bg-efcaAccent text-white py-2 px-4 rounded-lg hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-efcaAccent focus:ring-offset-2 transition-colors"
+              >
+                Request New Reset Link
+              </Link>
             </div>
           </div>
         </div>
@@ -93,10 +143,8 @@ export default function ForcePasswordChange() {
       <div className="max-w-md w-full space-y-8">
         <div className="bg-white rounded-lg shadow-lg p-6">
           <div className="text-center">
-            <h2 className="text-2xl font-bold text-efcaDark mb-4">Change Your Password</h2>
-            <p className="text-gray-600 mb-6">
-              For security reasons, you must change your temporary password before continuing.
-            </p>
+            <h2 className="text-2xl font-bold text-efcaDark mb-4">Reset Your Password</h2>
+            <p className="text-gray-600 mb-6">Enter your new password below.</p>
           </div>
 
           <form className="space-y-6" onSubmit={handleSubmit}>
@@ -107,39 +155,19 @@ export default function ForcePasswordChange() {
             )}
 
             <div>
-              <label
-                htmlFor="currentPassword"
-                className="block text-sm font-medium text-gray-700 mb-2"
-              >
-                Current Password
-              </label>
-              <input
-                id="currentPassword"
-                name="currentPassword"
-                type="password"
-                autoComplete="current-password"
-                required
-                value={currentPassword}
-                onChange={(e) => setCurrentPassword(e.target.value)}
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-efcaAccent focus:border-efcaAccent"
-                placeholder="Enter your current password"
-              />
-            </div>
-
-            <div>
-              <label htmlFor="newPassword" className="block text-sm font-medium text-gray-700 mb-2">
+              <label htmlFor="password" className="block text-sm font-medium text-gray-700 mb-2">
                 New Password
               </label>
               <input
-                id="newPassword"
-                name="newPassword"
+                id="password"
+                name="password"
                 type="password"
                 autoComplete="new-password"
                 required
-                value={newPassword}
-                onChange={(e) => setNewPassword(e.target.value)}
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
                 className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-efcaAccent focus:border-efcaAccent"
-                placeholder="Enter new password (min 8 characters)"
+                placeholder="Enter new password"
                 minLength={8}
               />
             </div>
@@ -170,12 +198,14 @@ export default function ForcePasswordChange() {
               disabled={loading}
               className="w-full bg-efcaAccent text-white py-2 px-4 rounded-lg hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-efcaAccent focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
             >
-              {loading ? 'Changing Password...' : 'Change Password'}
+              {loading ? 'Resetting...' : 'Reset Password'}
             </button>
           </form>
 
           <div className="mt-6 text-center">
-            <p className="text-sm text-gray-500">Need help? Contact your administrator.</p>
+            <Link href="/auth/login" className="text-efcaAccent hover:text-blue-700 font-medium">
+              Back to Login
+            </Link>
           </div>
         </div>
       </div>

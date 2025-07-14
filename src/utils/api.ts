@@ -299,3 +299,14 @@ export const registerCandidate = async (data: {
   };
   return apiClient.post(API_ENDPOINTS.CANDIDATE_REGISTER, body, false); // auth = false
 };
+
+export const resetPassword = async (data: {
+  temporaryPassword: string;
+  newPassword: string;
+}): Promise<{ detail: string }> => {
+  const body = {
+    temporary_password: data.temporaryPassword,
+    new_password: data.newPassword,
+  };
+  return apiClient.post(API_ENDPOINTS.RESET_PASSWORD, body);
+};

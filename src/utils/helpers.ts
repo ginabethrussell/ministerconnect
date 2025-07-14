@@ -1,3 +1,4 @@
+import { User } from '@/context/UserContext';
 import { CandidateRegistrationFormValues } from '@/types';
 
 export type RegistrationError = {
@@ -30,4 +31,20 @@ export const sanitizeRegistrationFormValues = (formValues: CandidateRegistration
     firstname: titleCase(formValues.firstname),
     lastname: titleCase(formValues.lastname),
   };
+};
+
+// Determines dashboard url for User
+export const getUserDashboardRoute = (userInfo: User) => {
+  switch (userInfo.groups[0]) {
+    case 'Super Admin':
+      return '/superadmin';
+    case 'Admin':
+      return '/admin';
+    case 'Church User':
+      return '/church';
+    case 'Candidate':
+      return '/candidate';
+    default:
+      return '/';
+  }
 };

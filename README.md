@@ -53,6 +53,7 @@ The application will be available at `http://localhost:3000`
 ### Full Stack (Frontend + Backend)
 
 1. **Start the Backend:**
+
    ```bash
    cd ministerconnect_backend
    python3 -m venv env
@@ -85,6 +86,7 @@ The application now includes a fully functional Django REST API backend with:
 ### Environment Setup
 
 1. **Frontend Environment:**
+
    ```bash
    cd ministerconnect
    cp env.example .env.local
@@ -247,6 +249,7 @@ All API endpoints are defined in `src/utils/api.ts` and match the Django backend
 ## Tech Stack
 
 ### Frontend
+
 - [Next.js](https://nextjs.org/) (v15+)
 - [React](https://react.dev/) (v19+)
 - [TypeScript](https://www.typescriptlang.org/)
@@ -254,6 +257,7 @@ All API endpoints are defined in `src/utils/api.ts` and match the Django backend
 - [MSW (Mock Service Worker)](https://mswjs.io/)
 
 ### Backend
+
 - [Django](https://www.djangoproject.com/) (v5.x)
 - [Django REST Framework](https://www.django-rest-framework.org/)
 - [PostgreSQL](https://www.postgresql.org/)
@@ -273,18 +277,20 @@ All API endpoints are defined in `src/utils/api.ts` and match the Django backend
 ### Installation
 
 1. **Clone the repository:**
+
    ```bash
    git clone <repository-url>
    cd ministerconnect-app
    ```
 
 2. **Set up the Backend:**
+
    ```bash
    cd ministerconnect_backend
    python3 -m venv env
    source env/bin/activate
    pip install -r requirements.txt
-   
+
    # Set up PostgreSQL database
    # Create .env file with SECRET_KEY
    python manage.py migrate
@@ -292,6 +298,7 @@ All API endpoints are defined in `src/utils/api.ts` and match the Django backend
    ```
 
 3. **Set up the Frontend:**
+
    ```bash
    cd ministerconnect
    npm install

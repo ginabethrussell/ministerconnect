@@ -11,12 +11,14 @@ This document describes the core data models and API endpoints for the Minister 
 ## Current Implementation Status
 
 ### ✅ Implemented Models & Endpoints
+
 - User Management (with JWT authentication)
 - Church Management
 - Invite Code System
 - Candidate Registration
 
 ### 🚧 Planned Models & Endpoints
+
 - Profile Management
 - Job Listings
 - Mutual Interests
@@ -48,6 +50,7 @@ This document describes the core data models and API endpoints for the Minister 
 ```
 
 **Available Endpoints:**
+
 - `POST /api/churches/create/` — Create new church (requires authentication)
 
 ---
@@ -71,10 +74,12 @@ This document describes the core data models and API endpoints for the Minister 
 ```
 
 **Available Endpoints:**
+
 - `POST /api/users/create/` — Create new user (requires authentication)
 - `GET /api/user/me/` — Get current user info (requires authentication)
 
 **Authentication Endpoints:**
+
 - `POST /api/token/` — Obtain JWT token
 - `POST /api/token/refresh/` — Refresh JWT token
 
@@ -100,6 +105,7 @@ This document describes the core data models and API endpoints for the Minister 
 ```
 
 **Available Endpoints:**
+
 - `POST /api/invite-codes/create/` — Create invite code (requires authentication)
 - `GET /api/invite-codes/` — List invite codes (requires authentication)
 
@@ -110,9 +116,11 @@ This document describes the core data models and API endpoints for the Minister 
 **Status**: Implemented in backend
 
 **Registration Endpoint:**
+
 - `POST /api/candidates/register/` — Register new candidate (no authentication required)
 
 **Request Body:**
+
 ```json
 {
   "invite_code": "CANDIDATE2024",
@@ -124,6 +132,7 @@ This document describes the core data models and API endpoints for the Minister 
 ```
 
 **Response:**
+
 ```json
 {
   "detail": "Registration successful. Please log in."
@@ -160,6 +169,7 @@ This document describes the core data models and API endpoints for the Minister 
 ```
 
 **Planned Endpoints:**
+
 - `GET /api/profile` — Get candidate profile
 - `POST /api/profile` — Update candidate profile
 - `POST /api/profile/upload` — Upload candidate document
@@ -188,6 +198,7 @@ This document describes the core data models and API endpoints for the Minister 
 ```
 
 **Planned Endpoints:**
+
 - `GET /api/job-listings` — List job listings (with optional status filter)
 - `POST /api/job-listings` — Create new job listing
 - `PUT /api/job-listings/:id` — Update job listing
@@ -212,6 +223,7 @@ This document describes the core data models and API endpoints for the Minister 
 ```
 
 **Planned Endpoints:**
+
 - `GET /api/mutual-interests` — Get mutual interests for current user/church
 - `POST /api/mutual-interests` — Express interest in a job/candidate
 - `DELETE /api/mutual-interests/:id` — Remove interest
@@ -261,6 +273,7 @@ This document describes the core data models and API endpoints for the Minister 
 ```
 
 **Planned Endpoints:**
+
 - `GET /api/superadmin/dashboard` — Get dashboard statistics
 - `GET /api/superadmin/activity` — Get recent activity log
 
@@ -284,6 +297,7 @@ This document describes the core data models and API endpoints for the Minister 
 ```
 
 **Planned Endpoints:**
+
 - `POST /api/forgot-password` — Request password reset
 - `POST /api/reset-password` — Reset password using token
 - `POST /api/validate-reset-token` — Validate reset token
@@ -294,12 +308,14 @@ This document describes the core data models and API endpoints for the Minister 
 ## Planned API Endpoints (Not Yet Implemented)
 
 ### User Management (Additional)
+
 - `GET /api/candidates` — List candidates (admin/church)
 - `GET /api/churches` — List churches (admin)
 - `GET /api/users` — List all users (superadmin)
 - `PUT /api/users/:id` — Update user status (superadmin)
 
 ### Superadmin Operations 🚧
+
 - `GET /api/superadmin/users` — List all users (superadmin)
 - `PUT /api/superadmin/users/:id` — Update user status (superadmin)
 - `GET /api/superadmin/profiles` — List all profiles (superadmin)
@@ -310,6 +326,7 @@ This document describes the core data models and API endpoints for the Minister 
 - `GET /api/superadmin/users/:id/password-resets` — Get password reset history (superadmin)
 
 ### Admin Operations 🚧
+
 - `POST /api/admin/review` — Admin approves/rejects candidate profile
 - `POST /api/admin/review-job` — Admin approves/rejects job listing
 
@@ -318,6 +335,7 @@ This document describes the core data models and API endpoints for the Minister 
 ## Development Notes
 
 ### Current Implementation
+
 - ✅ JWT Authentication system
 - ✅ User and Church management
 - ✅ Invite code system with usage tracking
@@ -326,6 +344,7 @@ This document describes the core data models and API endpoints for the Minister 
 - ✅ Comprehensive test coverage
 
 ### Next Development Phase
+
 - 🚧 Profile management system
 - 🚧 Job listing creation and management
 - 🚧 Mutual interest tracking
@@ -334,6 +353,7 @@ This document describes the core data models and API endpoints for the Minister 
 - 🚧 Password reset functionality
 
 ### API Integration Status
+
 - Frontend is prepared with TypeScript interfaces for all planned models
 - Mock API handlers exist for development without backend
 - Centralized API client can switch between mock and real backend
