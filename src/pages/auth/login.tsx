@@ -83,13 +83,18 @@ const Login = () => {
             placeholder="Password"
             required
           />
-          <div className="text-right">
-            <Link
-              href="/auth/forgot-password"
-              className="text-sm text-efcaAccent hover:text-blue-700 underline"
-            >
-              Forgot Password?
-            </Link>
+          {/* MVP - Contact Admin to Reset Password */}
+          <div className="text-left">
+            <p className="mt-4 text-sm text-gray-600">
+              Forgot Password? Please{' '}
+              <a
+                href="mailto:ginabeth.russell@gmail.com?subject=Minister%20Connect%20Password%20Reset%20Request"
+                className="text-efcaAccent underline hover:text-efcaAccent-dark"
+              >
+                contact the admin
+              </a>{' '}
+              to reset.
+            </p>
           </div>
           <button className="btn-primary w-full" type="submit">
             Login
@@ -108,7 +113,7 @@ const Login = () => {
           to request access.
         </p>
         <p className="mt-4 text-sm text-gray-600">
-          Don&apos;t have an account?{' '}
+          Are you a candidate without an account?{' '}
           <Link
             href="/auth/register"
             className="text-efcaAccent underline hover:text-blue-700 focus:underline focus:text-efcaAccent focus:outline-none"
