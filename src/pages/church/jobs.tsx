@@ -102,7 +102,7 @@ export default function ChurchJobs() {
             <div className="text-center py-8">
               <h3 className="text-lg font-medium text-gray-900 mb-2">No jobs posted yet</h3>
               <p className="text-gray-600 mb-4">
-                Click "Post New Job" to create your first listing.
+                Click &quot;Post New Job&quot; to create your first listing.
               </p>
             </div>
           ) : (

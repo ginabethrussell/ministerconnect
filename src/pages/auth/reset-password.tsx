@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { useRouter } from 'next/router';
 import { resetPassword } from '@/utils/api';
 
@@ -30,7 +30,7 @@ export default function ResetPassword() {
     setError('');
 
     try {
-      const response = await resetPassword({ temporaryPassword, newPassword });
+      await resetPassword({ temporaryPassword, newPassword });
       setSuccess(true);
       // Update localStorage to reflect the change
       localStorage.setItem('passwordChanged', 'true');

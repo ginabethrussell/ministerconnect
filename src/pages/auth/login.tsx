@@ -34,7 +34,7 @@ const Login = () => {
         userInfo = await getMe();
         setUser(userInfo);
         localStorage.setItem('userInfo', JSON.stringify(userInfo));
-      } catch (err) {
+      } catch {
         setError('Login succeeded, but failed to fetch user info.');
         return;
       }

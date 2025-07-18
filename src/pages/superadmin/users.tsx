@@ -121,7 +121,7 @@ export default function SuperAdminUsers() {
       setIsResetting(false);
     }
   };
-
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const generateTemporaryPassword = () => {
     const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
     let result = '';

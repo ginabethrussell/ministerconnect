@@ -43,17 +43,17 @@ export const handlers = [
   }),
 
   // Superadmin - Churches
-  http.get(`${API_PREFIX}/superadmin/churches`, ({ request }) => {
+  http.get(`${API_PREFIX}/superadmin/churches`, () => {
     return HttpResponse.json(churches);
   }),
 
   // Superadmin - Profiles
-  http.get(`${API_PREFIX}/superadmin/profiles`, ({ request }) => {
+  http.get(`${API_PREFIX}/superadmin/profiles`, () => {
     return HttpResponse.json(profiles);
   }),
 
   // Admin - Jobs
-  http.get(`${API_PREFIX}/admin/jobs`, ({ request }) => {
+  http.get(`${API_PREFIX}/admin/jobs`, () => {
     const jobsWithChurch = jobListings.map((job) => {
       const church = churches.find((c) => c.id === job.church_id);
       return { ...job, church };
@@ -87,7 +87,7 @@ export const handlers = [
   }),
 
   // Express Interest in Job Listing
-  http.post(`${API_PREFIX}/job-listings/:id/express-interest`, async ({ request, params }) => {
+  http.post(`${API_PREFIX}/job-listings/:id/express-interest`, async ({ params }) => {
     const { id } = params;
     const jobId = Number(id);
 
@@ -144,7 +144,7 @@ export const handlers = [
   }),
 
   // Get User's Expressed Interests
-  http.get(`${API_PREFIX}/job-listings/expressed-interests`, ({ request }) => {
+  http.get(`${API_PREFIX}/job-listings/expressed-interests`, () => {
     // Get current user from localStorage
     const userEmail = localStorage.getItem('user_email');
     const user = users.find((u) => u.email === userEmail);
@@ -182,7 +182,7 @@ export const handlers = [
   }),
 
   // Admin - Churches
-  http.get(`${API_PREFIX}/admin/churches`, ({ request }) => {
+  http.get(`${API_PREFIX}/admin/churches`, () => {
     const churchesWithUsers = churches.map((church) => ({
       ...church,
       users: users.filter((user) => user.church_id === church.id).map(({ ...rest }) => rest),
@@ -232,7 +232,7 @@ export const handlers = [
   }),
 
   // Admin - Invite Codes
-  http.get(`${API_PREFIX}/admin/invite-codes`, ({ request }) => {
+  http.get(`${API_PREFIX}/admin/invite-codes`, () => {
     return HttpResponse.json(inviteCodes);
   }),
 
@@ -285,7 +285,7 @@ export const handlers = [
   }),
 
   // Church - Mutual Interests
-  http.get(`${API_PREFIX}/church/mutual-interests`, ({ request }) => {
+  http.get(`${API_PREFIX}/church/mutual-interests`, () => {
     const mutualInterestsWithDetails = mockMutualInterests.map((interest) => {
       const profile = profiles.find((p) => p.id === interest.profile_id);
       const jobListing = jobListings.find((j) => j.id === interest.job_listing_id);
@@ -296,9 +296,8 @@ export const handlers = [
   }),
 
   // Candidate - Profile
-  http.get(`${API_PREFIX}/profile`, ({ cookies }) => {
+  http.get(`${API_PREFIX}/profile`, () => {
     // In a real app, the token would be decoded to get the user ID
-    const token = cookies.token;
 
     // Simulate finding user from token. For MSW, we'll just find a candidate.
     // Let's alternate between John and Jane for demonstration.
@@ -332,12 +331,12 @@ export const handlers = [
   }),
 
   // Church - Search Page
-  http.get(`${API_PREFIX}/profiles/approved`, ({ request }) => {
+  http.get(`${API_PREFIX}/profiles/approved`, () => {
     const approvedProfiles = profiles.filter((p) => p.status === 'approved');
     return HttpResponse.json(approvedProfiles);
   }),
 
-  http.get(`${API_PREFIX}/church/interests`, ({ request }) => {
+  http.get(`${API_PREFIX}/church/interests`, () => {
     const userEmail = localStorage.getItem('user_email');
     if (!userEmail) return HttpResponse.json([], { status: 401 });
 
@@ -354,7 +353,7 @@ export const handlers = [
     return HttpResponse.json(churchInterests);
   }),
 
-  http.get(`${API_PREFIX}/church/job-listings`, ({ request }) => {
+  http.get(`${API_PREFIX}/church/job-listings`, () => {
     const userEmail = localStorage.getItem('user_email');
     if (!userEmail) return HttpResponse.json([], { status: 401 });
 

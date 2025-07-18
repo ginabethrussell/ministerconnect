@@ -6,6 +6,7 @@ export type User = {
   name: string;
   groups: string[];
   church_id?: number | null;
+  password?: string;
   status?: string;
   requires_password_change?: boolean;
   created_at?: string;
