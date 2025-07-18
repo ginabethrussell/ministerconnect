@@ -16,25 +16,24 @@ export default function ResetPasswordLink() {
 
   // Validate token on page load
   useEffect(() => {
+    const validateToken = async () => {
+      try {
+        const response = await fetch(`/api/auth/validate-reset-token?token=${token}`);
+        if (response.ok) {
+          setTokenValid(true);
+        } else {
+          setError('Invalid or expired reset link. Please request a new one.');
+        }
+      } catch {
+        setError('Failed to validate reset link.');
+      } finally {
+        setValidating(false);
+      }
+    };
     if (token) {
       validateToken();
     }
   }, [token]);
-
-  const validateToken = async () => {
-    try {
-      const response = await fetch(`/api/auth/validate-reset-token?token=${token}`);
-      if (response.ok) {
-        setTokenValid(true);
-      } else {
-        setError('Invalid or expired reset link. Please request a new one.');
-      }
-    } catch (err) {
-      setError('Failed to validate reset link.');
-    } finally {
-      setValidating(false);
-    }
-  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -71,7 +70,7 @@ export default function ResetPasswordLink() {
       } else {
         setError(data.message || 'Failed to reset password');
       }
-    } catch (err) {
+    } catch {
       setError('Network error. Please try again.');
     } finally {
       setLoading(false);

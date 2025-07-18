@@ -17,6 +17,7 @@ export default function CandidateDashboard() {
   const router = useRouter();
   const [profile, setProfile] = useState<Profile | null>(null);
   const [loading, setLoading] = useState(true);
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [error, setError] = useState('');
 
   useEffect(() => {
@@ -28,7 +29,7 @@ export default function CandidateDashboard() {
         if (data.success && data.profile) {
           setProfile(data.profile);
         }
-      } catch (error) {
+      } catch {
         // Handle error silently or show user-friendly message
       } finally {
         setLoading(false);

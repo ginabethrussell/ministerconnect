@@ -9,6 +9,7 @@ export default function ForgotPassword() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    setLoading(true);
     setError('');
     setSuccess('');
 
@@ -28,8 +29,10 @@ export default function ForgotPassword() {
       } else {
         setError(data.message || 'Failed to send reset email');
       }
-    } catch (err) {
+    } catch {
       setError('Network error. Please try again.');
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -41,7 +44,7 @@ export default function ForgotPassword() {
             <div className="text-center">
               <h2 className="text-2xl font-bold text-efcaDark mb-4">Check Your Email</h2>
               <p className="text-gray-600 mb-6">
-                We've sent a password reset link to <strong>{email}</strong>
+                We&apos;ve sent a password reset link to <strong>{email}</strong>
               </p>
               <p className="text-sm text-gray-500 mb-6">
                 Click the link in the email to reset your password. The link will expire in 1 hour.
@@ -63,7 +66,7 @@ export default function ForgotPassword() {
           <div className="text-center">
             <h2 className="text-2xl font-bold text-efcaDark mb-4">Forgot Your Password?</h2>
             <p className="text-gray-600 mb-6">
-              Enter your email address and we'll send you a link to reset your password.
+              Enter your email address and we&apos;ll send you a link to reset your password.
             </p>
           </div>
 

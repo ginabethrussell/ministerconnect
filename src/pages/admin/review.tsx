@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import Image from 'next/image';
 import PDFViewer from '../../components/PDFViewer';
 import { getSuperAdminProfiles } from '../../utils/api'; // Using the centralized API
 import { Profile } from '../../types'; // Using the centralized type
@@ -18,11 +19,14 @@ function getYouTubeEmbedUrl(url: string): string {
 
 const AdminReview = () => {
   const [profiles, setProfiles] = useState<Profile[]>([]);
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [sortBy, setSortBy] = useState<'name' | 'createdAt'>('name');
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [filterEvent, setFilterEvent] = useState<string>('');
   const [filterStatus, setFilterStatus] = useState<string>('all');
   const [loading, setLoading] = useState(true);
   const [actionLoadingId, setActionLoadingId] = useState<string | null>(null);
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [events, setEvents] = useState<string[]>([]);
   const [pdfViewer, setPdfViewer] = useState<{
     isOpen: boolean;
@@ -157,14 +161,16 @@ const AdminReview = () => {
             </div>
           ) : (
             <div className="grid gap-6 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
-              {filtered.map((profile) => {
+              {filtered.map((profile, idx) => {
                 const fullName = `${profile.first_name} ${profile.last_name}`;
                 return (
-                  <div className="bg-white rounded-lg shadow-md p-6">
+                  <div key={`${fullName}-${idx}`} className="bg-white rounded-lg shadow-md p-6">
                     <div className="flex items-start gap-4 mb-4">
-                      <img
-                        src={profile.photo ?? undefined}
+                      <Image
+                        src={profile.photo ?? ''}
                         alt={`${fullName}`}
+                        width={200}
+                        height={200}
                         className="w-16 h-16 rounded-lg object-cover"
                       />
                       <div className="flex-1">

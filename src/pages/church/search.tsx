@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import Image from 'next/image';
 import PDFViewer from '../../components/PDFViewer';
 import ExpressInterestButton from '../../components/ExpressInterestButton';
 import { Profile, JobListing } from '../../types'; // Assuming types for Profile and JobListing exist
@@ -26,6 +27,7 @@ export default function ChurchSearch() {
 
   const [pdfViewer, setPdfViewer] = useState({ isOpen: false, url: '', title: '' });
   const [videoViewer, setVideoViewer] = useState({ isOpen: false, url: '', title: '' });
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [copyStatus, setCopyStatus] = useState<{ [key: string]: string }>({});
 
   useEffect(() => {
@@ -98,7 +100,7 @@ export default function ChurchSearch() {
       });
     }
   };
-
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const handleCopyContact = (profile: Profile) => {
     const contactInfo = `Name: ${profile.first_name} ${profile.last_name}\nEmail: ${profile.email}\nPhone: ${profile.phone}`;
     navigator.clipboard.writeText(contactInfo).then(
@@ -148,7 +150,7 @@ export default function ChurchSearch() {
           <div className="text-blue-700 space-y-2 text-sm">
             <p>• When you express interest, the candidate is NOT notified.</p>
             <p>• A candidate must first express interest in one of your job listings.</p>
-            <p>• If you also express interest in them, it becomes a "Mutual Interest."</p>
+            <p>• If you also express interest in them, it becomes a &quot;Mutual Interest.&quot;</p>
             <p>• You can view all Mutual Interests on the dashboard.</p>
           </div>
         </section>
@@ -178,9 +180,11 @@ export default function ChurchSearch() {
                     <div className="flex items-start gap-6 flex-grow">
                       <div className="w-24 h-24 flex-shrink-0">
                         {profile.photo ? (
-                          <img
+                          <Image
                             src={profile.photo}
                             alt={`${profile.first_name} ${profile.last_name}`}
+                            height={200}
+                            width={200}
                             className="w-24 h-24 object-cover rounded-lg"
                           />
                         ) : (

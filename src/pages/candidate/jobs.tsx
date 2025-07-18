@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/router';
-import Link from 'next/link';
 import ExpressInterestButton from '../../components/ExpressInterestButton';
 import { JobListing } from '../../types';
 
@@ -14,6 +13,7 @@ interface JobListingWithStatus extends JobListing {
 
 export default function CandidateJobs() {
   const router = useRouter();
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [profile, setProfile] = useState<any>(null);
   const [loading, setLoading] = useState(true);
   const [jobListings, setJobListings] = useState<JobListingWithStatus[]>([]);
@@ -142,12 +142,13 @@ export default function CandidateJobs() {
           </h3>
           <div className="text-blue-700 space-y-2">
             <p>
-              • Click "Express Interest" to let churches know you're interested in their position
+              • Click &quot;Express Interest&quot; to let churches know you&apos;re interested in
+              their position
             </p>
             <p>• Churches will be notified of your interest and can view your profile</p>
             <p>
-              • If there's mutual interest, churches will contact you directly using your profile
-              information
+              • If there&apos;s mutual interest, churches will contact you directly using your
+              profile information
             </p>
             <p>
               • You can express interest in multiple positions and withdraw interest at any time
@@ -194,6 +195,7 @@ export default function CandidateJobs() {
           ) : (
             <div className="space-y-4">
               {filteredJobs.map((job) => {
+                // eslint-disable-next-line @typescript-eslint/no-unused-vars
                 const hasExpressedInterest = expressedInterest.includes(job.id);
                 const isExpanded = expandedJobs.includes(job.id);
 

@@ -2,7 +2,8 @@ import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/router';
 import Link from 'next/link';
 import { getAdminChurchById, updateChurch, deleteChurch } from '../../../utils/api';
-import { Church, User } from '../../../types';
+import { Church } from '../../../types';
+import { User } from '@/context/UserContext';
 import PasswordInput from '../../../components/PasswordInput';
 
 type ChurchWithUsers = Church & { users: User[] };
@@ -12,27 +13,26 @@ export default function EditChurch() {
   const { id } = router.query;
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
-  const [deleting, setDeleting] = useState(false);
+  const [, setDeleting] = useState(false);
   const [churchData, setChurchData] = useState<ChurchWithUsers | null>(null);
 
   useEffect(() => {
+    const loadChurch = async (churchId: string) => {
+      try {
+        const data = await getAdminChurchById(churchId);
+        setChurchData(data as ChurchWithUsers);
+      } catch (error) {
+        console.error('Error loading church:', error);
+        alert('Error loading church data');
+        router.push('/admin/churches');
+      } finally {
+        setLoading(false);
+      }
+    };
     if (typeof id === 'string') {
       loadChurch(id);
     }
-  }, [id]);
-
-  const loadChurch = async (churchId: string) => {
-    try {
-      const data = await getAdminChurchById(churchId);
-      setChurchData(data);
-    } catch (error) {
-      console.error('Error loading church:', error);
-      alert('Error loading church data');
-      router.push('/admin/churches');
-    } finally {
-      setLoading(false);
-    }
-  };
+  }, [id, router]);
 
   const handleChurchDataChange = (field: string, value: string) => {
     setChurchData((prev) => (prev ? { ...prev, [field]: value } : null));
@@ -54,11 +54,11 @@ export default function EditChurch() {
         id: Date.now(), // Temporary ID for new user
         email: '',
         name: '',
-        role: 'church',
+        groups: ['Church User'],
+        password: '',
         church_id: prev.id,
         status: 'active',
         requires_password_change: true,
-        last_login: null,
         created_at: new Date().toISOString(),
         updated_at: new Date().toISOString(),
       };
@@ -93,6 +93,7 @@ export default function EditChurch() {
     }
   };
 
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const handleDeleteChurch = async () => {
     if (!churchData) return;
 

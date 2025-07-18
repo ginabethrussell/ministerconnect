@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import Image from 'next/image';
 import PDFViewer from '../../components/PDFViewer';
 import { getMutualInterests } from '../../utils/api';
 import { MutualInterest, JobListing, Profile, InviteCode } from '../../types';
@@ -50,7 +51,7 @@ export default function MutualInterests() {
   useEffect(() => {
     const fetchMutualInterests = async () => {
       try {
-        const data = await getMutualInterests();
+        const data: any = await getMutualInterests();
         setMutualInterests(data);
       } catch (error) {
         console.error('Failed to fetch mutual interests:', error);
@@ -95,7 +96,7 @@ export default function MutualInterests() {
       }, 2000);
     });
   };
-
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const getJobTitle = (jobId: number) => {
     const job = jobListings.find((j) => j.id === jobId);
     return job ? job.title : 'Unknown Position';
@@ -201,10 +202,12 @@ export default function MutualInterests() {
                     <div className="flex items-start gap-6 flex-grow">
                       <div className="w-24 h-24 flex-shrink-0">
                         {profile.photo ? (
-                          <img
+                          <Image
                             src={profile.photo}
                             alt={`${profile.first_name} ${profile.last_name}`}
                             className="w-24 h-24 object-cover rounded-lg"
+                            height={200}
+                            width={200}
                           />
                         ) : (
                           <div className="w-24 h-24 rounded-lg bg-gray-200 flex items-center justify-center">

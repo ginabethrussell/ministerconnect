@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useRef } from 'react';
-import Link from 'next/link';
+import Image from 'next/image';
 import { Profile } from '@/types';
 
 type Mode = 'view' | 'edit' | 'create';
@@ -439,9 +439,11 @@ const CandidateProfilePage = () => {
       <div className="bg-white rounded-lg shadow-lg p-6 border border-gray-200">
         <div className="flex flex-col md:flex-row items-center md:items-start gap-6">
           {profile.photo ? (
-            <img
+            <Image
               src={profile.photo}
               alt={`${profile.first_name} ${profile.last_name}`}
+              height={200}
+              width={200}
               className="w-32 h-32 rounded-lg object-cover border-4 border-white shadow-md"
             />
           ) : (
@@ -559,7 +561,11 @@ const CandidateProfilePage = () => {
   const renderForm = () => (
     <form
       onSubmit={(e) => {
-        mode === 'create' ? handleCreate(e) : handleEdit(e);
+        if (mode === 'create') {
+          handleCreate(e, 'draft');
+        } else {
+          handleEdit(e, 'draft');
+        }
       }}
       className="space-y-4"
     >
@@ -704,9 +710,11 @@ const CandidateProfilePage = () => {
         />
         {form.photoFile && (
           <div className="mt-2">
-            <img
+            <Image
               src={URL.createObjectURL(form.photoFile)}
               alt="Profile Preview"
+              height={200}
+              width={200}
               className="h-32 w-32 object-cover rounded-lg border"
             />
           </div>
@@ -858,7 +866,11 @@ const CandidateProfilePage = () => {
           className="bg-gray-400 text-white px-4 py-2.5 rounded-lg font-bold hover:bg-gray-500 focus:outline-none focus:ring-2 focus:ring-gray-400 transition-colors"
           type="button"
           onClick={(e) => {
-            mode === 'create' ? handleCreate(e, 'draft') : handleEdit(e, 'draft');
+            if (mode === 'create') {
+              handleCreate(e, 'draft');
+            } else {
+              handleEdit(e, 'draft');
+            }
           }}
         >
           Save as Draft
