@@ -107,7 +107,6 @@ const Register = () => {
             onChange={handleChange}
             placeholder="First Name"
             required
-            autoFocus
           />
           <input
             className="input-field"
@@ -116,7 +115,6 @@ const Register = () => {
             onChange={handleChange}
             placeholder="Last Name"
             required
-            autoFocus
           />
           <PasswordInput
             name="password"
