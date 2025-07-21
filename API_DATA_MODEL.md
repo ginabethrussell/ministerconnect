@@ -13,6 +13,7 @@ This document describes the core data models and API endpoints for the Minister 
 ### Authentication Endpoints
 
 - `POST /api/token/` — Obtain JWT token
+
   - Request:
     ```json
     {
@@ -43,17 +44,21 @@ This document describes the core data models and API endpoints for the Minister 
     ```
 
 ### User Endpoints
+
 - `POST /api/users/create/` — Create new user (requires authentication)
 - `GET /api/user/me/` — Get current user info (requires authentication)
 
 ### Church Endpoints
+
 - `POST /api/churches/create/` — Create new church (requires authentication)
 
 ### Invite Code Endpoints
+
 - `POST /api/invite-codes/create/` — Create invite code (requires authentication)
 - `GET /api/invite-codes/` — List invite codes (requires authentication)
 
 ### Candidate Registration
+
 - `POST /api/candidates/register/`
   - Registers a new candidate user.
   - **Required fields:** `invite_code`, `email`, `password`, `first_name`, `last_name`
@@ -73,21 +78,25 @@ This document describes the core data models and API endpoints for the Minister 
     ```
 
 ### Profile Endpoints
+
 - `GET /api/profile/me/` — Retrieve the authenticated user's profile.
 - `PATCH /api/profile/me/` — Update fields on the authenticated user's profile.
 - `PUT /api/profile/me/` — Replace the authenticated user's profile.
 - `POST /api/profile/reset/` — Reset the profile to a blank draft (removes resume and clears fields).
 
 #### Profile Status Logic
+
 - **Draft:** Can be saved with incomplete fields. Minimal validation is enforced.
 - **Pending:** All required fields (`phone`, `street_address`, `city`, `state`, `zipcode`, `resume`) must be filled to submit.
 
 #### Resume Upload
+
 - Field: `resume` (file, PDF, max 5MB)
 - To replace, upload a new file; to remove, use the reset endpoint.
 - Resume is deleted from storage and DB reference when profile is reset.
 
 #### Example PATCH request (to submit as pending):
+
 ```json
 {
   "status": "pending",
@@ -101,6 +110,7 @@ This document describes the core data models and API endpoints for the Minister 
 ```
 
 #### Example response for GET /api/profile/me/
+
 ```json
 {
   "id": 1,
@@ -125,6 +135,7 @@ This document describes the core data models and API endpoints for the Minister 
 ---
 
 ## Profile Reset
+
 - `POST /api/profile/reset/` — Resets the profile to a blank draft, removes resume from storage and DB, and clears all fields except user and invite_code.
 - Only the authenticated user can reset their own profile.
 - **Response:**
@@ -139,7 +150,7 @@ This document describes the core data models and API endpoints for the Minister 
 
 ## Status Table
 
-| Status   | Validation Level         | User Experience                |
-|----------|-------------------------|--------------------------------|
-| draft    | Minimal (allow partial) | Save progress, return later    |
-| pending  | Strict (all required)   | Must complete all fields       |
+| Status  | Validation Level        | User Experience             |
+| ------- | ----------------------- | --------------------------- |
+| draft   | Minimal (allow partial) | Save progress, return later |
+| pending | Strict (all required)   | Must complete all fields    |
