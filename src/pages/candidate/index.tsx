@@ -1,36 +1,25 @@
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/router';
+import { useUser } from '@/context/UserContext';
+import { useProfile, Profile } from '@/context/ProfileContext';
 import Link from 'next/link';
-
-interface Profile {
-  id: string;
-  firstName: string;
-  lastName: string;
-  email: string;
-  status: 'draft' | 'pending' | 'approved' | 'rejected';
-  updated_at: string;
-  adminFeedback?: string;
-  phone?: string;
-}
+import { getProfile } from '@/utils/api';
 
 export default function CandidateDashboard() {
   const router = useRouter();
-  const [profile, setProfile] = useState<Profile | null>(null);
   const [loading, setLoading] = useState(true);
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [error, setError] = useState('');
+  const { user } = useUser();
+  const { profile, setProfile } = useProfile();
 
   useEffect(() => {
     const fetchProfile = async () => {
       try {
-        const response = await fetch('/api/profile');
-        const data = await response.json();
-
-        if (data.success && data.profile) {
-          setProfile(data.profile);
-        }
-      } catch {
-        // Handle error silently or show user-friendly message
+        const response = await getProfile();
+        setProfile(response);
+      } catch (err) {
+        setError(JSON.stringify(err));
       } finally {
         setLoading(false);
       }
@@ -122,15 +111,9 @@ export default function CandidateDashboard() {
               href="/candidate/profile"
               className="px-4 py-2 bg-efcaAccent text-white rounded font-semibold hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-efcaAccent transition-colors"
             >
-              {profile ? 'Edit Profile' : 'Create Profile'}
+              {profile?.status === 'pending' ? 'View Profile' : 'Edit Profile'}
             </Link>
           </div>
-          {profile?.adminFeedback && (
-            <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4 mt-4">
-              <h3 className="font-semibold text-yellow-800 mb-1">Admin Feedback</h3>
-              <p className="text-yellow-800">{profile.adminFeedback}</p>
-            </div>
-          )}
           <p className="text-sm text-gray-400 mt-4">
             Last updated:{' '}
             {profile?.updated_at ? new Date(profile.updated_at).toLocaleDateString() : 'N/A'}
@@ -152,7 +135,7 @@ export default function CandidateDashboard() {
                 href="/candidate/profile"
                 className="block w-full px-4 py-2 text-center bg-efcaAccent text-white rounded font-semibold hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-efcaAccent transition-colors"
               >
-                {profile ? 'Update Profile' : 'Create Profile'}
+                {profile?.status === 'pending' ? 'View Profile' : 'Edit Profile'}
               </Link>
               {profile?.status === 'approved' && (
                 <Link
@@ -170,14 +153,6 @@ export default function CandidateDashboard() {
                   Submit for Review
                 </button>
               )}
-              {profile && (
-                <button
-                  onClick={() => alert('Delete profile functionality coming soon!')}
-                  className="block w-full px-4 py-2 text-center bg-red-100 text-red-700 rounded font-semibold hover:bg-red-200 focus:outline-none focus:ring-2 focus:ring-red-300 transition-colors"
-                >
-                  Delete Profile
-                </button>
-              )}
             </div>
           </section>
 
@@ -190,7 +165,7 @@ export default function CandidateDashboard() {
             {profile ? (
               <div className="space-y-2">
                 <p className="text-gray-600">
-                  <span className="font-medium">Email:</span> {profile.email}
+                  <span className="font-medium">Email:</span> {user?.email}
                 </p>
                 {profile.phone && (
                   <p className="text-gray-600">

@@ -1,5 +1,6 @@
 import { TokenResponse } from '@/types';
-import { User } from '../context/UserContext';
+import { User } from '@/context/UserContext';
+import { Profile } from '@/context/ProfileContext';
 // API client configuration for backend integration
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000';
 
@@ -11,12 +12,16 @@ export const getApiUrl = (endpoint: string): string => {
 };
 
 // Helper function to get auth headers
-const getAuthHeaders = () => {
+const getAuthHeaders = (contentType: 'json' | 'none' = 'json') => {
   const token = localStorage.getItem('accessToken');
-  return {
-    'Content-Type': 'application/json',
-    ...(token && { Authorization: `Bearer ${token}` }),
-  };
+  const headers: Record<string, string> = {};
+  if (contentType === 'json') {
+    headers['Content-Type'] = 'application/json';
+  }
+  if (token) {
+    headers['Authorization'] = `Bearer ${token}`;
+  }
+  return headers;
 };
 
 export const refreshToken = async () => {
@@ -37,12 +42,15 @@ async function fetchWithAuthRetry(
   input: RequestInfo,
   init?: RequestInit,
   retry = true,
-  auth = true
+  auth = true,
+  contentType: 'json' | 'none' = 'json'
 ) {
-  // Only add Authorization header if auth is true
   if (auth) {
     init = init || {};
-    init.headers = { ...getAuthHeaders(), ...(init.headers || {}) };
+    // Only set headers if not already set
+    if (!init.headers) {
+      init.headers = getAuthHeaders(contentType);
+    }
   }
   let response = await fetch(input, init);
   if (auth && response.status === 401 && retry) {
@@ -89,6 +97,24 @@ export const apiClient = {
       getApiUrl(endpoint),
       {
         method: 'POST',
+        headers: auth ? getAuthHeaders() : { 'Content-Type': 'application/json' },
+        body: JSON.stringify(data),
+      },
+      true,
+      auth
+    );
+    if (!response.ok) {
+      const errorBody = await response.json().catch(() => ({}));
+      throw errorBody;
+    }
+    return response.json();
+  },
+
+  async patch<T>(endpoint: string, data: any, auth = true): Promise<T> {
+    const response = await fetchWithAuthRetry(
+      getApiUrl(endpoint),
+      {
+        method: 'PATCH',
         headers: auth ? getAuthHeaders() : { 'Content-Type': 'application/json' },
         body: JSON.stringify(data),
       },
@@ -160,6 +186,31 @@ export const apiClient = {
     }
     return response.json();
   },
+
+  async patchForm<T>(endpoint: string, formData: FormData, auth = true): Promise<T> {
+    console.log('PATCHFORM', endpoint, formData);
+    const response = await fetchWithAuthRetry(
+      getApiUrl(endpoint),
+      {
+        method: 'PATCH',
+        headers: auth
+          ? localStorage.getItem('accessToken')
+            ? { Authorization: `Bearer ${localStorage.getItem('accessToken')}` }
+            : undefined
+          : undefined,
+        body: formData,
+      },
+      true,
+      auth,
+      'none' // <--- tell fetchWithAuthRetry not to add Content-Type
+    );
+    console.log('RESPONSE HEADERS', response.headers);
+    if (!response.ok) {
+      const errorBody = await response.json().catch(() => ({}));
+      throw errorBody;
+    }
+    return response.json();
+  },
 };
 
 // API endpoints configuration
@@ -182,36 +233,37 @@ export const API_ENDPOINTS = {
   CANDIDATE_REGISTER: '/api/candidates/register/',
 
   // Frontend routes (for MSW/fallback)
-  FORGOT_PASSWORD: '/api/auth/forgot-password',
-  RESET_PASSWORD: '/api/auth/reset-password',
-  FORCE_PASSWORD_CHANGE: '/api/auth/force-password-change',
+  FORGOT_PASSWORD: '/api/auth/forgot-password/',
+  RESET_PASSWORD: '/api/auth/reset-password/',
+  FORCE_PASSWORD_CHANGE: '/api/auth/force-password-change/',
 
   // User management
-  USER: '/api/user',
-  USERS: '/api/users',
+  USER: '/api/user/',
+  USERS: '/api/users/',
   GET_ME: '/api/user/me/',
 
   // Profiles
-  PROFILE: '/api/profile',
-  PROFILES: '/api/profiles',
+  PROFILE: '/api/profile/me/',
+  PROFILE_RESET: '/api/profile/reset/',
+  PROFILES: '/api/profiles/',
 
   // Churches (frontend routes)
-  CHURCHES: '/api/churches',
+  CHURCHES: '/api/churches/',
 
   // Job listings
-  JOB_LISTINGS: '/api/job-listings',
+  JOB_LISTINGS: '/api/job-listings/',
 
   // Mutual interests
-  MUTUAL_INTERESTS: '/api/mutual-interests',
+  MUTUAL_INTERESTS: '/api/mutual-interests/',
 
   // Invite codes (frontend routes)
-  INVITE_CODES: '/api/invite-codes',
+  INVITE_CODES: '/api/invite-codes/',
 
   // Superadmin
-  SUPERADMIN_DASHBOARD: '/api/superadmin/dashboard',
-  SUPERADMIN_USERS: '/api/superadmin/users',
-  SUPERADMIN_PROFILES: '/api/superadmin/profiles',
-  SUPERADMIN_CHURCHES: '/api/superadmin/churches',
+  SUPERADMIN_DASHBOARD: '/api/superadmin/dashboard/',
+  SUPERADMIN_USERS: '/api/superadmin/users/',
+  SUPERADMIN_PROFILES: '/api/superadmin/profiles/',
+  SUPERADMIN_CHURCHES: '/api/superadmin/churches/',
 } as const;
 
 // Superadmin
@@ -221,12 +273,12 @@ export const getSuperAdminProfiles = async () => {
 
 // Mutual Interests
 export const getMutualInterests = async () => {
-  return apiClient.get('/api/church/mutual-interests');
+  return apiClient.get(API_ENDPOINTS.MUTUAL_INTERESTS);
 };
 
 // Admin Job Listings
 export const getAdminJobListings = async () => {
-  return apiClient.get('/api/admin/jobs');
+  return apiClient.get(API_ENDPOINTS.JOB_LISTINGS);
 };
 
 export const updateJobListingStatus = async (id: number, status: 'approved' | 'rejected') => {
@@ -235,7 +287,7 @@ export const updateJobListingStatus = async (id: number, status: 'approved' | 'r
 
 // Admin Churches
 export const getAdminChurches = async () => {
-  return apiClient.get('/api/admin/churches');
+  return apiClient.get(API_ENDPOINTS.CHURCHES);
 };
 
 export const deleteChurch = async (id: number) => {
@@ -252,11 +304,11 @@ export const updateChurch = async (id: number, data: any) => {
 
 // Admin Invite Codes
 export const getAdminInviteCodes = async () => {
-  return apiClient.get('/api/admin/invite-codes');
+  return apiClient.get(API_ENDPOINTS.INVITE_CODES);
 };
 
 export const createInviteCode = async (data: { code: string; event: string }) => {
-  return apiClient.post('/api/admin/invite-codes', data);
+  return apiClient.post(API_ENDPOINTS.INVITE_CODES, data);
 };
 
 export const updateInviteCode = async (id: number, data: { code: string; event: string }) => {
@@ -309,4 +361,17 @@ export const resetPassword = async (data: {
     new_password: data.newPassword,
   };
   return apiClient.post(API_ENDPOINTS.RESET_PASSWORD, body);
+};
+
+// Fetch current authenticated user profile
+export const getProfile = async (): Promise<Profile> => {
+  return apiClient.get(API_ENDPOINTS.PROFILE);
+};
+
+export const patchProfileWithFile = async (formData: FormData): Promise<Profile> => {
+  return apiClient.patchForm(API_ENDPOINTS.PROFILE, formData);
+};
+
+export const resetProfileData = async (): Promise<{ detail: string; profile: Profile }> => {
+  return apiClient.post(API_ENDPOINTS.PROFILE_RESET, {}, true);
 };

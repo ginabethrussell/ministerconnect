@@ -3,6 +3,8 @@ import React, { createContext, useContext, useState, useEffect } from 'react';
 export type User = {
   id: number;
   email: string;
+  first_name: string;
+  last_name: string;
   name: string;
   groups: string[];
   church_id?: number | null;

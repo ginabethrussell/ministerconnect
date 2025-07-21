@@ -55,6 +55,7 @@ const Register = () => {
 
     if (password !== confirmPassword) {
       setError('Passwords do not match');
+      setLoading(false);
       return;
     }
 

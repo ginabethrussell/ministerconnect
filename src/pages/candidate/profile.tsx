@@ -1,190 +1,71 @@
-import React, { useEffect, useState, useRef } from 'react';
-import Image from 'next/image';
-import { Profile } from '@/types';
+import React, { useState } from 'react';
+import { Profile, useProfile } from '@/context/ProfileContext';
+import { useUser } from '@/context/UserContext';
+import { patchProfileWithFile, resetProfileData } from '@/utils/api';
 
-type Mode = 'view' | 'edit' | 'create';
-
-interface PreviewModalProps {
-  isOpen: boolean;
-  onClose: () => void;
-  file: File | null;
-  url: string | null;
-  type: 'pdf' | 'video';
-}
+type Mode = 'view' | 'edit';
 
 interface FormData {
-  first_name: string;
-  last_name: string;
-  email: string;
   phone: string;
   street_address: string;
   city: string;
   state: string;
   zipcode: string;
-  resumeFile: File | null;
-  videoFile: File | null;
-  resume_url: string | null;
+  resume: File | string | null;
   video_url: string | null;
-  photoFile: File | null;
   placement_preferences: string[];
 }
 
 interface FormErrors {
   [key: string]: string | undefined;
-  first_name?: string;
-  last_name?: string;
-  email?: string;
   phone?: string;
   street_address?: string;
   city?: string;
   state?: string;
   zipcode?: string;
-  resumeFile?: string;
+  resume?: string;
   video_url?: string;
-  photoFile?: string;
 }
 
 const MAX_FILE_SIZE = 5 * 1024 * 1024; // 5MB limit for localStorage
 
-const PreviewModal: React.FC<PreviewModalProps> = ({ isOpen, onClose, file, url, type }) => {
-  if (!isOpen) return null;
-
-  const previewUrl = file ? URL.createObjectURL(file) : url || undefined;
-
-  const isYouTubeUrl = (url: string) => {
-    return /^(https?:\/\/)?(www\.)?(youtube\.com|youtu\.be)\//.test(url);
-  };
-
-  const getYouTubeVideoId = (url: string) => {
-    const patterns = [
-      /(?:youtube\.com\/watch\?v=|youtu\.be\/|youtube\.com\/live\/|youtube\.com\/shorts\/)([a-zA-Z0-9_-]{11})/,
-      /youtube\.com\/embed\/([a-zA-Z0-9_-]{11})/,
-    ];
-    for (const pattern of patterns) {
-      const match = url.match(pattern);
-      if (match && match[1]) return match[1];
-    }
-    return null;
-  };
-
-  const getYouTubeEmbedUrl = (url: string) => {
-    const videoId = getYouTubeVideoId(url);
-    return videoId ? `https://www.youtube.com/embed/${videoId}` : '';
-  };
-
-  return (
-    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-      <div className="bg-white rounded-lg p-4 w-full max-w-4xl max-h-[90vh] flex flex-col">
-        <div className="flex justify-between items-center mb-4">
-          <h3 className="text-lg font-semibold">
-            {type === 'pdf' ? 'Resume Preview' : 'Video Preview'}
-          </h3>
-          <button onClick={onClose} className="text-gray-500 hover:text-gray-700">
-            <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2}
-                d="M6 18L18 6M6 6l12 12"
-              />
-            </svg>
-          </button>
-        </div>
-        <div className="flex-1 overflow-auto">
-          {type === 'pdf' ? (
-            <iframe src={previewUrl} className="w-full h-[70vh]" title="PDF Preview" />
-          ) : url && isYouTubeUrl(url) ? (
-            <iframe
-              src={getYouTubeEmbedUrl(url)}
-              className="w-full h-[70vh]"
-              title="YouTube Video Preview"
-              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-              allowFullScreen
-            />
-          ) : (
-            <video src={previewUrl} controls className="w-full max-h-[70vh]" />
-          )}
-        </div>
-      </div>
-    </div>
-  );
-};
-
 const CandidateProfilePage = () => {
-  const [profile, setProfile] = useState<Profile | null>(null);
+  const { profile, setProfile } = useProfile();
+  const { user } = useUser();
   const [mode, setMode] = useState<Mode>('view');
   const [form, setForm] = useState<FormData>({
-    first_name: '',
-    last_name: '',
-    email: '',
-    phone: '',
-    street_address: '',
-    city: '',
-    state: '',
-    zipcode: '',
-    resumeFile: null,
-    videoFile: null,
-    resume_url: null,
-    video_url: null,
-    photoFile: null,
-    placement_preferences: [],
+    phone: profile?.phone || '',
+    street_address: profile?.street_address || '',
+    city: profile?.city || '',
+    state: profile?.state || '',
+    zipcode: profile?.zipcode || '',
+    resume: profile?.resume || null,
+    video_url: profile?.video_url || '',
+    placement_preferences: profile?.placement_preferences || [],
   });
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
   const [formErrors, setFormErrors] = useState<FormErrors>({});
-  const [previewModal, setPreviewModal] = useState<{
-    isOpen: boolean;
-    file: File | null;
-    url: string | null;
-    type: 'pdf' | 'video';
-  }>({
-    isOpen: false,
-    file: null,
-    url: null,
-    type: 'pdf',
-  });
-  const firstNameRef = useRef<HTMLInputElement>(null);
 
-  const resetForm = () => {
+  const resetForm = (profile: Profile) => {
     setForm({
-      first_name: '',
-      last_name: '',
-      email: '',
-      phone: '',
-      street_address: '',
-      city: '',
-      state: '',
-      zipcode: '',
-      resumeFile: null,
-      videoFile: null,
-      resume_url: null,
-      video_url: null,
-      photoFile: null,
-      placement_preferences: [],
+      phone: profile?.phone || '',
+      street_address: profile?.street_address || '',
+      city: profile?.city || '',
+      state: profile?.state || '',
+      zipcode: profile?.zipcode || '',
+      resume: profile?.resume || null,
+      video_url: profile?.video_url || '',
+      placement_preferences: profile?.placement_preferences || [],
     });
     setFormErrors({});
   };
 
-  useEffect(() => {
-    fetchProfile();
-    if (firstNameRef.current) {
-      firstNameRef.current.focus();
-    }
-  }, []);
-
   const validateForm = () => {
     const errors: FormErrors = {};
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     const phoneRegex = /^\+?[\d\s-]{10,}$/;
 
-    if (!form.first_name.trim()) errors.first_name = 'First name is required';
-    if (!form.last_name.trim()) errors.last_name = 'Last name is required';
-    if (!form.email.trim()) {
-      errors.email = 'Email is required';
-    } else if (!emailRegex.test(form.email)) {
-      errors.email = 'Invalid email format';
-    }
     if (!form.phone.trim()) {
       errors.phone = 'Phone number is required';
     } else if (!phoneRegex.test(form.phone)) {
@@ -194,57 +75,14 @@ const CandidateProfilePage = () => {
     if (!form.city.trim()) errors.city = 'City is required';
     if (!form.state.trim()) errors.state = 'State is required';
     if (!form.zipcode.trim()) errors.zipcode = 'ZIP code is required';
-    if (!form.resume_url && !form.resumeFile) {
-      errors.resumeFile = 'Either resume URL or file upload is required';
+    if (!form.resume || (typeof form.resume === 'string' && !form.resume.trim())) {
+      errors.resume = 'Resume file upload is required';
     }
     if (form.video_url && !/^https?:\/\/.+\..+/.test(form.video_url)) {
       errors.video_url = 'Please enter a valid video URL';
     }
-
     setFormErrors(errors);
     return Object.keys(errors).length === 0;
-  };
-
-  const fetchProfile = async () => {
-    setLoading(true);
-    setError('');
-    setSuccess('');
-    try {
-      const res = await fetch('/api/profile');
-      if (res.ok) {
-        const data = await res.json();
-        setProfile(data.profile);
-        setForm({
-          first_name: data.profile.first_name || '',
-          last_name: data.profile.last_name || '',
-          email: data.profile.email || '',
-          phone: data.profile.phone || '',
-          street_address: data.profile.street_address || '',
-          city: data.profile.city || '',
-          state: data.profile.state || '',
-          zipcode: data.profile.zipcode || '',
-          resumeFile: null,
-          videoFile: null,
-          resume_url: data.profile.resume || '',
-          video_url: data.profile.video_url || '',
-          photoFile: null,
-          placement_preferences: data.profile.placement_preferences || [],
-        });
-        setMode('view');
-      } else {
-        setProfile(null);
-        setMode('create');
-        const userRes = await fetch('/api/user');
-        if (userRes.ok) {
-          const userData = await userRes.json();
-          setForm((prev) => ({ ...prev, email: userData.email || '' }));
-        }
-      }
-    } catch {
-      setError('Failed to load profile.');
-    } finally {
-      setLoading(false);
-    }
   };
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -255,156 +93,95 @@ const CandidateProfilePage = () => {
     }
   };
 
-  const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
-    const { name, files } = e.target;
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { files } = e.target;
     if (files && files[0]) {
       const file = files[0];
-
       if (file.size > MAX_FILE_SIZE) {
         setFormErrors((prev) => ({
           ...prev,
-          [name]: 'File size must be less than 5MB for local storage',
+          resume: 'File size must be less than 5MB',
         }));
         return;
       }
-
-      const fieldName = `${name}File`;
-      setForm((prev) => ({ ...prev, [fieldName]: file }));
-
-      if (formErrors[name]) {
-        setFormErrors((prev) => ({ ...prev, [name]: '' }));
+      setForm((prev) => ({ ...prev, resume: file }));
+      if (formErrors.resume) {
+        setFormErrors((prev) => ({ ...prev, resume: '' }));
       }
     }
   };
 
-  const handlePreview = (type: 'pdf' | 'video') => {
-    if (type === 'pdf') {
-      const url = form.resumeFile ? URL.createObjectURL(form.resumeFile) : form.resume_url;
-      if (url) {
-        setPreviewModal({ isOpen: true, file: form.resumeFile, url, type });
-      }
-    } else {
-      const url = form.videoFile ? URL.createObjectURL(form.videoFile) : form.video_url;
-      if (url) {
-        setPreviewModal({ isOpen: true, file: form.videoFile, url, type });
-      }
-    }
+  const normalizePhone = (phone: string) => {
+    return phone.replace(/\D/g, '');
   };
 
-  const handleCreate = async (e: React.SyntheticEvent, status: 'draft' | 'pending' = 'pending') => {
+  const formatPhone = (phone: string) => {
+    const cleaned = ('' + phone).replace(/\D/g, '');
+    if (cleaned.length === 10) {
+      return `(${cleaned.slice(0, 3)}) ${cleaned.slice(3, 6)}-${cleaned.slice(6)}`;
+    }
+    if (cleaned.length === 11 && cleaned[0] === '1') {
+      return `+1 (${cleaned.slice(1, 4)}) ${cleaned.slice(4, 7)}-${cleaned.slice(7)}`;
+    }
+    return phone;
+  };
+
+  const handleProfileUpdate = async (
+    e: React.SyntheticEvent,
+    status: 'draft' | 'pending' = 'pending'
+  ) => {
     e.preventDefault();
-    if (!validateForm()) return;
+    if (status !== 'draft' && !validateForm()) return;
 
     setError('');
     setSuccess('');
+    const normalizedPhone = normalizePhone(form.phone);
+
     try {
-      const formData = new FormData();
+      const updateData = new FormData();
+      updateData.append('phone', normalizedPhone);
       Object.entries(form).forEach(([key, value]) => {
-        if (value !== null) {
+        if (value !== null && value !== undefined) {
+          if (key === 'phone') return; // Already appended
           if (key === 'placement_preferences') {
-            formData.append(key, JSON.stringify(value));
+            updateData.append(key, JSON.stringify(value));
+          } else if (key === 'resume') {
+            // Only append if it's a File (user selected a new file)
+            if (value instanceof File) {
+              updateData.append('resume', value);
+            }
+            // If it's a string (URL), do not append; backend will keep the old file
           } else {
-            formData.append(key, value as string | Blob);
+            updateData.append(key, value as string | Blob);
           }
         }
       });
-      formData.append('status', status);
-
-      const res = await fetch('/api/profile', {
-        method: 'POST',
-        body: formData,
-      });
-      if (res.ok) {
-        setSuccess(status === 'draft' ? 'Draft saved!' : 'Profile submitted!');
-        fetchProfile();
-      } else {
-        const data = await res.json();
-        setError(data.message || 'Failed to create profile.');
-      }
-    } catch {
-      setError('Failed to create profile.');
-    }
-  };
-
-  const handleEdit = async (e: React.SyntheticEvent, status: 'draft' | 'pending' = 'pending') => {
-    e.preventDefault();
-    if (!validateForm()) return;
-
-    setError('');
-    setSuccess('');
-    try {
-      const formData = new FormData();
-      Object.entries(form).forEach(([key, value]) => {
-        if (value !== null) {
-          if (key === 'placement_preferences') {
-            formData.append(key, JSON.stringify(value));
-          } else {
-            formData.append(key, value as string | Blob);
-          }
-        }
-      });
-      formData.append('status', status);
-
-      const res = await fetch('/api/profile', {
-        method: 'PUT',
-        body: formData,
-      });
-      if (res.ok) {
-        setSuccess(status === 'draft' ? 'Draft saved!' : 'Profile submitted!');
-        fetchProfile();
-      } else {
-        const data = await res.json();
-        setError(data.message || 'Failed to update profile.');
-      }
+      updateData.append('status', status);
+      const response = await patchProfileWithFile(updateData);
+      setProfile(response);
+      setForm(response);
+      setMode('view');
     } catch {
       setError('Failed to update profile.');
-    }
-  };
-
-  const handleDelete = async () => {
-    if (!confirm('Are you sure you want to delete your profile? This action cannot be undone.')) {
-      return;
-    }
-
-    setLoading(true);
-    setError('');
-    setSuccess('');
-
-    try {
-      const res = await fetch('/api/profile', {
-        method: 'DELETE',
-      });
-
-      if (res.ok) {
-        setProfile(null);
-        resetForm();
-        setMode('create');
-        setSuccess('Profile deleted successfully.');
-      } else {
-        setError('Failed to delete profile.');
-      }
-    } catch {
-      setError('Failed to delete profile.');
     } finally {
       setLoading(false);
     }
   };
 
-  const handleDeleteAccount = async () => {
-    if (!window.confirm('Are you sure you want to delete your account? This cannot be undone.'))
-      return;
+  const handleResetProfile = async () => {
+    setLoading(true);
     setError('');
     setSuccess('');
+
     try {
-      const res = await fetch('/api/account', { method: 'DELETE' });
-      if (res.ok) {
-        setSuccess('Account deleted.');
-        // Optionally, log out or redirect
-      } else {
-        setError('Failed to delete account.');
-      }
+      const response = await resetProfileData();
+      setProfile(response.profile);
+      resetForm(response.profile);
+      setMode('view');
     } catch {
-      setError('Failed to delete account.');
+      setError('Failed to reset profile data.');
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -424,54 +201,29 @@ const CandidateProfilePage = () => {
   if (loading) return <div className="text-center mt-10">Loading...</div>;
 
   const renderView = () => {
-    if (!profile) {
-      return (
-        <div className="text-center p-8">
-          <p className="mb-4">You have not created a profile yet.</p>
-          <button onClick={() => setMode('create')} className="btn-primary">
-            Create Profile
-          </button>
-        </div>
-      );
-    }
-
     return (
       <div className="bg-white rounded-lg shadow-lg p-6 border border-gray-200">
         <div className="flex flex-col md:flex-row items-center md:items-start gap-6">
-          {profile.photo ? (
-            <Image
-              src={profile.photo}
-              alt={`${profile.first_name} ${profile.last_name}`}
-              height={200}
-              width={200}
-              className="w-32 h-32 rounded-lg object-cover border-4 border-white shadow-md"
-            />
-          ) : (
-            <div className="w-32 h-32 rounded-lg bg-gray-200 border-4 border-white shadow-md flex items-center justify-center">
-              <svg
-                className="w-12 h-12 text-gray-400"
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"
-                />
-              </svg>
-            </div>
-          )}
           <div className="flex-1 text-center md:text-left">
-            <h2 className="text-3xl font-bold text-efcaDark">
-              {profile.first_name} {profile.last_name}
-            </h2>
-            <p className="text-gray-600 mt-1">{profile.email}</p>
-            {profile.phone && <p className="text-gray-600 mt-1">{profile.phone}</p>}
-            <p className="text-gray-600 mt-1">
-              {profile.city}, {profile.state}
-            </p>
+            <h2 className="text-3xl font-bold text-efcaDark">{user?.name}</h2>
+            <hr className="my-6" />
+            <h3 className="font-semibold text-lg text-efcaDark">Email</h3>
+            <p className="text-gray-600 mt-1">{user?.email}</p>
+            {profile?.phone ? (
+              <>
+                <h3 className="font-semibold text-lg text-efcaDark">Phone</h3>
+                <p className="text-gray-600 mt-1">{formatPhone(profile.phone)}</p>
+              </>
+            ) : null}
+            {profile?.street_address ? (
+              <>
+                <h3 className="font-semibold text-lg text-efcaDark">Address</h3>
+                <p className="text-gray-600 mt-1">{profile.street_address}</p>
+                <p className="text-gray-600 mt-1">
+                  {profile?.city}, {profile?.state} {profile?.zipcode}
+                </p>
+              </>
+            ) : null}
           </div>
         </div>
 
@@ -480,45 +232,34 @@ const CandidateProfilePage = () => {
         <div className="space-y-4">
           <div>
             <h3 className="font-semibold text-lg text-efcaDark">Resume</h3>
-            {profile.resume ? (
+            {typeof form.resume === 'string' && form.resume && (
               <div className="flex items-center gap-4 mt-2">
                 <a
-                  href={profile.resume}
+                  href={form.resume}
                   target="_blank"
                   rel="noopener noreferrer"
                   className="text-efcaAccent hover:underline"
                 >
-                  View Resume
+                  View Current Resume
                 </a>
-                <button
-                  onClick={() => handlePreview('pdf')}
-                  className="text-sm text-gray-600 hover:text-efcaAccent"
-                >
-                  Preview
-                </button>
               </div>
-            ) : (
+            )}
+            {profile && profile.resume === null && (
               <p className="text-gray-500">No resume uploaded.</p>
             )}
           </div>
           <div>
             <h3 className="font-semibold text-lg text-efcaDark">Preaching / Teaching Video</h3>
-            {profile.video_url ? (
+            {profile?.video_url ? (
               <div className="flex items-center gap-4 mt-2">
                 <a
-                  href={profile.video_url}
+                  href={profile?.video_url}
                   target="_blank"
                   rel="noopener noreferrer"
                   className="text-efcaAccent hover:underline"
                 >
-                  Watch Video
+                  View Video
                 </a>
-                <button
-                  onClick={() => handlePreview('video')}
-                  className="text-sm text-gray-600 hover:text-efcaAccent"
-                >
-                  Preview
-                </button>
               </div>
             ) : (
               <p className="text-gray-500">No video provided.</p>
@@ -526,7 +267,7 @@ const CandidateProfilePage = () => {
           </div>
           <div>
             <h3 className="font-semibold text-lg text-efcaDark">Placement Preferences</h3>
-            {profile.placement_preferences && profile.placement_preferences.length > 0 ? (
+            {profile?.placement_preferences && profile.placement_preferences.length > 0 ? (
               <div className="flex flex-wrap gap-2 mt-2">
                 {profile.placement_preferences.map((pref) => (
                   <span
@@ -544,15 +285,19 @@ const CandidateProfilePage = () => {
         </div>
 
         <div className="flex flex-wrap gap-4 mt-8">
-          <button className="btn-primary" onClick={() => setMode('edit')}>
-            Edit Profile
-          </button>
-          <button className="btn-danger" onClick={handleDelete}>
-            Delete Profile
-          </button>
-          <button className="btn-secondary" onClick={handleDeleteAccount}>
-            Delete Account
-          </button>
+          {profile?.status !== 'pending' ? (
+            <button className="btn-primary" onClick={() => setMode('edit')}>
+              Edit Profile
+            </button>
+          ) : (
+            <p className="text-gray-500">
+              Profile is in{' '}
+              <span className="px-3 py-1 rounded-full text-sm font-medium bg-blue-100 text-blue-800">
+                Pending
+              </span>{' '}
+              status and awaiting Admin review.
+            </p>
+          )}
         </div>
       </div>
     );
@@ -561,11 +306,7 @@ const CandidateProfilePage = () => {
   const renderForm = () => (
     <form
       onSubmit={(e) => {
-        if (mode === 'create') {
-          handleCreate(e, 'draft');
-        } else {
-          handleEdit(e, 'draft');
-        }
+        handleProfileUpdate(e, 'pending');
       }}
       className="space-y-4"
     >
@@ -574,50 +315,32 @@ const CandidateProfilePage = () => {
         <div>
           <label className="block text-sm font-medium text-gray-700">First Name</label>
           <input
-            ref={firstNameRef}
-            className={`mt-1 block w-full rounded-lg border p-2.5 text-sm focus:border-efcaAccent focus:ring-efcaAccent ${
-              formErrors.first_name ? 'border-red-500' : 'border-gray-300'
-            }`}
+            className="mt-1 block w-full rounded-lg border p-2.5 text-sm focus:border-efcaAccent focus:ring-efcaAccent border-gray-300"
             name="first_name"
-            value={form.first_name}
-            onChange={handleChange}
-            required
+            value={user?.first_name}
+            disabled
           />
-          {formErrors.first_name && (
-            <p className="mt-1 text-sm text-red-600">{formErrors.first_name}</p>
-          )}
         </div>
-
         <div>
           <label className="block text-sm font-medium text-gray-700">Last Name</label>
           <input
-            className={`mt-1 block w-full rounded-lg border p-2.5 text-sm focus:border-efcaAccent focus:ring-efcaAccent ${
-              formErrors.last_name ? 'border-red-500' : 'border-gray-300'
-            }`}
+            className="mt-1 block w-full rounded-lg border p-2.5 text-sm focus:border-efcaAccent focus:ring-efcaAccent border-gray-300"
             name="last_name"
-            value={form.last_name}
-            onChange={handleChange}
-            required
+            value={user?.last_name}
+            disabled
           />
-          {formErrors.last_name && (
-            <p className="mt-1 text-sm text-red-600">{formErrors.last_name}</p>
-          )}
         </div>
       </div>
 
       <div>
         <label className="block text-sm font-medium text-gray-700">Email</label>
         <input
-          className={`mt-1 block w-full rounded-lg border p-2.5 text-sm focus:border-efcaAccent focus:ring-efcaAccent ${
-            formErrors.email ? 'border-red-500' : 'border-gray-300'
-          }`}
+          className="mt-1 block w-full rounded-lg border p-2.5 text-sm focus:border-efcaAccent focus:ring-efcaAccent border-gray-300"
           name="email"
           type="email"
-          value={form.email}
-          onChange={handleChange}
-          required
+          value={user?.email}
+          disabled
         />
-        {formErrors.email && <p className="mt-1 text-sm text-red-600">{formErrors.email}</p>}
       </div>
 
       <div>
@@ -697,63 +420,43 @@ const CandidateProfilePage = () => {
       <hr className="my-6 border-gray-200" />
       <h3 className="mb-2 text-base font-semibold text-efcaDark">Documents & Media</h3>
       <div className="mb-4">
-        <label htmlFor="photoFile" className="block mb-2 text-sm text-gray-700">
-          Individual or Family Picture (Optional)
-        </label>
-        <input
-          type="file"
-          id="photoFile"
-          name="photo"
-          accept="image/*"
-          onChange={handleFileChange}
-          className="flex-1 rounded-lg border p-2.5 text-sm focus:border-efcaAccent focus:ring-efcaAccent border-gray-300"
-        />
-        {form.photoFile && (
-          <div className="mt-2">
-            <Image
-              src={URL.createObjectURL(form.photoFile)}
-              alt="Profile Preview"
-              height={200}
-              width={200}
-              className="h-32 w-32 object-cover rounded-lg border"
+        <div>
+          <label htmlFor="resumeFile" className="block mb-2 text-sm text-gray-700">
+            Resume PDF Required (max 5MB)
+          </label>
+          <div className="flex gap-2 mt-1">
+            <input
+              type="file"
+              id="resumeFile"
+              name="resume"
+              onChange={handleFileChange}
+              accept=".pdf"
+              required={!(typeof form.resume === 'string' && form.resume)}
+              className="flex-1 rounded-lg border p-2.5 text-sm focus:border-efcaAccent focus:ring-efcaAccent border-gray-300"
             />
           </div>
-        )}
-        <p className="mt-1 text-sm text-gray-500">
-          Upload a photo of yourself or your family (JPG, PNG, etc.)
-        </p>
-      </div>
-
-      <div className="mb-4">
-        <label htmlFor="resumeFile" className="block mb-2 text-sm text-gray-700">
-          Resume (PDF) Required
-        </label>
-        <div className="flex gap-2">
-          <input
-            type="file"
-            id="resumeFile"
-            name="resume"
-            onChange={handleFileChange}
-            accept=".pdf"
-            required
-            className={`flex-1 rounded-lg border p-2.5 text-sm focus:border-efcaAccent focus:ring-efcaAccent ${
-              formErrors.resumeFile ? 'border-red-500' : 'border-gray-300'
-            }`}
-          />
-          {form.resumeFile && (
-            <button
-              type="button"
-              onClick={() => handlePreview('pdf')}
-              className="px-4 py-2 bg-efcaAccent text-white rounded hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-efcaAccent transition-colors"
-            >
-              Preview
-            </button>
+          {formErrors.resume && <p className="mt-1 text-sm text-red-600">{formErrors.resume}</p>}
+          {typeof form.resume === 'string' && form.resume && (
+            <p className="mt-1 text-sm text-gray-500">
+              A resume is already on file. Upload a new file above to replace it.
+            </p>
+          )}
+          {typeof form.resume === 'string' && form.resume && (
+            <div className="mb-2 mt-2 flex items-center gap-2">
+              <span className="inline-block bg-green-100 text-green-800 text-xs px-2 py-1 rounded">
+                Uploaded
+              </span>
+              <a
+                href={form.resume}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-efcaAccent text-sm hover:underline"
+              >
+                View Current Resume
+              </a>
+            </div>
           )}
         </div>
-        {formErrors.resumeFile && (
-          <p className="mt-1 text-sm text-red-600">{formErrors.resumeFile}</p>
-        )}
-        <p className="mt-1 text-sm text-gray-500">Upload a PDF file (max 5MB)</p>
       </div>
 
       <div>
@@ -768,15 +471,6 @@ const CandidateProfilePage = () => {
             onChange={handleChange}
             placeholder="Video URL (YouTube, Vimeo, etc.)"
           />
-          {form.video_url && (
-            <button
-              type="button"
-              onClick={() => handlePreview('video')}
-              className="px-4 py-2 bg-efcaAccent text-white rounded hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-efcaAccent transition-colors"
-            >
-              Preview
-            </button>
-          )}
         </div>
         {formErrors.video_url && (
           <p className="mt-1 text-sm text-red-600">{formErrors.video_url}</p>
@@ -866,11 +560,7 @@ const CandidateProfilePage = () => {
           className="bg-gray-400 text-white px-4 py-2.5 rounded-lg font-bold hover:bg-gray-500 focus:outline-none focus:ring-2 focus:ring-gray-400 transition-colors"
           type="button"
           onClick={(e) => {
-            if (mode === 'create') {
-              handleCreate(e, 'draft');
-            } else {
-              handleEdit(e, 'draft');
-            }
+            handleProfileUpdate(e, 'draft');
           }}
         >
           Save as Draft
@@ -888,9 +578,9 @@ const CandidateProfilePage = () => {
           <button
             className="bg-red-600 text-white px-4 py-2.5 rounded-lg font-bold hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-600 transition-colors"
             type="button"
-            onClick={handleDelete}
+            onClick={handleResetProfile}
           >
-            Delete
+            Reset Profile
           </button>
         )}
       </div>
@@ -907,13 +597,6 @@ const CandidateProfilePage = () => {
           {mode === 'view' && profile ? renderView() : renderForm()}
         </div>
       </div>
-      <PreviewModal
-        isOpen={previewModal.isOpen}
-        onClose={() => setPreviewModal((prev) => ({ ...prev, isOpen: false }))}
-        file={previewModal.file}
-        url={previewModal.url}
-        type={previewModal.type}
-      />
     </div>
   );
 };
