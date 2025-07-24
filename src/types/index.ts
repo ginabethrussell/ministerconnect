@@ -41,28 +41,6 @@ export interface InviteCode {
   updated_at: string;
 }
 
-export interface Profile {
-  id: number;
-  first_name: string;
-  last_name: string;
-  email: string;
-  phone: string;
-  user_id: number;
-  invite_code_id: number;
-  street_address: string;
-  city: string;
-  state: string;
-  zipcode: string;
-  status: 'pending' | 'approved' | 'rejected';
-  photo: string | null;
-  resume: string;
-  video_url: string | null;
-  placement_preferences: string[];
-  submitted_at: string; // When the profile was submitted for review
-  created_at: string;
-  updated_at: string;
-}
-
 export interface JobListing {
   id: number;
   church_id: number;
