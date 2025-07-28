@@ -2,10 +2,12 @@ import React, { useState } from 'react';
 import Link from 'next/link';
 import { useUser } from '@/context/UserContext';
 import { useRouter } from 'next/router';
+import { useProfile } from '@/context/ProfileContext';
 
 const Header = () => {
   const [menuOpen, setMenuOpen] = useState(false);
-  const { user, profileStatus, logout } = useUser();
+  const { user, logout } = useUser();
+  const { profile } = useProfile();
   const router = useRouter();
   const group = user?.groups?.[0] || null;
 
@@ -78,7 +80,7 @@ const Header = () => {
               <Link href="/candidate/profile" className={navLinkClass('/candidate/profile')}>
                 Profile
               </Link>
-              {profileStatus === 'approved' && (
+              {profile?.status === 'approved' && (
                 <Link href="/candidate/jobs" className={navLinkClass('/candidate/jobs')}>
                   Jobs
                 </Link>
@@ -166,7 +168,7 @@ const Header = () => {
               <Link href="/candidate/profile" className={navLinkClass('/candidate/profile')}>
                 Profile
               </Link>
-              {profileStatus === 'approved' && (
+              {profile?.status === 'approved' && (
                 <Link href="/candidate/jobs" className={navLinkClass('/candidate/jobs')}>
                   Jobs
                 </Link>

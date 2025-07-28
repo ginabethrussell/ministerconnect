@@ -41,25 +41,40 @@ export interface InviteCode {
   updated_at: string;
 }
 
+export interface JobListingResponse {
+  count: number;
+  next: number | null;
+  previous: number | null;
+  results: JobListing[];
+}
+export interface InlineChurch {
+  id: number;
+  name: string;
+  city: string;
+  state: string;
+  website: string;
+}
+
 export interface JobListing {
   id: number;
-  church_id: number;
+  church: InlineChurch;
   title: string;
   ministry_type: string;
   employment_type: string;
   job_description: string;
   about_church: string;
-  status: 'pending' | 'approved' | 'rejected';
+  job_url_link: string;
+  status: 'draft' | 'pending' | 'approved' | 'rejected';
   created_at: string;
   updated_at: string;
 }
 
 export interface MutualInterest {
   id: number;
-  job_listing_id: number;
-  profile_id: number;
+  job_listing: number;
+  profile: number;
   expressed_by: 'candidate' | 'church';
-  expressed_by_user_id: number;
+  expressed_by_user: number;
   created_at: string;
   updated_at: string;
 }

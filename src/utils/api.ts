@@ -1,4 +1,4 @@
-import { TokenResponse } from '@/types';
+import { JobListingResponse, MutualInterest, TokenResponse } from '@/types';
 import { User } from '@/context/UserContext';
 import { Profile } from '@/context/ProfileContext';
 // API client configuration for backend integration
@@ -220,7 +220,7 @@ export const API_ENDPOINTS = {
   REFRESH_TOKEN: '/api/token/refresh/',
 
   // Churches (Django backend)
-  CREATE_CHURCH: '/api/churches/create/',
+  CREATE_CHURCH: '/api/churches/',
 
   // Users (Django backend)
   CREATE_USER: '/api/users/create/',
@@ -251,7 +251,7 @@ export const API_ENDPOINTS = {
   CHURCHES: '/api/churches/',
 
   // Job listings
-  JOB_LISTINGS: '/api/job-listings/',
+  JOB_LISTINGS: '/api/jobs/',
 
   // Mutual interests
   MUTUAL_INTERESTS: '/api/mutual-interests/',
@@ -374,4 +374,12 @@ export const patchProfileWithFile = async (formData: FormData): Promise<Profile>
 
 export const resetProfileData = async (): Promise<{ detail: string; profile: Profile }> => {
   return apiClient.post(API_ENDPOINTS.PROFILE_RESET, {}, true);
+};
+
+export const getApprovedJobs = async (): Promise<JobListingResponse> => {
+  return apiClient.get(`${API_ENDPOINTS.JOB_LISTINGS}?status=approved`);
+};
+
+export const getExpressedInterests = async (): Promise<MutualInterest[]> => {
+  return apiClient.get(API_ENDPOINTS.MUTUAL_INTERESTS);
 };
