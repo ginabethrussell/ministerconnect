@@ -12,6 +12,7 @@ export interface Profile {
   phone: string;
   status: 'draft' | 'pending' | 'approved' | 'rejected';
   resume: string | null; // URL to the file, or null if not uploaded
+  profile_image: string | null; // URL to the file, or null if not uploaded
   video_url: string | null;
   placement_preferences: string[]; // or any[] if not always string
   submitted_at: string | null; // ISO date string or null

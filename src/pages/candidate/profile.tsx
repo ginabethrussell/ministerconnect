@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { Profile, useProfile } from '@/context/ProfileContext';
 import { useUser } from '@/context/UserContext';
 import { patchProfileWithFile, resetProfileData } from '@/utils/api';
+import UserIcon from '@/components/UserIcon';
 
 type Mode = 'view' | 'edit';
 
@@ -12,6 +13,7 @@ interface FormData {
   state: string;
   zipcode: string;
   resume: File | string | null;
+  profile_image: File | string | null;
   video_url: string | null;
   placement_preferences: string[];
 }
@@ -24,10 +26,12 @@ interface FormErrors {
   state?: string;
   zipcode?: string;
   resume?: string;
+  profile_image?: string;
   video_url?: string;
 }
 
 const MAX_FILE_SIZE = 5 * 1024 * 1024; // 5MB limit for localStorage
+const MAX_IMAGE_FILE_SIZE = 3 * 1024 * 1024; // 1MB
 
 const CandidateProfilePage = () => {
   const { profile, setProfile } = useProfile();
@@ -40,6 +44,7 @@ const CandidateProfilePage = () => {
     state: profile?.state || '',
     zipcode: profile?.zipcode || '',
     resume: profile?.resume || null,
+    profile_image: profile?.profile_image || null,
     video_url: profile?.video_url || '',
     placement_preferences: profile?.placement_preferences || [],
   });
@@ -56,6 +61,7 @@ const CandidateProfilePage = () => {
       state: profile?.state || '',
       zipcode: profile?.zipcode || '',
       resume: profile?.resume || null,
+      profile_image: profile?.profile_image || null,
       video_url: profile?.video_url || '',
       placement_preferences: profile?.placement_preferences || [],
     });
@@ -94,20 +100,32 @@ const CandidateProfilePage = () => {
   };
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const { files } = e.target;
-    if (files && files[0]) {
-      const file = files[0];
-      if (file.size > MAX_FILE_SIZE) {
-        setFormErrors((prev) => ({
-          ...prev,
-          resume: 'File size must be less than 5MB',
-        }));
-        return;
-      }
-      setForm((prev) => ({ ...prev, resume: file }));
-      if (formErrors.resume) {
-        setFormErrors((prev) => ({ ...prev, resume: '' }));
-      }
+    const { files, name } = e.target;
+    const file = files?.[0] ?? null;
+
+    if (!file) {
+      setForm((prev) => ({ ...prev, [name]: null }));
+      return;
+    }
+
+    // Choose the correct size limit and error message
+    const isResume = name === 'resume';
+    const maxSize = isResume ? MAX_FILE_SIZE : MAX_IMAGE_FILE_SIZE;
+    const fieldName = name as keyof FormData;
+
+    if (file.size > maxSize) {
+      setFormErrors((prev) => ({
+        ...prev,
+        [fieldName]: isResume
+          ? 'Resume file size must be less than 5MB'
+          : 'Profile image file size must be less than 3MB',
+      }));
+      return;
+    }
+
+    setForm((prev) => ({ ...prev, [fieldName]: file }));
+    if (formErrors[fieldName]) {
+      setFormErrors((prev) => ({ ...prev, [fieldName]: '' }));
     }
   };
 
@@ -142,15 +160,17 @@ const CandidateProfilePage = () => {
       updateData.append('phone', normalizedPhone);
       Object.entries(form).forEach(([key, value]) => {
         if (value !== null && value !== undefined) {
-          if (key === 'phone') return; // Already appended
+          if (key === 'phone') return; // already added separately
           if (key === 'placement_preferences') {
             updateData.append(key, JSON.stringify(value));
           } else if (key === 'resume') {
-            // Only append if it's a File (user selected a new file)
             if (value instanceof File) {
               updateData.append('resume', value);
             }
-            // If it's a string (URL), do not append; backend will keep the old file
+          } else if (key === 'profile_image') {
+            if (value instanceof File) {
+              updateData.append('profile_image', value);
+            }
           } else {
             updateData.append(key, value as string | Blob);
           }
@@ -202,73 +222,98 @@ const CandidateProfilePage = () => {
 
   const renderView = () => {
     return (
-      <div className="bg-white rounded-lg shadow-lg p-6 border border-gray-200">
-        <div className="flex flex-col md:flex-row items-center md:items-start gap-6">
-          <div className="flex-1 text-center md:text-left">
-            <h2 className="text-3xl font-bold text-efcaDark">{user?.name}</h2>
-            <hr className="my-6" />
-            <h3 className="font-semibold text-lg text-efcaDark">Email</h3>
-            <p className="text-gray-600 mt-1">{user?.email}</p>
-            {profile?.phone ? (
-              <>
-                <h3 className="font-semibold text-lg text-efcaDark">Phone</h3>
-                <p className="text-gray-600 mt-1">{formatPhone(profile.phone)}</p>
-              </>
-            ) : null}
-            {profile?.street_address ? (
-              <>
-                <h3 className="font-semibold text-lg text-efcaDark">Address</h3>
-                <p className="text-gray-600 mt-1">{profile.street_address}</p>
-                <p className="text-gray-600 mt-1">
-                  {profile?.city}, {profile?.state} {profile?.zipcode}
-                </p>
-              </>
-            ) : null}
-          </div>
-        </div>
-
-        <hr className="my-6" />
-
-        <div className="space-y-4">
-          <div>
-            <h3 className="font-semibold text-lg text-efcaDark">Resume</h3>
-            {typeof form.resume === 'string' && form.resume && (
-              <div className="flex items-center gap-4 mt-2">
-                <a
-                  href={form.resume}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="text-efcaAccent hover:underline"
-                >
-                  View Current Resume
-                </a>
-              </div>
-            )}
-            {profile && profile.resume === null && (
-              <p className="text-gray-500">No resume uploaded.</p>
-            )}
-          </div>
-          <div>
-            <h3 className="font-semibold text-lg text-efcaDark">Preaching / Teaching Video</h3>
-            {profile?.video_url ? (
-              <div className="flex items-center gap-4 mt-2">
-                <a
-                  href={profile?.video_url}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="text-efcaAccent hover:underline"
-                >
-                  View Video
-                </a>
-              </div>
+      <div className="min-h-screen bg-efcaGray flex items-center justify-center py-8 px-4">
+        <div className="w-full mx-8 bg-white rounded-lg shadow-lg p-8 border border-gray-200">
+          {/* Profile Header */}
+          <div className="flex flex-col items-center space-y-4 mb-8">
+            {profile && profile?.profile_image ? (
+              <img
+                src={profile.profile_image}
+                alt="Profile"
+                className="w-60 h-60 rounded-full border-4 border-gray-300 shadow-xlg object-cover"
+              />
             ) : (
-              <p className="text-gray-500">No video provided.</p>
+              <div className="w-60 h-60 flex items-center justify-center rounded-full bg-gray-100 text-gray-400 border-2 border-gray-300">
+                <UserIcon />
+              </div>
             )}
+            <h2 className="text-3xl font-bold text-efcaDark">{user?.name}</h2>
           </div>
-          <div>
-            <h3 className="font-semibold text-lg text-efcaDark">Placement Preferences</h3>
-            {profile?.placement_preferences && profile.placement_preferences.length > 0 ? (
-              <div className="flex flex-wrap gap-2 mt-2">
+
+          {/* Contact Info */}
+          <div className="border-t pt-6">
+            <h3 className="text-sm font-semibold text-gray-700 uppercase tracking-wide mb-4">
+              Contact Information
+            </h3>
+            <div className="space-y-2 text-gray-600">
+              <div>
+                <p className="text-sm font-semibold text-efcaDark">Email</p>
+                <p>{user?.email}</p>
+              </div>
+              {profile?.phone && (
+                <div>
+                  <p className="text-sm font-semibold text-efcaDark">Phone</p>
+                  <p>{formatPhone(profile.phone)}</p>
+                </div>
+              )}
+              {profile?.street_address && (
+                <div>
+                  <p className="text-sm font-semibold text-efcaDark">Address</p>
+                  <p>{profile.street_address}</p>
+                  <p>
+                    {profile.city}, {profile.state} {profile.zipcode}
+                  </p>
+                </div>
+              )}
+            </div>
+          </div>
+
+          {/* Documents */}
+          <div className="border-t pt-6 mt-8">
+            <h3 className="text-sm font-semibold text-gray-700 uppercase tracking-wide mb-4">
+              Documents & Media
+            </h3>
+            <div className="space-y-4 text-gray-600">
+              <div>
+                <p className="text-sm font-semibold text-efcaDark">Resume</p>
+                {typeof form.resume === 'string' && form.resume ? (
+                  <a
+                    href={form.resume}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-efcaAccent hover:underline"
+                  >
+                    View Current Resume
+                  </a>
+                ) : (
+                  <p className="text-gray-500">No resume uploaded.</p>
+                )}
+              </div>
+              <div>
+                <p className="text-sm font-semibold text-efcaDark">Preaching / Teaching Video</p>
+                {profile?.video_url ? (
+                  <a
+                    href={profile.video_url}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-efcaAccent hover:underline"
+                  >
+                    View Video
+                  </a>
+                ) : (
+                  <p className="text-gray-500">No video provided.</p>
+                )}
+              </div>
+            </div>
+          </div>
+
+          {/* Preferences */}
+          <div className="border-t pt-6 mt-8">
+            <h3 className="text-sm font-semibold text-gray-700 uppercase tracking-wide mb-4">
+              Placement Preferences
+            </h3>
+            {profile?.placement_preferences && profile?.placement_preferences?.length > 0 ? (
+              <div className="flex flex-wrap gap-2">
                 {profile.placement_preferences.map((pref) => (
                   <span
                     key={pref}
@@ -282,22 +327,25 @@ const CandidateProfilePage = () => {
               <p className="text-gray-500">No preferences set.</p>
             )}
           </div>
-        </div>
 
-        <div className="flex flex-wrap gap-4 mt-8">
-          {profile?.status !== 'pending' ? (
-            <button className="btn-primary" onClick={() => setMode('edit')}>
-              Edit Profile
-            </button>
-          ) : (
-            <p className="text-gray-500">
-              Profile is in{' '}
-              <span className="px-3 py-1 rounded-full text-sm font-medium bg-blue-100 text-blue-800">
-                Pending
-              </span>{' '}
-              status and awaiting Admin review.
-            </p>
-          )}
+          {/* Edit Button / Status */}
+          <div className="mt-10">
+            {profile?.status !== 'pending' ? (
+              <div className="flex justify-center">
+                <button className="btn-primary" onClick={() => setMode('edit')}>
+                  Edit Profile
+                </button>
+              </div>
+            ) : (
+              <p className="text-center text-gray-500">
+                Profile is in{' '}
+                <span className="px-3 py-1 rounded-full text-sm font-medium bg-blue-100 text-blue-800">
+                  Pending
+                </span>{' '}
+                status and awaiting Admin review.
+              </p>
+            )}
+          </div>
         </div>
       </div>
     );
@@ -457,6 +505,37 @@ const CandidateProfilePage = () => {
             </div>
           )}
         </div>
+      </div>
+      <div className="mb-4">
+        <label htmlFor="profileImage" className="block mb-2 text-sm text-gray-700">
+          Profile Photo (Optional, JPG/PNG, max 1MB)
+        </label>
+        <input
+          type="file"
+          id="profileImage"
+          name="profile_image"
+          accept="image/*"
+          onChange={handleFileChange}
+          className="flex-1 rounded-lg border p-2.5 text-sm focus:border-efcaAccent focus:ring-efcaAccent border-gray-300"
+        />
+        {typeof form.profile_image === 'string' && form.profile_image && (
+          <div className="mt-2 flex items-center gap-2">
+            <span className="inline-block bg-green-100 text-green-800 text-xs px-2 py-1 rounded">
+              Uploaded
+            </span>
+            <a
+              href={form.profile_image}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-efcaAccent text-sm hover:underline"
+            >
+              View Current Photo
+            </a>
+          </div>
+        )}
+        {formErrors.profile_image && (
+          <p className="mt-1 text-sm text-red-600">{formErrors.profile_image}</p>
+        )}
       </div>
 
       <div>
