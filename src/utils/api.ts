@@ -188,7 +188,6 @@ export const apiClient = {
   },
 
   async patchForm<T>(endpoint: string, formData: FormData, auth = true): Promise<T> {
-    console.log('PATCHFORM', endpoint, formData);
     const response = await fetchWithAuthRetry(
       getApiUrl(endpoint),
       {
@@ -204,7 +203,6 @@ export const apiClient = {
       auth,
       'none' // <--- tell fetchWithAuthRetry not to add Content-Type
     );
-    console.log('RESPONSE HEADERS', response.headers);
     if (!response.ok) {
       const errorBody = await response.json().catch(() => ({}));
       throw errorBody;
