@@ -25,7 +25,7 @@ export default function CandidateDashboard() {
     };
 
     fetchProfile();
-  }, []);
+  }, [setProfile]);
 
   const getStatusColor = (status: Profile['status']) => {
     switch (status) {

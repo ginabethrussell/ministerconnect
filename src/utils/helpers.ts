@@ -1,5 +1,10 @@
 import { User } from '@/context/UserContext';
-import { CandidateRegistrationFormValues } from '@/types';
+import {
+  CandidateRegistrationFormValues,
+  JobListing,
+  MutualInterest,
+  JobWithInterest,
+} from '@/types';
 
 export type RegistrationError = {
   invite_code?: string | string[];
@@ -47,4 +52,23 @@ export const getUserDashboardRoute = (userInfo: User) => {
     default:
       return '/';
   }
+};
+
+export const normalizeInterests = (interests: MutualInterest[]) => {
+  const interestMap: Record<number, MutualInterest> = {};
+  interests.forEach((interest) => {
+    interestMap[interest.job_listing] = interest;
+  });
+  return interestMap;
+};
+
+export const mergeJobsWithInterest = (
+  jobs: JobListing[],
+  interests: MutualInterest[]
+): JobWithInterest[] => {
+  const interestMap = normalizeInterests(interests);
+  return jobs.map((job) => ({
+    ...job,
+    interest: interestMap[job.id],
+  }));
 };

@@ -1,4 +1,4 @@
-import { JobListingResponse, MutualInterest, TokenResponse } from '@/types';
+import { JobListing, PaginatedResponse, MutualInterest, TokenResponse } from '@/types';
 import { User } from '@/context/UserContext';
 import { Profile } from '@/context/ProfileContext';
 // API client configuration for backend integration
@@ -146,7 +146,7 @@ export const apiClient = {
     return response.json();
   },
 
-  async delete<T>(endpoint: string, auth = true): Promise<T> {
+  async delete(endpoint: string, auth = true): Promise<void> {
     const response = await fetchWithAuthRetry(
       getApiUrl(endpoint),
       {
@@ -160,7 +160,7 @@ export const apiClient = {
       const errorBody = await response.json().catch(() => ({}));
       throw errorBody;
     }
-    return response.json();
+    return;
   },
 
   async upload<T>(endpoint: string, formData: FormData, auth = true): Promise<T> {
@@ -376,10 +376,38 @@ export const resetProfileData = async (): Promise<{ detail: string; profile: Pro
   return apiClient.post(API_ENDPOINTS.PROFILE_RESET, {}, true);
 };
 
-export const getApprovedJobs = async (): Promise<JobListingResponse> => {
+export const getApprovedJobs = async (): Promise<PaginatedResponse<JobListing>> => {
   return apiClient.get(`${API_ENDPOINTS.JOB_LISTINGS}?status=approved`);
 };
 
-export const getExpressedInterests = async (): Promise<MutualInterest[]> => {
+export const getCandidateInterests = async (): Promise<PaginatedResponse<MutualInterest>> => {
   return apiClient.get(API_ENDPOINTS.MUTUAL_INTERESTS);
+};
+
+interface ExpressInterestInput {
+  jobId: number;
+  profileId: number;
+  expressedBy: 'candidate' | 'church';
+}
+export const expressInterest = async ({
+  jobId,
+  profileId,
+  expressedBy,
+}: ExpressInterestInput): Promise<MutualInterest> => {
+  return apiClient.post(API_ENDPOINTS.MUTUAL_INTERESTS, {
+    job_listing: jobId,
+    profile: profileId,
+    expressed_by: expressedBy,
+  });
+};
+
+// Role-specific wrappers
+export const expressCandidateInterest = (jobId: number, profileId: number) =>
+  expressInterest({ jobId, profileId, expressedBy: 'candidate' });
+
+export const expressChurchInterest = (jobId: number, profileId: number) =>
+  expressInterest({ jobId, profileId, expressedBy: 'church' });
+
+export const withdrawInterest = async (id: number): Promise<void> => {
+  await apiClient.delete(`${API_ENDPOINTS.MUTUAL_INTERESTS}${id}/`);
 };
