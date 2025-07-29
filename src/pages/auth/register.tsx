@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { useSearchParams } from 'next/navigation';
 import { useRouter } from 'next/router';
 import Link from 'next/link';
 import { registerCandidate } from '../../utils/api';
@@ -23,6 +24,8 @@ const Register = () => {
   const [success, setSuccess] = useState(false);
   const [loading, setLoading] = useState(false);
   const router = useRouter();
+  const searchParams = useSearchParams();
+  const code = searchParams.get('invite') || '';
 
   useEffect(() => {
     if (success) {
@@ -32,6 +35,12 @@ const Register = () => {
       return () => clearTimeout(timer);
     }
   }, [success, router]);
+
+  useEffect(() => {
+    if (code) {
+      setFormValues((prev) => ({ ...prev, code }));
+    }
+  }, [code]);
 
   // TODO: Add additional client side validation
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
