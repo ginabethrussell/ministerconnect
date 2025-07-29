@@ -39,8 +39,10 @@ const Login = () => {
         return;
       }
       setSuccess(true);
+      console.log(userInfo, userInfo.requires_password_change);
       if (userInfo.requires_password_change) {
         router.push('/auth/reset-password');
+        return;
       }
       router.push(getUserDashboardRoute(userInfo));
     } catch {

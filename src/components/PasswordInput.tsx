@@ -1,3 +1,4 @@
+'use client';
 import React, { useState } from 'react';
 
 interface PasswordInputProps extends React.InputHTMLAttributes<HTMLInputElement> {
