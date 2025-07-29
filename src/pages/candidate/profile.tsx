@@ -222,8 +222,8 @@ const CandidateProfilePage = () => {
 
   const renderView = () => {
     return (
-      <div className="min-h-screen bg-efcaGray flex items-center justify-center py-8 px-4">
-        <div className="w-full mx-8 bg-white rounded-lg shadow-lg p-8 border border-gray-200">
+      <div className="min-h-screen bg-efcaGray md:flex md:items-center md:justify-center md:py-8 md:px-8">
+        <div className="w-full md:max-w-3xl bg-white rounded-lg shadow-lg p-6 md:p-8 border border-gray-200">
           {/* Profile Header */}
           <div className="flex flex-col items-center space-y-4 mb-8">
             {profile && profile?.profile_image ? (
@@ -628,7 +628,7 @@ const CandidateProfilePage = () => {
         ))}
       </div>
 
-      <div className="flex gap-2 pt-4">
+      <div className="flex flex-col justify-evenly md:flex-row gap-2 pt-4">
         <button
           className="bg-efcaAccent text-white px-4 py-2.5 rounded-lg font-bold hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-efcaAccent transition-colors"
           type="submit"

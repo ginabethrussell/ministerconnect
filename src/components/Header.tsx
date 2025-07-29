@@ -162,14 +162,26 @@ const Header = () => {
         <nav className="md:hidden flex flex-col items-center pt-4 space-y-2">
           {roleHref === '/candidate' && (
             <>
-              <Link href="/candidate" className={navLinkClass('/candidate')}>
+              <Link
+                href="/candidate"
+                className={navLinkClass('/candidate')}
+                onClick={() => setMenuOpen(false)}
+              >
                 Dashboard
               </Link>
-              <Link href="/candidate/profile" className={navLinkClass('/candidate/profile')}>
+              <Link
+                href="/candidate/profile"
+                className={navLinkClass('/candidate/profile')}
+                onClick={() => setMenuOpen(false)}
+              >
                 Profile
               </Link>
               {profile?.status === 'approved' && (
-                <Link href="/candidate/jobs" className={navLinkClass('/candidate/jobs')}>
+                <Link
+                  href="/candidate/jobs"
+                  className={navLinkClass('/candidate/jobs')}
+                  onClick={() => setMenuOpen(false)}
+                >
                   Jobs
                 </Link>
               )}
@@ -177,18 +189,31 @@ const Header = () => {
           )}
           {roleHref === '/church' && (
             <>
-              <Link href="/church" className={navLinkClass('/church')}>
+              <Link
+                href="/church"
+                className={navLinkClass('/church')}
+                onClick={() => setMenuOpen(false)}
+              >
                 Dashboard
               </Link>
-              <Link href="/church/search" className={navLinkClass('/church/search')}>
+              <Link
+                href="/church/search"
+                className={navLinkClass('/church/search')}
+                onClick={() => setMenuOpen(false)}
+              >
                 Candidates
               </Link>
-              <Link href="/church/jobs" className={navLinkClass('/church/jobs')}>
+              <Link
+                href="/church/jobs"
+                className={navLinkClass('/church/jobs')}
+                onClick={() => setMenuOpen(false)}
+              >
                 Jobs
               </Link>
               <Link
                 href="/church/mutual-interests"
                 className={navLinkClass('/church/mutual-interests')}
+                onClick={() => setMenuOpen(false)}
               >
                 Interests
               </Link>
@@ -196,39 +221,74 @@ const Header = () => {
           )}
           {roleHref === '/admin' && (
             <>
-              <Link href="/admin" className={navLinkClass('/admin')}>
+              <Link
+                href="/admin"
+                className={navLinkClass('/admin')}
+                onClick={() => setMenuOpen(false)}
+              >
                 Dashboard
               </Link>
-              <Link href="/admin/review" className={navLinkClass('/admin/review')}>
+              <Link
+                href="/admin/review"
+                className={navLinkClass('/admin/review')}
+                onClick={() => setMenuOpen(false)}
+              >
                 Candidates
               </Link>
-              <Link href="/admin/jobs" className={navLinkClass('/admin/jobs')}>
+              <Link
+                href="/admin/jobs"
+                className={navLinkClass('/admin/jobs')}
+                onClick={() => setMenuOpen(false)}
+              >
                 Jobs
               </Link>
-              <Link href="/admin/churches" className={navLinkClass('/admin/churches')}>
+              <Link
+                href="/admin/churches"
+                className={navLinkClass('/admin/churches')}
+                onClick={() => setMenuOpen(false)}
+              >
                 Churches
               </Link>
-              <Link href="/admin/codes" className={navLinkClass('/admin/codes')}>
+              <Link
+                href="/admin/codes"
+                className={navLinkClass('/admin/codes')}
+                onClick={() => setMenuOpen(false)}
+              >
                 Codes
               </Link>
             </>
           )}
           {roleHref === '/superadmin' && (
             <>
-              <Link href="/superadmin" className={navLinkClass('/superadmin')}>
+              <Link
+                href="/superadmin"
+                className={navLinkClass('/superadmin')}
+                onClick={() => setMenuOpen(false)}
+              >
                 Dashboard
               </Link>
-              <Link href="/superadmin/users" className={navLinkClass('/superadmin/users')}>
+              <Link
+                href="/superadmin/users"
+                className={navLinkClass('/superadmin/users')}
+                onClick={() => setMenuOpen(false)}
+              >
                 Users
               </Link>
-              <Link href="/superadmin/churches" className={navLinkClass('/superadmin/churches')}>
+              <Link
+                href="/superadmin/churches"
+                className={navLinkClass('/superadmin/churches')}
+                onClick={() => setMenuOpen(false)}
+              >
                 Churches
               </Link>
             </>
           )}
           {user !== null && (
             <button
-              onClick={handleLogout}
+              onClick={() => {
+                handleLogout();
+                setMenuOpen(false);
+              }}
               className="text-center px-3 py-2 rounded-md text-lg font-regular text-white hover:bg-red-600"
             >
               Logout
@@ -236,10 +296,18 @@ const Header = () => {
           )}
           {user === null && (
             <>
-              <Link href="/auth/login" className={navLinkClass('/auth/login')}>
+              <Link
+                href="/auth/login"
+                className={navLinkClass('/auth/login')}
+                onClick={() => setMenuOpen(false)}
+              >
                 Login
               </Link>
-              <Link href="/auth/register" className={navLinkClass('/auth/register')}>
+              <Link
+                href="/auth/register"
+                className={navLinkClass('/auth/register')}
+                onClick={() => setMenuOpen(false)}
+              >
                 Register
               </Link>
             </>
