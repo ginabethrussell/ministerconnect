@@ -2,32 +2,44 @@ import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/router';
 import { useProfile } from '../../context/ProfileContext';
 import ExpressInterestButton from '../../components/ExpressInterestButton';
-import { JobListing } from '../../types';
-import { getApprovedJobs, getExpressedInterests } from '@/utils/api';
+import { JobWithInterest, MutualInterest } from '../../types';
+import {
+  getApprovedJobs,
+  getCandidateInterests,
+  expressCandidateInterest,
+  withdrawInterest,
+} from '@/utils/api';
+import { mergeJobsWithInterest } from '@/utils/helpers';
 
 export default function CandidateJobs() {
   const router = useRouter();
   const { profile } = useProfile();
   const [loading, setLoading] = useState(true);
-  const [jobListings, setJobListings] = useState<JobListing[]>([]);
-  const [expressedInterest, setExpressedInterest] = useState<number[]>([]);
+  const [interests, setInterests] = useState<Record<number, MutualInterest>>({});
+  const [jobsWithInterest, setJobsWithInterest] = useState<JobWithInterest[]>([]);
   const [expandedJobs, setExpandedJobs] = useState<number[]>([]);
 
   useEffect(() => {
-    if (!(profile?.status === 'approved')) {
+    if (!profile || !(profile?.status === 'approved')) {
       router.push('/candidate');
     }
-    const loadJobs = async () => {
+    const loadJobsAndInterests = async () => {
       try {
-        // Load approved job listings
-        const response = await getApprovedJobs();
-        setJobListings(response.results);
+        const [jobsResponse, interestsResponse] = await Promise.all([
+          await getApprovedJobs(),
+          await getCandidateInterests(),
+        ]);
 
-        // Load user's expressed interests
-        const interestsResponse = await getExpressedInterests();
-        console.log('MUTUALINTERESTS', interestsResponse);
+        const combined = mergeJobsWithInterest(jobsResponse.results, interestsResponse.results);
+        setJobsWithInterest(combined);
+
+        const interestMap: Record<number, MutualInterest> = {};
+        interestsResponse.results.forEach((interest) => {
+          interestMap[interest.job_listing] = interest;
+        });
+        setInterests(interestMap);
       } catch (error) {
-        console.error('Failed to load jobs and interests', error);
+        console.error('Failed to load jobs and/or interests', error);
         router.push('/candidate');
         return;
       } finally {
@@ -35,33 +47,34 @@ export default function CandidateJobs() {
       }
     };
 
-    loadJobs();
+    loadJobsAndInterests();
   }, [router, profile]);
 
-  const handleExpressInterest = async (jobId: number) => {
-    try {
-      const response = await fetch(`/api/job-listings/${jobId}/express-interest`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-      });
+  const handleToggleInterest = async (jobId: number) => {
+    const existingInterest = interests[jobId];
 
-      if (response.ok) {
-        const data = await response.json();
-        if (data.expressed) {
-          // Add interest
-          setExpressedInterest((prev) => [...prev, jobId]);
-        } else {
-          // Remove interest
-          setExpressedInterest((prev) => prev.filter((id) => id !== jobId));
-        }
+    try {
+      if (existingInterest) {
+        // Interest already exists — withdraw it
+        await withdrawInterest(existingInterest.id);
+        setInterests((prev) => {
+          const updated = { ...prev };
+          delete updated[jobId];
+          return updated;
+        });
       } else {
-        console.error('Failed to express interest:', response.statusText);
+        // Express new interest
+        if (profile?.id) {
+          const newInterest = await expressCandidateInterest(jobId, profile.id);
+          setInterests((prev) => ({
+            ...prev,
+            [jobId]: newInterest,
+          }));
+        }
       }
     } catch (error) {
-      console.error('Failed to express interest:', error);
-      // You could show a toast notification here
+      console.error('Failed to toggle interest:', error);
+      // Optional: show toast
     }
   };
 
@@ -113,17 +126,16 @@ export default function CandidateJobs() {
         {/* Job Listings */}
         <section className="bg-white rounded-lg shadow-sm p-6">
           <h2 className="text-2xl font-semibold text-gray-700 mb-4">Job Listings</h2>
-          {jobListings && jobListings.length === 0 ? (
+          {jobsWithInterest && jobsWithInterest.length === 0 ? (
             <div className="text-center py-8">
               <h3 className="text-lg font-medium text-gray-900 mb-2">No positions found</h3>
               <p className="text-gray-600">Check back soon for new opportunities.</p>
             </div>
           ) : (
             <div className="space-y-4">
-              {jobListings &&
-                jobListings.map((job) => {
-                  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-                  const hasExpressedInterest = expressedInterest.includes(job.id);
+              {jobsWithInterest &&
+                jobsWithInterest.map((job) => {
+                  const hasExpressedInterest = !!interests[job.id];
                   const isExpanded = expandedJobs.includes(job.id);
 
                   return (
@@ -184,15 +196,16 @@ export default function CandidateJobs() {
                         </div>
 
                         <div className="flex flex-col gap-2 min-w-[200px]">
-                          <ExpressInterestButton
-                            id={job.id.toString()}
-                            hasExpressedInterest={expressedInterest.includes(job.id)}
-                            onExpressInterest={() => handleExpressInterest(job.id)}
-                            className="w-full"
-                            size="md"
-                            variant="primary"
-                          />
-
+                          {profile?.id && (
+                            <ExpressInterestButton
+                              id={job.id.toString()}
+                              hasExpressedInterest={hasExpressedInterest}
+                              onExpressInterest={() => handleToggleInterest(job.id)}
+                              className="w-full"
+                              size="md"
+                              variant="primary"
+                            />
+                          )}
                           <button
                             onClick={() => toggleJobExpansion(job.id)}
                             className="px-4 py-2 border border-gray-300 text-gray-700 rounded font-semibold hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-gray-400 transition-colors text-center"

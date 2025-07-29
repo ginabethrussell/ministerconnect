@@ -41,12 +41,13 @@ export interface InviteCode {
   updated_at: string;
 }
 
-export interface JobListingResponse {
+export interface PaginatedResponse<T> {
   count: number;
   next: number | null;
   previous: number | null;
-  results: JobListing[];
+  results: T[];
 }
+
 export interface InlineChurch {
   id: number;
   name: string;
@@ -72,12 +73,20 @@ export interface JobListing {
 export interface MutualInterest {
   id: number;
   job_listing: number;
+  job_title: string;
+  church_name: string | null;
   profile: number;
+  candidate_name: string | null;
   expressed_by: 'candidate' | 'church';
   expressed_by_user: number;
   created_at: string;
   updated_at: string;
+  is_mutual: boolean;
 }
+
+export type JobWithInterest = JobListing & {
+  interest?: MutualInterest;
+};
 
 export interface ActivityLog {
   id: number;
