@@ -1,8 +1,9 @@
+'use client';
 import React, { useEffect, useState } from 'react';
 import Image from 'next/image';
 import PDFViewer from '../../components/PDFViewer';
 import { getSuperAdminProfiles } from '../../utils/api'; // Using the centralized API
-import { Profile } from '../../types'; // Using the centralized type
+import { Profile } from '@/context/ProfileContext'; // Using the centralized type
 
 function getYouTubeEmbedUrl(url: string): string {
   if (!url) return '';
@@ -53,9 +54,7 @@ const AdminReview = () => {
         setLoading(true);
         const data = (await getSuperAdminProfiles()) as Profile[];
         setProfiles(data);
-        // Get unique events for filter dropdown
-        const uniqueEvents = Array.from(new Set(data.map((p) => p.email))); // Placeholder for event
-        setEvents(uniqueEvents);
+        // Placeholder for event
       } catch (error) {
         console.error('Failed to fetch profiles:', error);
       } finally {
@@ -64,25 +63,6 @@ const AdminReview = () => {
     };
     fetchProfiles();
   }, []);
-
-  // Filter profiles based on status and event
-  let filtered = profiles;
-  if (filterStatus !== 'all') {
-    filtered = filtered.filter((p) => p.status === filterStatus);
-  }
-  if (filterEvent) {
-    // This will need to be adjusted once 'event' is on the Profile type
-    filtered = filtered.filter((p) => p.email === filterEvent); // Placeholder
-  }
-
-  // Sort filtered results
-  filtered = [...filtered].sort((a, b) => {
-    const nameA = `${a.first_name} ${a.last_name}`;
-    const nameB = `${b.first_name} ${b.last_name}`;
-    if (sortBy === 'name') return nameA.localeCompare(nameB);
-    if (sortBy === 'createdAt') return (b.created_at || '').localeCompare(a.created_at || '');
-    return 0;
-  });
 
   const handleStatus = async (id: number, status: 'approved' | 'rejected') => {
     setActionLoadingId(id.toString());
@@ -155,19 +135,19 @@ const AdminReview = () => {
             <div className="text-center py-10">
               <p className="text-gray-500">Loading profiles...</p>
             </div>
-          ) : filtered.length === 0 ? (
+          ) : profiles.length === 0 ? (
             <div className="text-center py-10">
               <p className="text-gray-500">No candidate profiles found.</p>
             </div>
           ) : (
             <div className="grid gap-6 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
-              {filtered.map((profile, idx) => {
-                const fullName = `${profile.first_name} ${profile.last_name}`;
+              {profiles.map((profile, idx) => {
+                const fullName = `${profile.city} ${profile.state}`;
                 return (
                   <div key={`${fullName}-${idx}`} className="bg-white rounded-lg shadow-md p-6">
                     <div className="flex items-start gap-4 mb-4">
                       <Image
-                        src={profile.photo ?? ''}
+                        src={profile.profile_image ?? ''}
                         alt={`${fullName}`}
                         width={200}
                         height={200}
@@ -195,7 +175,7 @@ const AdminReview = () => {
                       <div className="space-y-2 text-sm">
                         <div className="flex items-center gap-2">
                           <span className="font-medium text-gray-600 w-20">Email:</span>
-                          <span className="text-gray-700">{profile.email}</span>
+                          <span className="text-gray-700">{profile.zipcode}</span>
                         </div>
                         <div className="flex items-center gap-2">
                           <span className="font-medium text-gray-600 w-20">Phone:</span>
@@ -276,7 +256,7 @@ const AdminReview = () => {
 
                     {/* Submission Info */}
                     <div className="mb-4 text-xs text-gray-500">
-                      <p>Submitted: {new Date(profile.submitted_at).toLocaleDateString()}</p>
+                      <p>Submitted: {new Date(profile.created_at).toLocaleDateString()}</p>
                       <p>Last Updated: {new Date(profile.updated_at).toLocaleDateString()}</p>
                     </div>
 

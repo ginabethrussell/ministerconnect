@@ -1,3 +1,4 @@
+'use client';
 import React, { useState } from 'react';
 import { useRouter } from 'next/router';
 import Link from 'next/link';
@@ -41,6 +42,7 @@ const Login = () => {
       setSuccess(true);
       if (userInfo.requires_password_change) {
         router.push('/auth/reset-password');
+        return;
       }
       router.push(getUserDashboardRoute(userInfo));
     } catch {

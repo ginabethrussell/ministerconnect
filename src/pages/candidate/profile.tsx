@@ -1,3 +1,4 @@
+'use client';
 import React, { useState } from 'react';
 import { Profile, useProfile } from '@/context/ProfileContext';
 import { useUser } from '@/context/UserContext';

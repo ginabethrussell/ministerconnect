@@ -188,7 +188,6 @@ export const apiClient = {
   },
 
   async patchForm<T>(endpoint: string, formData: FormData, auth = true): Promise<T> {
-    console.log('PATCHFORM', endpoint, formData);
     const response = await fetchWithAuthRetry(
       getApiUrl(endpoint),
       {
@@ -204,7 +203,6 @@ export const apiClient = {
       auth,
       'none' // <--- tell fetchWithAuthRetry not to add Content-Type
     );
-    console.log('RESPONSE HEADERS', response.headers);
     if (!response.ok) {
       const errorBody = await response.json().catch(() => ({}));
       throw errorBody;
@@ -234,7 +232,7 @@ export const API_ENDPOINTS = {
 
   // Frontend routes (for MSW/fallback)
   FORGOT_PASSWORD: '/api/auth/forgot-password/',
-  RESET_PASSWORD: '/api/auth/reset-password/',
+  RESET_PASSWORD: '/api/reset-password/',
   FORCE_PASSWORD_CHANGE: '/api/auth/force-password-change/',
 
   // User management
@@ -324,17 +322,14 @@ export const getChurchDashboard = async () => {
   // ... implement as needed ...
 };
 
-// Fetch current authenticated user info
 export const getMe = async (): Promise<User> => {
   return apiClient.get(API_ENDPOINTS.GET_ME);
 };
 
-// Example usage for a public endpoint (login):
 export const login = async (data: { email: string; password: string }): Promise<TokenResponse> => {
   return apiClient.post(API_ENDPOINTS.LOGIN, data, false); // auth = false
 };
 
-// Example usage for a public endpoint (login):
 export const registerCandidate = async (data: {
   code: string;
   email: string;
