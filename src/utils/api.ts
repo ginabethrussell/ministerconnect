@@ -379,6 +379,10 @@ export const getApprovedJobs = async (): Promise<PaginatedResponse<JobListing>> 
   return apiClient.get(`${API_ENDPOINTS.JOB_LISTINGS}?status=approved`);
 };
 
+export const getChurchJobs = async (): Promise<PaginatedResponse<JobListing>> => {
+  return apiClient.get(API_ENDPOINTS.JOB_LISTINGS + 'my-jobs/');
+};
+
 export const getCandidateInterests = async (): Promise<PaginatedResponse<MutualInterest>> => {
   return apiClient.get(API_ENDPOINTS.MUTUAL_INTERESTS);
 };

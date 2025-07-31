@@ -7,6 +7,7 @@ interface ExpressInterestButtonProps {
   onExpressInterest: (id: string) => Promise<void>;
   className?: string;
   size?: 'sm' | 'md' | 'lg';
+  disabled: boolean;
   variant?: 'primary' | 'secondary';
 }
 
@@ -17,6 +18,7 @@ export default function ExpressInterestButton({
   className = '',
   size = 'md',
   variant = 'primary',
+  disabled = false,
 }: ExpressInterestButtonProps) {
   const [isProcessing, setIsProcessing] = useState(false);
 
@@ -51,12 +53,13 @@ export default function ExpressInterestButton({
   return (
     <button
       onClick={handleClick}
-      disabled={isProcessing}
+      disabled={isProcessing || disabled}
       className={`
         ${sizeClasses[size]}
         ${variantClasses[variant]}
         rounded font-semibold transition-colors focus:outline-none focus:ring-2
         ${isProcessing ? 'opacity-50 cursor-not-allowed' : ''}
+        ${disabled ? 'opacity-50 cursor-not-allowed' : ''}}
         ${className}
       `}
     >

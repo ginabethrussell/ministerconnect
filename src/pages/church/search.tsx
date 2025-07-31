@@ -4,15 +4,15 @@ import { ClipboardCopy, Check } from 'lucide-react';
 import UserIcon from '@/components/UserIcon';
 import ExpressInterestButton from '../../components/ExpressInterestButton';
 import { Profile } from '@/context/ProfileContext';
-import { JobListing, PaginatedResponse } from '../../types'; // Assuming types for Profile and JobListing exist
-import { apiClient, getApprovedCandidates } from '../../utils/api';
+import { JobListing } from '../../types'; // Assuming types for Profile and JobListing exist
+import { apiClient, getApprovedCandidates, getChurchJobs } from '../../utils/api';
 import { formatPhone } from '@/utils/helpers';
 
 export default function ChurchSearch() {
   const [search, setSearch] = useState('');
   const [profiles, setProfiles] = useState<Profile[]>([]);
   const [expressedInterest, setExpressedInterest] = useState<string[]>([]);
-  const [jobListings, setJobListings] = useState<JobListing[]>([]); // To associate with interest
+  const [churchJobListings, setChurchJobListings] = useState<JobListing[]>([]); // To associate with interest
   const [selectedJobId, setSelectedJobId] = useState<string>('');
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -21,10 +21,13 @@ export default function ChurchSearch() {
   useEffect(() => {
     const fetchInitialData = async () => {
       try {
-        const profilesRes: PaginatedResponse<Profile> = await getApprovedCandidates();
-        console.log(profilesRes);
-
+        const [profilesRes, churchJobListingsRes] = await Promise.all([
+          await getApprovedCandidates(),
+          await getChurchJobs(),
+        ]);
         setProfiles(profilesRes.results);
+        setChurchJobListings(churchJobListingsRes.results);
+        console.log(profilesRes, churchJobListingsRes);
         // setExpressedInterest(interestsRes.map((i) => String(i.profile_id)));
       } catch (error) {
         console.error('Error fetching initial data:', error);
@@ -85,7 +88,7 @@ export default function ChurchSearch() {
       <div className="max-w-7xl mx-auto">
         <header className="flex flex-col md:flex-row justify-between md:items-center mb-8 gap-4">
           <h1 className="text-3xl font-bold text-gray-800">Search Candidates</h1>
-          {jobListings.length > 0 && (
+          {churchJobListings && churchJobListings.length > 0 && (
             <div className="flex items-center gap-2">
               <label htmlFor="job-select" className="font-semibold text-gray-700">
                 Expressing interest for:
@@ -96,7 +99,7 @@ export default function ChurchSearch() {
                 onChange={(e) => setSelectedJobId(e.target.value)}
                 className="block w-full md:w-auto pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm rounded-md shadow-sm"
               >
-                {jobListings.map((job) => (
+                {churchJobListings.map((job) => (
                   <option key={job.id} value={String(job.id)}>
                     {job.title}
                   </option>
@@ -111,8 +114,8 @@ export default function ChurchSearch() {
             How Expressing Interest Works
           </h3>
           <div className="text-blue-700 space-y-2 text-sm">
-            <p>• You may indicate interest in a candidate by clicking Express Interest.</p>
-            <p>• You may withdraw interest in a candidate by clicking Express Interest.</p>
+            <p>• You may express interest in a candidate by clicking Express Interest.</p>
+            <p>• You may withdraw interest in a candidate by clicking Interest Expressed.</p>
             <p>• When you express or withdraw interest, the candidate is NOT notified.</p>
             <p>
               • If a candidate also expresses interest in one of your job listings, it becomes a
@@ -126,17 +129,38 @@ export default function ChurchSearch() {
               </Link>
               page.
             </p>
+            <p>
+              • One or more job listings must exist before you can express interest. Create a job
+              listing on the
+              <Link href="/church/jobs" className="cursor-pointer hover:underline">
+                {' '}
+                Jobs{' '}
+              </Link>
+              page.
+            </p>
           </div>
         </section>
 
         <section className="bg-white rounded-lg shadow-sm p-4 sm:p-6">
           <input
             type="text"
+            name="search"
             placeholder="Search by name, email, city, or state abbreviation..."
             value={search}
             onChange={(e) => setSearch(e.target.value)}
             className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 mb-6"
           />
+          {!selectedJobId && (
+            <div className="mb-6 bg-yellow-50 border border-yellow-300 text-yellow-800 p-4 rounded">
+              <p>
+                You must{' '}
+                <Link href="/church/jobs/create" className="text-blue-600 hover:underline">
+                  create a job listing
+                </Link>{' '}
+                before expressing interest in candidates.
+              </p>
+            </div>
+          )}
           {filteredProfiles.length === 0 ? (
             <div className="py-8 text-center text-gray-500">
               No candidates found matching your criteria.
@@ -177,6 +201,7 @@ export default function ChurchSearch() {
                         hasExpressedInterest={expressedInterest.includes(String(profile.id))}
                         onExpressInterest={handleExpressInterest}
                         size="lg"
+                        disabled={!selectedJobId}
                       />
                     </div>
                   </div>
