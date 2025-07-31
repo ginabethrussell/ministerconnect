@@ -383,8 +383,20 @@ export const getChurchJobs = async (): Promise<PaginatedResponse<JobListing>> =>
   return apiClient.get(API_ENDPOINTS.JOB_LISTINGS + 'my-jobs/');
 };
 
+export const createJob = async (jobData: Partial<JobListing>): Promise<JobListing> => {
+  return apiClient.post(API_ENDPOINTS.JOB_LISTINGS, jobData);
+};
+
+export const deleteJob = async (id: number): Promise<void> => {
+  await apiClient.delete(`${API_ENDPOINTS.JOB_LISTINGS}${id}/`);
+};
+
 export const getCandidateInterests = async (): Promise<PaginatedResponse<MutualInterest>> => {
   return apiClient.get(API_ENDPOINTS.MUTUAL_INTERESTS);
+};
+
+export const getChurchInterests = async (): Promise<PaginatedResponse<MutualInterest>> => {
+  return apiClient.get(`${API_ENDPOINTS.MUTUAL_INTERESTS}my-church-interests/`);
 };
 
 interface ExpressInterestInput {

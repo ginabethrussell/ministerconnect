@@ -596,6 +596,7 @@ const CandidateProfilePage = () => {
           'Music and worship',
           'Outreach/evangelism',
           'Pastoral care/counseling',
+          'Residency',
           'Seniors ministry',
           'Singles ministry',
           'Student/youth ministry',

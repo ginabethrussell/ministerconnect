@@ -1,3 +1,5 @@
+import { Profile } from '@/context/ProfileContext';
+
 export interface TokenResponse {
   access: string;
   refresh: string;
@@ -65,7 +67,7 @@ export interface JobListing {
   job_description: string;
   about_church: string;
   job_url_link: string;
-  status: 'draft' | 'pending' | 'approved' | 'rejected';
+  status: 'pending' | 'approved' | 'rejected';
   created_at: string;
   updated_at: string;
 }
@@ -85,6 +87,10 @@ export interface MutualInterest {
 }
 
 export type JobWithInterest = JobListing & {
+  interest?: MutualInterest;
+};
+
+export type ProfileWithInterest = Profile & {
   interest?: MutualInterest;
 };
 

@@ -1,18 +1,20 @@
 import React, { useState } from 'react';
 import { useRouter } from 'next/router';
 import Link from 'next/link';
-import { JobListing } from '../../../types';
+import { createJob } from '@/utils/api';
 
 export default function CreateJob() {
   const router = useRouter();
-  const [saving, setSaving] = useState(false);
   const [formData, setFormData] = useState({
     title: '',
     ministry_type: '',
     employment_type: '',
     job_description: '',
     about_church: '',
+    job_url_link: '',
   });
+  const [error, setError] = useState('');
+  const [submitting, setSubmitting] = useState(false);
 
   const handleInputChange = (field: string, value: string) => {
     setFormData((prev) => ({ ...prev, [field]: value }));
@@ -20,7 +22,7 @@ export default function CreateJob() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setSaving(true);
+    setSubmitting(true);
 
     if (
       !formData.title ||
@@ -30,41 +32,19 @@ export default function CreateJob() {
       !formData.about_church
     ) {
       alert('Please fill in all required fields.');
-      setSaving(false);
+      setSubmitting(false);
       return;
     }
 
-    const newJob: Partial<JobListing> = {
-      church_id: 1, // Mocked
-      title: formData.title,
-      ministry_type: formData.ministry_type,
-      employment_type: formData.employment_type,
-      job_description: formData.job_description,
-      about_church: formData.about_church,
-    };
-
     try {
-      const response = await fetch('/api/job-listings', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(newJob),
-      });
-
-      if (response.ok) {
-        alert(
-          'Job posting created successfully! It will be reviewed by an administrator before becoming visible to candidates.'
-        );
-        router.push('/church/jobs');
-      } else {
-        alert('Error creating job posting. Please try again.');
-      }
-    } catch (error) {
-      console.error('Error creating job posting:', error);
-      alert('Error creating job posting. Please try again.');
+      await createJob(formData);
+      router.push('/church/jobs');
+    } catch {
+      setError(
+        'Failed to create job listing. Please try again later or contact the site admin for assistance.'
+      );
     } finally {
-      setSaving(false);
+      setSubmitting(false);
     }
   };
 
@@ -86,6 +66,7 @@ export default function CreateJob() {
             Create a job posting to attract ministry candidates. Provide detailed information about
             the position and your church.
           </p>
+          {error && <p className="text-red-500 mb-4">{error}</p>}
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-2">
               Job Title <span className="text-red-500">*</span>
@@ -104,14 +85,45 @@ export default function CreateJob() {
             <label className="block text-sm font-medium text-gray-700 mb-2">
               Ministry Type <span className="text-red-500">*</span>
             </label>
-            <input
-              type="text"
+            <select
               value={formData.ministry_type}
               onChange={(e) => handleInputChange('ministry_type', e.target.value)}
-              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-efcaAccent focus:border-efcaAccent"
-              placeholder="e.g., Family ministry"
+              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-efcaAccent focus:border-efcaAccent bg-white"
               required
-            />
+            >
+              <option value="" disabled>
+                Select a ministry type
+              </option>
+              {[
+                'Solo pastor',
+                'Church-planting pastor',
+                'Senior pastor (plus one or two full-time staff)',
+                'Senior pastor (plus three or more full-time staff)',
+                'Administration/operations/business',
+                'Adult education/small groups/discipleship',
+                'Associate pastor',
+                "Children's ministry",
+                'Christian education (all ages)',
+                'College ministries',
+                'Communications/technology',
+                'Executive pastor',
+                'Family/community life',
+                "Men's ministry",
+                'Multicultural ministry',
+                'Music and worship',
+                'Outreach/evangelism',
+                'Pastoral care/counseling',
+                'Residency',
+                'Seniors ministry',
+                'Singles ministry',
+                'Student/youth ministry',
+                "Women's ministry",
+              ].map((ministry, idx) => (
+                <option key={`${ministry}-${idx}`} value={ministry}>
+                  {ministry}
+                </option>
+              ))}
+            </select>
           </div>
 
           <div>
@@ -161,6 +173,18 @@ export default function CreateJob() {
             />
           </div>
 
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-2">Job URL Link</label>
+            <input
+              type="text"
+              value={formData.job_url_link}
+              onChange={(e) => handleInputChange('job_url_link', e.target.value)}
+              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-efcaAccent focus:border-efcaAccent"
+              placeholder="Job URL Link"
+              required
+            />
+          </div>
+
           <div className="flex justify-end gap-4 pt-4">
             <Link
               href="/church/jobs"
@@ -170,10 +194,10 @@ export default function CreateJob() {
             </Link>
             <button
               type="submit"
-              disabled={saving}
+              disabled={submitting}
               className="px-6 py-2 bg-efcaAccent text-white rounded-lg hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-efcaAccent focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
             >
-              {saving ? 'Creating...' : 'Create Job Posting'}
+              {submitting ? 'Submitting...' : 'Create Job Posting'}
             </button>
           </div>
         </form>

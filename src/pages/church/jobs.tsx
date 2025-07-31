@@ -1,40 +1,35 @@
 import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { JobListing } from '../../types';
-
-interface JobListingWithStatus extends JobListing {
-  status: 'pending' | 'approved' | 'rejected';
-}
+import { deleteJob, getChurchJobs } from '@/utils/api';
 
 export default function ChurchJobs() {
   const [loading, setLoading] = useState(true);
-  const [jobs, setJobs] = useState<JobListingWithStatus[]>([]);
+  const [jobs, setJobs] = useState<JobListing[]>([]);
   const [expandedJobs, setExpandedJobs] = useState<number[]>([]);
 
   useEffect(() => {
-    setLoading(false);
+    const loadJobs = async () => {
+      try {
+        const jobListingsRes = await getChurchJobs();
+        setJobs(jobListingsRes.results);
+      } catch {
+        console.error('An error occurred while retrieving jobs');
+      } finally {
+        setLoading(false);
+      }
+    };
     loadJobs();
   }, []);
 
-  const loadJobs = async () => {
-    try {
-      const response = await fetch('/api/job-listings');
-      if (response.ok) {
-        const data = await response.json();
-        // Filter to only show jobs for this church (church_id: 1 for now)
-        const churchJobs = data.filter((job: JobListingWithStatus) => job.church_id === 1);
-        setJobs(churchJobs);
-      } else {
-        console.error('Failed to load jobs');
-      }
-    } catch (error) {
-      console.error('Error loading jobs:', error);
-    }
-  };
+  console.log('JOBS', jobs);
 
-  const handleDeleteJob = (jobId: number) => {
-    if (confirm('Are you sure you want to delete this job posting?')) {
+  const handleDeleteJob = async (jobId: number) => {
+    try {
+      await deleteJob(jobId);
       setJobs(jobs.filter((job) => job.id !== jobId));
+    } catch (error) {
+      console.error(error);
     }
   };
 
@@ -98,7 +93,7 @@ export default function ChurchJobs() {
 
         {/* Job Listings */}
         <section className="bg-white rounded-lg shadow-sm p-6">
-          {jobs.length === 0 ? (
+          {!jobs || jobs?.length === 0 ? (
             <div className="text-center py-8">
               <h3 className="text-lg font-medium text-gray-900 mb-2">No jobs posted yet</h3>
               <p className="text-gray-600 mb-4">
@@ -107,80 +102,89 @@ export default function ChurchJobs() {
             </div>
           ) : (
             <div className="space-y-4">
-              {jobs.map((job) => {
-                const isExpanded = expandedJobs.includes(job.id);
+              {jobs &&
+                jobs.map((job) => {
+                  const isExpanded = expandedJobs.includes(job.id);
 
-                return (
-                  <div
-                    key={job.id}
-                    className="border border-gray-200 rounded-lg p-6 hover:shadow-md transition-shadow"
-                  >
-                    <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
-                      <div className="flex-1">
-                        <div className="flex items-start justify-between mb-2">
-                          <h3 className="text-xl font-semibold text-efcaDark">{job.title}</h3>
-                          <span className="text-sm text-gray-500">
-                            {new Date(job.created_at).toLocaleDateString()}
-                          </span>
-                        </div>
-
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
-                          <div>
-                            <p className="text-lg font-medium text-gray-800">
-                              {job.church_id === 1
-                                ? 'Grace Fellowship Church'
-                                : 'New Hope Community Church'}
-                            </p>
-                            <p className="text-gray-600">{job.ministry_type}</p>
-                            <p className="text-sm text-gray-500">
-                              {job.church_id === 1 ? 'Springfield, IL' : 'Shelbyville, IL'}
-                            </p>
+                  return (
+                    <div
+                      key={job.id}
+                      className="border border-gray-200 rounded-lg p-6 hover:shadow-md transition-shadow"
+                    >
+                      <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
+                        <div className="flex-1">
+                          <div className="flex items-start justify-between mb-2">
+                            <h3 className="text-xl font-semibold text-efcaDark">{job.title}</h3>
                           </div>
-                          <div className="text-right md:text-left">
-                            <span
-                              className={`inline-block px-3 py-1 ${getStatusColor(job.status)} text-sm font-medium rounded-full`}
-                            >
-                              {getStatusMessage(job.status)}
-                            </span>
-                          </div>
-                        </div>
 
-                        {/* Expandable Content */}
-                        {isExpanded && (
-                          <div className="mt-4 space-y-4 border-t pt-4">
+                          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
                             <div>
-                              <h4 className="font-semibold text-gray-800 mb-2">Job Description</h4>
-                              <p className="text-gray-700 leading-relaxed">{job.job_description}</p>
+                              <p className="text-lg font-medium text-gray-800">{job.church.name}</p>
+                              <p className="text-md text-gray-600">{job.ministry_type}</p>
+                              <p className="text-md text-gray-500">
+                                {`${job.church.city}, ${job.church.state}`}
+                              </p>
                             </div>
-                            <div>
-                              <h4 className="font-semibold text-gray-800 mb-2">
-                                About This Church
-                              </h4>
-                              <p className="text-gray-700 leading-relaxed">{job.about_church}</p>
+                            <div className="text-right md:text-left">
+                              <span
+                                className={`inline-block px-3 py-1 ${getStatusColor(job.status)} text-sm font-medium rounded-full`}
+                              >
+                                {getStatusMessage(job.status)}
+                              </span>
+                              <p className="mt-2 text-md text-gray-600">{job.employment_type}</p>
                             </div>
                           </div>
-                        )}
-                      </div>
 
-                      <div className="flex flex-col gap-2 min-w-[200px]">
-                        <button
-                          onClick={() => toggleJobExpansion(job.id)}
-                          className="px-4 py-2 border border-gray-300 text-gray-700 rounded font-semibold hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-gray-400 transition-colors text-center"
-                        >
-                          {isExpanded ? 'Show Less' : 'View Details'}
-                        </button>
+                          {/* Expandable Content */}
+                          {isExpanded && (
+                            <div className="mt-4 space-y-4 border-t pt-4">
+                              <div>
+                                <h4 className="font-semibold text-gray-800 mb-2">
+                                  Job Description
+                                </h4>
+                                <p className="text-gray-700 leading-relaxed">
+                                  {job.job_description}
+                                </p>
+                              </div>
+                              <div>
+                                <h4 className="font-semibold text-gray-800 mb-2">
+                                  About This Church
+                                </h4>
+                                <p className="text-gray-700 leading-relaxed">{job.about_church}</p>
+                              </div>
+                              <div>
+                                <h4 className="font-semibold text-gray-800 mb-2">Job URL Link</h4>
+                                <a
+                                  href={job?.job_url_link}
+                                  target="_blank"
+                                  className="font-regular text-blue-800 cursor-pointer hover:underline"
+                                >
+                                  {job.job_url_link}
+                                </a>
+                              </div>
+                            </div>
+                          )}
+                        </div>
 
-                        <button
-                          onClick={() => handleDeleteJob(job.id)}
-                          className="px-4 py-2 border border-red-300 text-red-700 rounded font-semibold hover:bg-red-50 focus:outline-none focus:ring-2 focus:ring-red-400 transition-colors text-center"
-                        >
-                          Delete Job
-                        </button>
+                        <div className="flex flex-col gap-2 min-w-[200px]">
+                          <button
+                            onClick={() => toggleJobExpansion(job.id)}
+                            className="px-4 py-2 border border-gray-300 text-gray-700 rounded font-semibold hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-gray-400 transition-colors text-center"
+                          >
+                            {isExpanded ? 'Show Less' : 'View Details'}
+                          </button>
+
+                          <button
+                            onClick={() => handleDeleteJob(job.id)}
+                            className="px-4 py-2 border border-red-300 text-red-700 rounded font-semibold hover:bg-red-50 focus:outline-none focus:ring-2 focus:ring-red-400 transition-colors text-center"
+                          >
+                            Delete Job
+                          </button>
+                        </div>
                       </div>
                     </div>
-                  </div>
-                );
-              })}
+                  );
+                })}
             </div>
           )}
         </section>
