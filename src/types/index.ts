@@ -43,8 +43,8 @@ export interface InviteCode {
 
 export interface PaginatedResponse<T> {
   count: number;
-  next: number | null;
-  previous: number | null;
+  next: string | null;
+  previous: string | null;
   results: T[];
 }
 

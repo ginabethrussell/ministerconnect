@@ -1,22 +1,12 @@
 import React, { useState, useEffect } from 'react';
-import Image from 'next/image';
-import PDFViewer from '../../components/PDFViewer';
+import Link from 'next/link';
+import { ClipboardCopy, Check } from 'lucide-react';
+import UserIcon from '@/components/UserIcon';
 import ExpressInterestButton from '../../components/ExpressInterestButton';
-import { Profile, JobListing } from '../../types'; // Assuming types for Profile and JobListing exist
-import { apiClient } from '../../utils/api';
-
-function getYouTubeEmbedUrl(url: string): string {
-  if (!url) return '';
-  const liveMatch = url.match(/youtube\.com\/live\/([\w-]+)/);
-  const watchMatch = url.match(/[?&]v=([\w-]+)/);
-  let videoId = '';
-  if (liveMatch) {
-    videoId = liveMatch[1];
-  } else if (watchMatch) {
-    videoId = watchMatch[1];
-  }
-  return videoId ? `https://www.youtube.com/embed/${videoId}` : url;
-}
+import { Profile } from '@/context/ProfileContext';
+import { JobListing, PaginatedResponse } from '../../types'; // Assuming types for Profile and JobListing exist
+import { apiClient, getApprovedCandidates } from '../../utils/api';
+import { formatPhone } from '@/utils/helpers';
 
 export default function ChurchSearch() {
   const [search, setSearch] = useState('');
@@ -25,26 +15,17 @@ export default function ChurchSearch() {
   const [jobListings, setJobListings] = useState<JobListing[]>([]); // To associate with interest
   const [selectedJobId, setSelectedJobId] = useState<string>('');
 
-  const [pdfViewer, setPdfViewer] = useState({ isOpen: false, url: '', title: '' });
-  const [videoViewer, setVideoViewer] = useState({ isOpen: false, url: '', title: '' });
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [copyStatus, setCopyStatus] = useState<{ [key: string]: string }>({});
 
   useEffect(() => {
     const fetchInitialData = async () => {
       try {
-        const [profilesRes, interestsRes, jobsRes] = await Promise.all([
-          apiClient.get<Profile[]>('/api/profiles/approved'),
-          apiClient.get<{ profile_id: number }[]>('/api/church/interests'),
-          apiClient.get<JobListing[]>('/api/church/job-listings'),
-        ]);
-        setProfiles(profilesRes);
-        setExpressedInterest(interestsRes.map((i) => String(i.profile_id)));
+        const profilesRes: PaginatedResponse<Profile> = await getApprovedCandidates();
+        console.log(profilesRes);
 
-        if (jobsRes.length > 0) {
-          setJobListings(jobsRes);
-          setSelectedJobId(String(jobsRes[0].id)); // Default to the first job
-        }
+        setProfiles(profilesRes.results);
+        // setExpressedInterest(interestsRes.map((i) => String(i.profile_id)));
       } catch (error) {
         console.error('Error fetching initial data:', error);
       }
@@ -55,8 +36,10 @@ export default function ChurchSearch() {
 
   const filteredProfiles = profiles.filter(
     (p) =>
-      (p.first_name + ' ' + p.last_name).toLowerCase().includes(search.toLowerCase()) ||
-      p.email.toLowerCase().includes(search.toLowerCase())
+      (p.user.first_name + ' ' + p.user.last_name).toLowerCase().includes(search.toLowerCase()) ||
+      p.user.email.toLowerCase().includes(search.toLowerCase()) ||
+      p.city.toLowerCase().includes(search.toLowerCase()) ||
+      p.state.toLowerCase().includes(search.toLowerCase())
   );
 
   const handleExpressInterest = async (candidateId: string) => {
@@ -80,29 +63,9 @@ export default function ChurchSearch() {
       alert('There was an error expressing interest. Please try again.');
     }
   };
-
-  const handleViewResume = (resumeUrl: string | null, candidateName: string) => {
-    if (resumeUrl) {
-      setPdfViewer({
-        isOpen: true,
-        url: resumeUrl,
-        title: `${candidateName}'s Resume`,
-      });
-    }
-  };
-
-  const handleViewVideo = (videoUrl: string | null, candidateName: string) => {
-    if (videoUrl) {
-      setVideoViewer({
-        isOpen: true,
-        url: videoUrl,
-        title: `${candidateName}'s Video`,
-      });
-    }
-  };
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const handleCopyContact = (profile: Profile) => {
-    const contactInfo = `Name: ${profile.first_name} ${profile.last_name}\nEmail: ${profile.email}\nPhone: ${profile.phone}`;
+    const contactInfo = `Name: ${profile.user.first_name} ${profile.user.last_name}\nEmail: ${profile.user.email}\nPhone: ${formatPhone(profile.phone)}`;
     navigator.clipboard.writeText(contactInfo).then(
       () => {
         setCopyStatus((prev) => ({ ...prev, [profile.id]: 'Copied!' }));
@@ -148,17 +111,28 @@ export default function ChurchSearch() {
             How Expressing Interest Works
           </h3>
           <div className="text-blue-700 space-y-2 text-sm">
-            <p>• When you express interest, the candidate is NOT notified.</p>
-            <p>• A candidate must first express interest in one of your job listings.</p>
-            <p>• If you also express interest in them, it becomes a &quot;Mutual Interest.&quot;</p>
-            <p>• You can view all Mutual Interests on the dashboard.</p>
+            <p>• You may indicate interest in a candidate by clicking Express Interest.</p>
+            <p>• You may withdraw interest in a candidate by clicking Express Interest.</p>
+            <p>• When you express or withdraw interest, the candidate is NOT notified.</p>
+            <p>
+              • If a candidate also expresses interest in one of your job listings, it becomes a
+              &quot;Mutual Interest.&quot;
+            </p>
+            <p>
+              • You can view all Mutual Interests on the
+              <Link href="/church/mutual-interests" className="cursor-pointer hover:underline">
+                {' '}
+                Interests{' '}
+              </Link>
+              page.
+            </p>
           </div>
         </section>
 
         <section className="bg-white rounded-lg shadow-sm p-4 sm:p-6">
           <input
             type="text"
-            placeholder="Search by name or email..."
+            placeholder="Search by name, email, city, or state abbreviation..."
             value={search}
             onChange={(e) => setSearch(e.target.value)}
             className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 mb-6"
@@ -175,39 +149,24 @@ export default function ChurchSearch() {
                   className="bg-white rounded-lg shadow-sm border border-gray-200 p-6"
                 >
                   {/* Top Section */}
-                  <div className="flex flex-col md:flex-row gap-6 justify-between">
+                  <div className="flex flex-col md:flex-row gap-6 justify-between md:items-center">
                     {/* Candidate Info */}
-                    <div className="flex items-start gap-6 flex-grow">
-                      <div className="w-24 h-24 flex-shrink-0">
-                        {profile.photo ? (
-                          <Image
-                            src={profile.photo}
-                            alt={`${profile.first_name} ${profile.last_name}`}
-                            height={200}
-                            width={200}
-                            className="w-24 h-24 object-cover rounded-lg"
+                    <div className="flex flex-col items-center gap-6 flex-grow md:flex-row">
+                      <div className="flex-shrink-0">
+                        {profile && profile?.profile_image ? (
+                          <img
+                            src={profile.profile_image}
+                            alt={`${profile.user.first_name} ${profile.user.last_name}`}
+                            className="w-40 h-40 md:w-36 md:h-36 object-cover rounded-full border-2 border-gray-300 shadow-xlg"
                           />
                         ) : (
-                          <div className="w-24 h-24 rounded-lg bg-gray-200 flex items-center justify-center">
-                            <svg
-                              className="w-10 h-10 text-gray-400"
-                              fill="none"
-                              stroke="currentColor"
-                              viewBox="0 0 24 24"
-                            >
-                              <path
-                                strokeLinecap="round"
-                                strokeLinejoin="round"
-                                strokeWidth={2}
-                                d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"
-                              />
-                            </svg>
+                          <div className="object-cover rounded-full">
+                            <UserIcon width="36" height="36" />
                           </div>
                         )}
                       </div>
                       <div className="flex-grow">
-                        <h3 className="text-2xl font-bold text-gray-800">{`${profile.first_name} ${profile.last_name}`}</h3>
-                        {/* Placeholder for interest details if needed in future */}
+                        <h3 className="text-2xl font-bold text-gray-800">{`${profile.user.first_name} ${profile.user.last_name}`}</h3>
                       </div>
                     </div>
 
@@ -230,13 +189,29 @@ export default function ChurchSearch() {
                     {/* Contact Info */}
                     <div>
                       <h4 className="font-semibold text-gray-700 mb-2">Contact Information</h4>
-                      <p className="text-sm text-gray-600">Email: {profile.email}</p>
-                      <p className="text-sm text-gray-600">Phone: {profile.phone}</p>
+                      <p className="text-sm text-gray-600">Email: {profile.user.email}</p>
+                      <p className="text-sm text-gray-600">Phone: {formatPhone(profile.phone)}</p>
                       <p className="text-sm text-gray-600">
                         Location:{' '}
                         {profile.street_address &&
                           `${profile.street_address}, ${profile.city}, ${profile.state} ${profile.zipcode}`}
                       </p>
+                      <button
+                        onClick={() => handleCopyContact(profile)}
+                        className="mt-2 text-sm text-blue-600 hover:underline"
+                      >
+                        {copyStatus[profile.id] === 'Copied!' ? (
+                          <div className="flex">
+                            <Check size={16} className="text-green-600" />
+                            <span className="ml-2 text-xs text-green-600">Copied</span>
+                          </div>
+                        ) : (
+                          <div className="flex">
+                            <ClipboardCopy size={16} />
+                            <span className="ml-2 text-xs">Copy Contact Info</span>
+                          </div>
+                        )}
+                      </button>
                     </div>
 
                     {/* Documents & Media */}
@@ -253,17 +228,6 @@ export default function ChurchSearch() {
                             >
                               View Resume
                             </a>
-                            <button
-                              onClick={() =>
-                                handleViewResume(
-                                  profile.resume,
-                                  `${profile.first_name} ${profile.last_name}`
-                                )
-                              }
-                              className="ml-3 text-blue-600 hover:underline"
-                            >
-                              Preview
-                            </button>
                           </div>
                         )}
                         {profile.video_url && (
@@ -276,17 +240,6 @@ export default function ChurchSearch() {
                             >
                               View Video
                             </a>
-                            <button
-                              onClick={() =>
-                                handleViewVideo(
-                                  profile.video_url,
-                                  `${profile.first_name} ${profile.last_name}`
-                                )
-                              }
-                              className="ml-3 text-blue-600 hover:underline"
-                            >
-                              Preview
-                            </button>
                           </div>
                         )}
                       </div>
@@ -333,45 +286,6 @@ export default function ChurchSearch() {
           )}
         </section>
       </div>
-
-      <PDFViewer
-        isOpen={pdfViewer.isOpen}
-        onClose={() => setPdfViewer((prev) => ({ ...prev, isOpen: false }))}
-        pdfUrl={pdfViewer.url}
-        title={pdfViewer.title}
-      />
-
-      {videoViewer.isOpen && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-          <div className="bg-white rounded-lg p-4 w-full max-w-4xl max-h-[90vh] flex flex-col">
-            <div className="flex justify-between items-center mb-4">
-              <h3 className="text-lg font-semibold">{videoViewer.title}</h3>
-              <button
-                onClick={() => setVideoViewer((prev) => ({ ...prev, isOpen: false }))}
-                className="text-gray-500 hover:text-gray-700 transition-colors"
-              >
-                <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M6 18L18 6M6 6l12 12"
-                  />
-                </svg>
-              </button>
-            </div>
-            <div className="flex-1 overflow-hidden">
-              <iframe
-                src={getYouTubeEmbedUrl(videoViewer.url)}
-                title="YouTube video player"
-                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                allowFullScreen
-                className="w-full h-full"
-              ></iframe>
-            </div>
-          </div>
-        </div>
-      )}
     </div>
   );
 }

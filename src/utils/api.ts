@@ -89,7 +89,8 @@ export const apiClient = {
       const errorBody = await response.json().catch(() => ({}));
       throw errorBody;
     }
-    return response.json();
+    const data = await response.json();
+    return data as T;
   },
 
   async post<T>(endpoint: string, data: any, auth = true): Promise<T> {
@@ -248,6 +249,9 @@ export const API_ENDPOINTS = {
   // Churches (frontend routes)
   CHURCHES: '/api/churches/',
 
+  // Approved Candidates
+  APPROVED_CANDIDATES: '/api/approved-candidates/',
+
   // Job listings
   JOB_LISTINGS: '/api/jobs/',
 
@@ -405,4 +409,8 @@ export const expressChurchInterest = (jobId: number, profileId: number) =>
 
 export const withdrawInterest = async (id: number): Promise<void> => {
   await apiClient.delete(`${API_ENDPOINTS.MUTUAL_INTERESTS}${id}/`);
+};
+
+export const getApprovedCandidates = async (): Promise<PaginatedResponse<Profile>> => {
+  return apiClient.get(API_ENDPOINTS.APPROVED_CANDIDATES);
 };
