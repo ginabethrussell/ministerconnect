@@ -60,7 +60,10 @@ export default function ChurchSearch() {
 
   const handleToggleInterest = async (profileId: number) => {
     const existingInterest = allInterests.find(
-      (i) => i.profile === profileId && i.job_listing === Number(selectedJobId)
+      (interest) =>
+        interest.profile === profileId &&
+        interest.job_listing === Number(selectedJobId) &&
+        interest.expressed_by === 'church'
     );
 
     try {
@@ -195,12 +198,16 @@ export default function ChurchSearch() {
             <ul className="space-y-6">
               {profilesWithInterest &&
                 filteredProfiles.map((profile) => {
-                  const hasExpressedInterest =
-                    profile.interest?.expressed_by === 'church' &&
-                    profile.interest?.job_listing === Number(selectedJobId);
+                  const hasExpressedInterest = !!allInterests.find(
+                    (interest) =>
+                      interest.profile === profile.id &&
+                      interest.job_listing === Number(selectedJobId) &&
+                      interest.expressed_by === 'church'
+                  );
+
                   return (
                     <li
-                      key={profile.id}
+                      key={`${profile.id}-${selectedJobId}`}
                       className="bg-white rounded-lg shadow-sm border border-gray-200 p-6"
                     >
                       {/* Top Section */}
@@ -228,6 +235,7 @@ export default function ChurchSearch() {
                         {/* Action Buttons */}
                         <div className="w-full md:w-[250px] flex-shrink-0 flex flex-col gap-3">
                           <ExpressInterestButton
+                            key={`${profile.id}-${selectedJobId}`}
                             id={String(profile.id)}
                             hasExpressedInterest={hasExpressedInterest}
                             onExpressInterest={() => handleToggleInterest(profile.id)}
