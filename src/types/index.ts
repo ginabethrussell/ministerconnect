@@ -35,10 +35,10 @@ export interface InviteCode {
   id: number;
   code: string;
   event: string; // Human-readable description of the event/purpose
-  used_count: number; // Current number of times used
-  status: 'active' | 'expired' | 'used';
-  created_by: number; // User ID who created this code
-  expires_at: string; // Expiration date
+  used_count: number;
+  status: 'active' | 'inactive' | 'expired';
+  created_by: number;
+  expires_at: string;
   created_at: string;
   updated_at: string;
 }

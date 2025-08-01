@@ -225,7 +225,6 @@ export const API_ENDPOINTS = {
   CREATE_USER: '/api/users/create/',
 
   // Invite codes (Django backend)
-  CREATE_INVITE_CODE: '/api/invite-codes/create/',
   INVITE_CODES: '/api/invite-codes/',
 
   // Candidates (Django backend)
@@ -281,21 +280,27 @@ export const getInviteCodes = async (): Promise<PaginatedResponse<InviteCode>> =
   return apiClient.get(API_ENDPOINTS.INVITE_CODES);
 };
 
-export const createInviteCode = async (data: { code: string; event: string }) => {
+export const createInviteCode = async (data: {
+  code: string;
+  event: string;
+  expires_at: string;
+}) => {
   return apiClient.post(API_ENDPOINTS.INVITE_CODES, data);
 };
 
-export const updateInviteCode = async (id: number, data: { code: string; event: string }) => {
-  return apiClient.put(`/api/admin/invite-codes/${id}`, data);
+export const updateInviteCode = async (
+  id: number,
+  data: { code: string; event: string; expires_at: string; status: string }
+) => {
+  return apiClient.put(`${API_ENDPOINTS.INVITE_CODES}${id}/`, data);
+};
+
+export const patchInviteCodeStatus = async (id: number, data: { status: string }) => {
+  return apiClient.patch(`${API_ENDPOINTS.INVITE_CODES}${id}/`, data);
 };
 
 export const deleteInviteCode = async (id: number) => {
   return apiClient.delete(`/api/admin/invite-codes/${id}`);
-};
-
-// Church Dashboard (stub, update as needed)
-export const getChurchDashboard = async () => {
-  // ... implement as needed ...
 };
 
 export const getMe = async (): Promise<User> => {
@@ -334,7 +339,6 @@ export const resetPassword = async (data: {
   return apiClient.post(API_ENDPOINTS.RESET_PASSWORD, body);
 };
 
-// Fetch current authenticated user profile
 export const getProfile = async (): Promise<Profile> => {
   return apiClient.get(API_ENDPOINTS.PROFILE);
 };
