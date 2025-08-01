@@ -1,7 +1,6 @@
 'use client';
 import React, { useEffect, useState } from 'react';
 import Image from 'next/image';
-import PDFViewer from '../../components/PDFViewer';
 import { getSuperAdminProfiles } from '../../utils/api'; // Using the centralized API
 import { Profile } from '@/context/ProfileContext'; // Using the centralized type
 
@@ -286,13 +285,6 @@ const AdminReview = () => {
           )}
         </section>
       </div>
-
-      <PDFViewer
-        isOpen={pdfViewer.isOpen}
-        onClose={() => setPdfViewer((prev) => ({ ...prev, isOpen: false }))}
-        pdfUrl={pdfViewer.url}
-        title={pdfViewer.title}
-      />
 
       {videoViewer.isOpen && (
         <div className="fixed inset-0 z-50 bg-black bg-opacity-75 flex items-center justify-center p-4">
