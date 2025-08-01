@@ -1,11 +1,11 @@
+'use client';
 import React, { useEffect, useState } from 'react';
-import { getAdminJobListings, updateJobListingStatus } from '../../utils/api';
-import { JobListing, Church } from '../../types';
-
-type JobListingWithChurch = JobListing & { church: Church };
+import { getAllJobs, reviewChurchJobs } from '../../utils/api';
+import { JobListing } from '../../types';
+import { titleCase } from '@/utils/helpers';
 
 const AdminJobReview = () => {
-  const [jobListings, setJobListings] = useState<JobListingWithChurch[]>([]);
+  const [jobListings, setJobListings] = useState<JobListing[]>([]);
   const [filterStatus, setFilterStatus] = useState<string>('all');
   const [loading, setLoading] = useState(true);
   const [actionLoadingId, setActionLoadingId] = useState<number | null>(null);
@@ -18,8 +18,8 @@ const AdminJobReview = () => {
   const loadJobListings = async () => {
     setLoading(true);
     try {
-      const data = await getAdminJobListings();
-      setJobListings(data);
+      const jobsRes = await getAllJobs();
+      setJobListings(jobsRes.results);
     } catch (error) {
       console.error('Error loading job listings:', error);
     } finally {
@@ -30,8 +30,7 @@ const AdminJobReview = () => {
   const handleStatusUpdate = async (id: number, status: 'approved' | 'rejected') => {
     setActionLoadingId(id);
     try {
-      await updateJobListingStatus(id, status);
-      // Optimistically update the UI
+      await reviewChurchJobs(id, status);
       setJobListings((prevListings) =>
         prevListings.map((job) => (job.id === id ? { ...job, status: status } : job))
       );
@@ -135,7 +134,7 @@ const AdminJobReview = () => {
           ) : (
             <div className="divide-y divide-gray-200">
               {filteredListings.map((job) => (
-                <div key={job.id} className="p-6">
+                <div key={job.id} className="p-6  mb-4">
                   <div className="flex justify-between items-start flex-wrap gap-4">
                     <div className="flex-1">
                       <h3 className="text-xl font-semibold text-gray-800 mb-2">{job.title}</h3>
@@ -155,7 +154,7 @@ const AdminJobReview = () => {
                           job.status
                         )}`}
                       >
-                        {job.status}
+                        {titleCase(job.status)}
                       </span>
                     </div>
                     <div className="flex-shrink-0 flex items-center gap-2">
@@ -195,10 +194,7 @@ const AdminJobReview = () => {
                             <strong>Name:</strong> {job.church.name}
                           </p>
                           <p>
-                            <strong>Email:</strong> {job.church.email}
-                          </p>
-                          <p>
-                            <strong>Phone:</strong> {job.church.phone}
+                            <strong>Location:</strong> {`${job.church.city}, ${job.church.state}`}
                           </p>
                           <p>
                             <strong>Website:</strong>{' '}
@@ -226,6 +222,17 @@ const AdminJobReview = () => {
                         <div className="prose prose-sm max-w-none bg-gray-50 p-4 rounded-md">
                           {job.about_church}
                         </div>
+                      </div>
+                      <div>
+                        <h4 className="font-semibold text-gray-800 mb-2">Job Link</h4>
+                        <a
+                          href={job.job_url_link}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="text-efcaAccent hover:underline"
+                        >
+                          {job.job_url_link}
+                        </a>
                       </div>
                     </div>
                   )}

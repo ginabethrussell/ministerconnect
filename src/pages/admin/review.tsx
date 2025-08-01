@@ -1,20 +1,15 @@
 'use client';
 import React, { useEffect, useState } from 'react';
 import { getCandidateProfiles, reviewCandidateProfiles } from '../../utils/api'; // Using the centralized API
-import { Profile } from '@/context/ProfileContext'; // Using the centralized type
+import { Profile } from '@/context/ProfileContext';
+import { titleCase } from '@/utils/helpers';
 import { UserIcon } from 'lucide-react';
 
 const AdminReview = () => {
   const [profiles, setProfiles] = useState<Profile[]>([]);
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const [sortBy, setSortBy] = useState<'name' | 'createdAt'>('name');
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const [filterEvent, setFilterEvent] = useState<string>('');
   const [filterStatus, setFilterStatus] = useState<string>('all');
   const [loading, setLoading] = useState(true);
   const [actionLoadingId, setActionLoadingId] = useState<string | null>(null);
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const [events, setEvents] = useState<string[]>([]);
 
   useEffect(() => {
     const fetchProfiles = async () => {
@@ -140,7 +135,7 @@ const AdminReview = () => {
                                 : 'bg-yellow-100 text-yellow-800'
                           }`}
                         >
-                          {profile.status}
+                          {titleCase(profile.status)}
                         </p>
                       </div>
                     </div>

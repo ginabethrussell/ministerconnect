@@ -226,7 +226,7 @@ export const API_ENDPOINTS = {
 
   // Invite codes (Django backend)
   CREATE_INVITE_CODE: '/api/invite-codes/create/',
-  LIST_INVITE_CODES: '/api/invite-codes/',
+  INVITE_CODES: '/api/invite-codes/',
 
   // Candidates (Django backend)
   CANDIDATE_REGISTER: '/api/candidates/register/',
@@ -257,19 +257,7 @@ export const API_ENDPOINTS = {
 
   // Mutual interests
   MUTUAL_INTERESTS: '/api/mutual-interests/',
-
-  // Invite codes (frontend routes)
-  INVITE_CODES: '/api/invite-codes/',
 } as const;
-
-// Admin Job Listings
-export const getAdminJobListings = async () => {
-  return apiClient.get(API_ENDPOINTS.JOB_LISTINGS);
-};
-
-export const updateJobListingStatus = async (id: number, status: 'approved' | 'rejected') => {
-  return apiClient.post(`/api/admin/jobs/${id}`, { status });
-};
 
 // Admin Churches
 export const getAdminChurches = async () => {
@@ -371,6 +359,10 @@ export const createJob = async (jobData: Partial<JobListing>): Promise<JobListin
   return apiClient.post(API_ENDPOINTS.JOB_LISTINGS, jobData);
 };
 
+export const getAllJobs = async (): Promise<PaginatedResponse<JobListing>> => {
+  return apiClient.get(API_ENDPOINTS.JOB_LISTINGS);
+};
+
 export const deleteJob = async (id: number): Promise<void> => {
   await apiClient.delete(`${API_ENDPOINTS.JOB_LISTINGS}${id}/`);
 };
@@ -428,4 +420,11 @@ export const reviewCandidateProfiles = async (
   status: 'approved' | 'rejected'
 ): Promise<PaginatedResponse<Profile>> => {
   return apiClient.patch(`${API_ENDPOINTS.PROFILES}${id}/review/`, { id, status });
+};
+
+export const reviewChurchJobs = async (
+  id: number,
+  status: 'approved' | 'rejected'
+): Promise<PaginatedResponse<JobListing>> => {
+  return apiClient.patch(`${API_ENDPOINTS.JOB_LISTINGS}${id}/review/`, { id, status });
 };
