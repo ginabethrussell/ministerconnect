@@ -216,7 +216,7 @@ export default function ChurchSearch() {
                               />
                             ) : (
                               <div className="object-cover rounded-full">
-                                <UserIcon width="36" height="36" />
+                                <UserIcon />
                               </div>
                             )}
                           </div>
@@ -256,7 +256,7 @@ export default function ChurchSearch() {
                           </p>
                           <button
                             onClick={() => handleCopyContact(profile)}
-                            className="mt-2 text-sm text-blue-600 hover:underline"
+                            className="mt-4 text-sm text-blue-600 hover:underline"
                           >
                             {copyStatus[profile.id] === 'Copied!' ? (
                               <div className="flex">

@@ -8,7 +8,7 @@ const UserIcon = ({ width = '64', height = '64' }) => {
       viewBox="0 0 24 24"
       strokeWidth={1.5}
       stroke="#D1D5DB"
-      className={`w-${width} h-${height}`}
+      className="w-40 h-40"
     >
       <path
         strokeLinecap="round"
