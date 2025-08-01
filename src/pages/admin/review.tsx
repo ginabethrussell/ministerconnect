@@ -1,21 +1,8 @@
 'use client';
 import React, { useEffect, useState } from 'react';
-import Image from 'next/image';
-import { getSuperAdminProfiles } from '../../utils/api'; // Using the centralized API
+import { getCandidateProfiles, reviewCandidateProfiles } from '../../utils/api'; // Using the centralized API
 import { Profile } from '@/context/ProfileContext'; // Using the centralized type
-
-function getYouTubeEmbedUrl(url: string): string {
-  if (!url) return '';
-  const liveMatch = url.match(/youtube\.com\/live\/([\w-]+)/);
-  const watchMatch = url.match(/[?&]v=([\w-]+)/);
-  let videoId = '';
-  if (liveMatch) {
-    videoId = liveMatch[1];
-  } else if (watchMatch) {
-    videoId = watchMatch[1];
-  }
-  return videoId ? `https://www.youtube.com/embed/${videoId}` : url;
-}
+import { UserIcon } from 'lucide-react';
 
 const AdminReview = () => {
   const [profiles, setProfiles] = useState<Profile[]>([]);
@@ -29,23 +16,13 @@ const AdminReview = () => {
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [events, setEvents] = useState<string[]>([]);
 
-  const [videoViewer, setVideoViewer] = useState<{
-    isOpen: boolean;
-    url: string;
-    title: string;
-  }>({
-    isOpen: false,
-    url: '',
-    title: '',
-  });
-
   useEffect(() => {
     const fetchProfiles = async () => {
       try {
         setLoading(true);
-        const data = (await getSuperAdminProfiles()) as Profile[];
-        setProfiles(data);
-        // Placeholder for event
+        const profilesRes = await getCandidateProfiles();
+        setProfiles(profilesRes.results);
+        console.log(profilesRes.results);
       } catch (error) {
         console.error('Failed to fetch profiles:', error);
       } finally {
@@ -57,21 +34,23 @@ const AdminReview = () => {
 
   const handleStatus = async (id: number, status: 'approved' | 'rejected') => {
     setActionLoadingId(id.toString());
-    // Replace with actual API call to update status
-    console.log(`Updating profile ${id} to ${status}`);
-    // Simulating API call
-    await new Promise((resolve) => setTimeout(resolve, 500));
-    setProfiles((prevProfiles) => prevProfiles.map((p) => (p.id === id ? { ...p, status } : p)));
+    try {
+      await reviewCandidateProfiles(id, status);
+      setProfiles((prevProfiles) => prevProfiles.map((p) => (p.id === id ? { ...p, status } : p)));
+    } catch (error) {
+      console.error('Failed to review profile:', error);
+    } finally {
+      setActionLoadingId(null);
+    }
     setActionLoadingId(null);
   };
 
-  const handleViewVideo = (videoUrl: string, candidateName: string) => {
-    setVideoViewer({
-      isOpen: true,
-      url: videoUrl,
-      title: `${candidateName}'s Video`,
-    });
-  };
+  const filteredProfiles = profiles.filter((p) => {
+    if (filterStatus === 'all') {
+      return true;
+    }
+    return p.status === filterStatus;
+  });
 
   return (
     <div className="min-h-screen bg-gray-100 p-8">
@@ -112,6 +91,16 @@ const AdminReview = () => {
             >
               Approved ({profiles.filter((p) => p.status === 'approved').length})
             </button>
+            <button
+              onClick={() => setFilterStatus('rejected')}
+              className={`px-4 py-2 rounded-md font-medium text-sm ${
+                filterStatus === 'rejected'
+                  ? 'bg-blue-600 text-white'
+                  : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
+              }`}
+            >
+              Rejected ({profiles.filter((p) => p.status === 'rejected').length})
+            </button>
           </div>
 
           {loading ? (
@@ -124,18 +113,22 @@ const AdminReview = () => {
             </div>
           ) : (
             <div className="grid gap-6 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
-              {profiles.map((profile, idx) => {
-                const fullName = `${profile.city} ${profile.state}`;
+              {filteredProfiles.map((profile, idx) => {
+                const fullName = `${profile.user.first_name} ${profile.user.last_name}`;
                 return (
                   <div key={`${fullName}-${idx}`} className="bg-white rounded-lg shadow-md p-6">
                     <div className="flex items-start gap-4 mb-4">
-                      <Image
-                        src={profile.profile_image ?? ''}
-                        alt={`${fullName}`}
-                        width={200}
-                        height={200}
-                        className="w-16 h-16 rounded-lg object-cover"
-                      />
+                      {profile.profile_image ? (
+                        <img
+                          src={profile.profile_image}
+                          alt={`${fullName}`}
+                          className="w-16 h-16 rounded-lg object-cover border-2 border-gray-300 shadow-xlg"
+                        />
+                      ) : (
+                        <div className="object-cover rounded-full border-2 border-gray-300 shadow-xlg">
+                          <UserIcon />
+                        </div>
+                      )}
                       <div className="flex-1">
                         <h3 className="text-xl font-bold text-gray-900">{fullName}</h3>
                         <p
@@ -175,9 +168,9 @@ const AdminReview = () => {
                       </div>
                     </div>
 
-                    {/* Documents Section */}
+                    {/* Documents & MediaSection */}
                     <div className="mb-6 p-4 bg-gray-50 rounded-lg">
-                      <h4 className="font-semibold text-gray-800 mb-3">Documents</h4>
+                      <h4 className="font-semibold text-gray-800 mb-3">Documents & Media</h4>
                       <div className="space-y-2">
                         {profile.resume && (
                           <div className="flex items-center gap-4 text-sm">
@@ -203,12 +196,6 @@ const AdminReview = () => {
                             >
                               View
                             </a>
-                            <button
-                              onClick={() => handleViewVideo(profile.video_url || '', fullName)}
-                              className="text-blue-600 hover:underline font-medium"
-                            >
-                              Preview
-                            </button>
                           </div>
                         )}
                       </div>
@@ -238,7 +225,7 @@ const AdminReview = () => {
                     </div>
 
                     {/* Action Buttons */}
-                    {profile.status !== 'approved' && (
+                    {profile.status !== 'approved' && profile.status !== 'rejected' && (
                       <div className="pt-4 border-t border-gray-200 flex gap-2">
                         <button
                           onClick={() => handleStatus(profile.id, 'approved')}
@@ -263,31 +250,6 @@ const AdminReview = () => {
           )}
         </section>
       </div>
-
-      {videoViewer.isOpen && (
-        <div className="fixed inset-0 z-50 bg-black bg-opacity-75 flex items-center justify-center p-4">
-          <div className="bg-white p-4 rounded-lg shadow-xl max-w-4xl w-full">
-            <div className="flex justify-between items-center mb-4">
-              <h2 className="text-xl font-bold">{videoViewer.title}</h2>
-              <button
-                onClick={() => setVideoViewer({ isOpen: false, url: '', title: '' })}
-                className="text-2xl font-bold leading-none"
-              >
-                &times;
-              </button>
-            </div>
-            <div className="aspect-w-16 aspect-h-9">
-              <iframe
-                src={getYouTubeEmbedUrl(videoViewer.url)}
-                frameBorder="0"
-                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                allowFullScreen
-                className="w-full h-full"
-              ></iframe>
-            </div>
-          </div>
-        </div>
-      )}
     </div>
   );
 };

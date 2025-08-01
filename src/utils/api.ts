@@ -260,18 +260,7 @@ export const API_ENDPOINTS = {
 
   // Invite codes (frontend routes)
   INVITE_CODES: '/api/invite-codes/',
-
-  // Superadmin
-  SUPERADMIN_DASHBOARD: '/api/superadmin/dashboard/',
-  SUPERADMIN_USERS: '/api/superadmin/users/',
-  SUPERADMIN_PROFILES: '/api/superadmin/profiles/',
-  SUPERADMIN_CHURCHES: '/api/superadmin/churches/',
 } as const;
-
-// Superadmin
-export const getSuperAdminProfiles = async () => {
-  return apiClient.get(API_ENDPOINTS.SUPERADMIN_PROFILES);
-};
 
 // Admin Job Listings
 export const getAdminJobListings = async () => {
@@ -428,4 +417,15 @@ export const withdrawInterest = async (id: number): Promise<void> => {
 
 export const getApprovedCandidates = async (): Promise<PaginatedResponse<Profile>> => {
   return apiClient.get(API_ENDPOINTS.APPROVED_CANDIDATES);
+};
+
+export const getCandidateProfiles = async (): Promise<PaginatedResponse<Profile>> => {
+  return apiClient.get(API_ENDPOINTS.PROFILES);
+};
+
+export const reviewCandidateProfiles = async (
+  id: number,
+  status: 'approved' | 'rejected'
+): Promise<PaginatedResponse<Profile>> => {
+  return apiClient.patch(`${API_ENDPOINTS.PROFILES}${id}/review/`, { id, status });
 };
