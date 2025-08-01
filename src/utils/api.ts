@@ -1,4 +1,4 @@
-import { JobListing, PaginatedResponse, MutualInterest, TokenResponse } from '@/types';
+import { JobListing, PaginatedResponse, MutualInterest, TokenResponse, InviteCode } from '@/types';
 import { User } from '@/context/UserContext';
 import { Profile } from '@/context/ProfileContext';
 // API client configuration for backend integration
@@ -273,11 +273,6 @@ export const getSuperAdminProfiles = async () => {
   return apiClient.get(API_ENDPOINTS.SUPERADMIN_PROFILES);
 };
 
-// Mutual Interests
-export const getMutualInterests = async () => {
-  return apiClient.get(API_ENDPOINTS.MUTUAL_INTERESTS);
-};
-
 // Admin Job Listings
 export const getAdminJobListings = async () => {
   return apiClient.get(API_ENDPOINTS.JOB_LISTINGS);
@@ -304,8 +299,8 @@ export const updateChurch = async (id: number, data: any) => {
   return apiClient.put(`/api/admin/churches/${id}`, data);
 };
 
-// Admin Invite Codes
-export const getAdminInviteCodes = async () => {
+// Invite Codes
+export const getInviteCodes = async (): Promise<PaginatedResponse<InviteCode>> => {
   return apiClient.get(API_ENDPOINTS.INVITE_CODES);
 };
 
@@ -397,6 +392,10 @@ export const getCandidateInterests = async (): Promise<PaginatedResponse<MutualI
 
 export const getChurchInterests = async (): Promise<PaginatedResponse<MutualInterest>> => {
   return apiClient.get(`${API_ENDPOINTS.MUTUAL_INTERESTS}my-church-interests/`);
+};
+
+export const getMutualInterests = async (): Promise<PaginatedResponse<MutualInterest>> => {
+  return apiClient.get(`${API_ENDPOINTS.MUTUAL_INTERESTS}matches/`);
 };
 
 interface ExpressInterestInput {

@@ -113,3 +113,11 @@ export const mergeProfilesWithInterest = (
     };
   });
 };
+
+export const normalizeProfiles = (profiles: Profile[]) => {
+  const map: Record<number, Profile> = {};
+  profiles.forEach((p) => {
+    map[p.id] = p;
+  });
+  return map;
+};

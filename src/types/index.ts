@@ -94,6 +94,10 @@ export type ProfileWithInterest = Profile & {
   interest?: MutualInterest;
 };
 
+export type EnrichedMutualInterest = Omit<MutualInterest, 'profile'> & {
+  profile: Profile;
+};
+
 export interface ActivityLog {
   id: number;
   user_id: number | null; // User who performed the action (null for system events)

@@ -1,58 +1,44 @@
-import React, { useState, useEffect } from 'react';
-import Image from 'next/image';
-import PDFViewer from '../../components/PDFViewer';
-import { getMutualInterests } from '../../utils/api';
-import { MutualInterest, JobListing, Profile, InviteCode } from '../../types';
-
-function getYouTubeEmbedUrl(url: string): string {
-  if (!url) return '';
-  const liveMatch = url.match(/youtube\.com\/live\/([\w-]+)/);
-  const watchMatch = url.match(/[?&]v=([\w-]+)/);
-  let videoId = '';
-  if (liveMatch) {
-    videoId = liveMatch[1];
-  } else if (watchMatch) {
-    videoId = watchMatch[1];
-  }
-  return videoId ? `https://www.youtube.com/embed/${videoId}` : url;
-}
+'use client';
+import React, { useState, useEffect, useMemo } from 'react';
+import { getApprovedCandidates, getMutualInterests, getInviteCodes } from '@/utils/api';
+import { normalizeProfiles, formatPhone } from '@/utils/helpers';
+import { Profile } from '@/context/ProfileContext';
+import { MutualInterest, InviteCode, EnrichedMutualInterest } from '../../types';
 
 export default function MutualInterests() {
   const [loading, setLoading] = useState(true);
-  const [mutualInterests, setMutualInterests] = useState<
-    {
-      interest: MutualInterest;
-      profile: Profile;
-      jobListing: JobListing;
-      inviteCode?: InviteCode;
-    }[]
-  >([]);
+  const [mutualInterests, setMutualInterests] = useState<MutualInterest[]>([]);
+  const [profiles, setProfiles] = useState<Profile[]>([]);
+  const [inviteCodes, setInviteCodes] = useState<InviteCode[]>([]);
   const [selectedJob, setSelectedJob] = useState<string>('all');
-  const [pdfViewer, setPdfViewer] = useState<{
-    isOpen: boolean;
-    url: string;
-    title: string;
-  }>({
-    isOpen: false,
-    url: '',
-    title: '',
-  });
-  const [videoViewer, setVideoViewer] = useState<{
-    isOpen: boolean;
-    url: string;
-    title: string;
-  }>({
-    isOpen: false,
-    url: '',
-    title: '',
-  });
-  const [copyStatus, setCopyStatus] = useState<{ [key: number]: string }>({});
+  const [copyStatus, setCopyStatus] = useState<{
+    [key: number]: { message: string; success: boolean };
+  }>({});
+
+  const profileMap = useMemo(() => normalizeProfiles(profiles), [profiles]);
+
+  const enrichedInterests = useMemo<EnrichedMutualInterest[]>(() => {
+    if (mutualInterests && mutualInterests.length > 0) {
+      return mutualInterests.map((interest) => ({
+        ...interest,
+        profile: profileMap[interest.profile],
+      }));
+    }
+    return [];
+  }, [mutualInterests, profileMap]);
 
   useEffect(() => {
     const fetchMutualInterests = async () => {
       try {
-        const data: any = await getMutualInterests();
-        setMutualInterests(data);
+        const [profilesRes, mutualInterestsRes, inviteCodesRes] = await Promise.all([
+          getApprovedCandidates(),
+          getMutualInterests(),
+          getInviteCodes(),
+        ]);
+
+        setProfiles(profilesRes.results);
+        setMutualInterests(mutualInterestsRes.results);
+        setInviteCodes(inviteCodesRes.results);
       } catch (error) {
         console.error('Failed to fetch mutual interests:', error);
       } finally {
@@ -62,50 +48,47 @@ export default function MutualInterests() {
     fetchMutualInterests();
   }, []);
 
-  const jobListings = Array.from(
-    new Map(mutualInterests.map((item) => [item.jobListing.id, item.jobListing])).values()
+  let jobListings: any = [];
+  if (mutualInterests && mutualInterests.length > 0) {
+    jobListings = Array.from(
+      new Map(
+        mutualInterests.map((item) => [
+          item.job_listing,
+          { id: item.job_listing, title: item.job_title },
+        ])
+      ).values()
+    );
+  }
+
+  const filteredCandidates = enrichedInterests.filter(
+    ({ job_listing }) => selectedJob === 'all' || job_listing.toString() === selectedJob
   );
-
-  const filteredCandidates = mutualInterests.filter(
-    ({ jobListing }) => selectedJob === 'all' || jobListing.id.toString() === selectedJob
-  );
-
-  const handleViewResume = (resumeUrl: string, candidateName: string) => {
-    setPdfViewer({
-      isOpen: true,
-      url: resumeUrl,
-      title: `${candidateName}'s Resume`,
-    });
-  };
-
-  const handleViewVideo = (videoUrl: string | null, candidateName: string) => {
-    if (!videoUrl) return;
-    setVideoViewer({
-      isOpen: true,
-      url: videoUrl,
-      title: `${candidateName}'s Video`,
-    });
-  };
 
   const handleCopyContact = (profile: Profile) => {
-    const contactInfo = `Name: ${profile.first_name} ${profile.last_name}\nEmail: ${profile.email}\nPhone: ${profile.phone}`;
+    const contactInfo = `Name: ${profile.user.first_name} ${profile.user.last_name}\nEmail: ${profile.user.email}\nPhone: ${formatPhone(profile.phone)}`;
+
     navigator.clipboard.writeText(contactInfo).then(() => {
-      setCopyStatus((prev) => ({ ...prev, [profile.id]: 'Copied!' }));
+      setCopyStatus((prev) => ({
+        ...prev,
+        [profile.id]: { message: 'Copied!', success: true },
+      }));
+
       setTimeout(() => {
-        setCopyStatus((prev) => ({ ...prev, [profile.id]: '' }));
+        setCopyStatus((prev) => ({
+          ...prev,
+          [profile.id]: { message: '', success: false },
+        }));
       }, 2000);
     });
   };
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const getJobTitle = (jobId: number) => {
-    const job = jobListings.find((j) => j.id === jobId);
-    return job ? job.title : 'Unknown Position';
+
+  const getTotalInterests = () => {
+    if (mutualInterests) return mutualInterests.length;
+    return 0;
   };
 
-  const getTotalInterests = () => mutualInterests.length;
-
   const getInterestsByJob = (jobId: number) =>
-    mutualInterests.filter((c) => c.jobListing.id === jobId).length;
+    mutualInterests.filter((match) => match.job_listing === jobId).length;
 
   // Show loading state
   if (loading) {
@@ -146,14 +129,12 @@ export default function MutualInterests() {
           <div className="bg-white rounded-lg shadow-sm p-6">
             <h3 className="text-lg font-semibold text-efcaDark mb-2">Recent Activity</h3>
             <p className="text-3xl font-bold text-efcaAccent">
-              {
-                mutualInterests.filter((c) => {
-                  const interestDate = new Date(c.interest.created_at);
-                  const weekAgo = new Date();
-                  weekAgo.setDate(weekAgo.getDate() - 7);
-                  return interestDate > weekAgo;
-                }).length
-              }
+              {mutualInterests?.filter((match) => {
+                const interestDate = new Date(match.created_at);
+                const weekAgo = new Date();
+                weekAgo.setDate(weekAgo.getDate() - 7);
+                return interestDate > weekAgo;
+              }).length ?? 0}
             </p>
             <p className="text-sm text-gray-600">Interests in the last 7 days</p>
           </div>
@@ -169,7 +150,7 @@ export default function MutualInterests() {
               className="px-4 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-efcaAccent bg-white"
             >
               <option value="all">All Positions ({getTotalInterests()})</option>
-              {jobListings.map((job) => (
+              {jobListings.map((job: any) => (
                 <option key={job.id} value={job.id}>
                   {job.title} ({getInterestsByJob(job.id)})
                 </option>
@@ -191,9 +172,9 @@ export default function MutualInterests() {
             </div>
           ) : (
             <ul className="space-y-6">
-              {filteredCandidates.map(({ profile, interest, jobListing, inviteCode }) => (
+              {filteredCandidates.map((enrichedInterest) => (
                 <li
-                  key={profile.id}
+                  key={enrichedInterest.id}
                   className="bg-white rounded-lg shadow-sm border border-gray-200 p-6"
                 >
                   {/* Top Section */}
@@ -201,13 +182,11 @@ export default function MutualInterests() {
                     {/* Candidate Info */}
                     <div className="flex items-start gap-6 flex-grow">
                       <div className="w-24 h-24 flex-shrink-0">
-                        {profile.photo ? (
-                          <Image
-                            src={profile.photo}
-                            alt={`${profile.first_name} ${profile.last_name}`}
+                        {enrichedInterest.profile.profile_image ? (
+                          <img
+                            src={enrichedInterest.profile.profile_image}
+                            alt={`${enrichedInterest.profile.user.first_name} ${enrichedInterest.profile.user.last_name}`}
                             className="w-24 h-24 object-cover rounded-lg"
-                            height={200}
-                            width={200}
                           />
                         ) : (
                           <div className="w-24 h-24 rounded-lg bg-gray-200 flex items-center justify-center">
@@ -228,12 +207,14 @@ export default function MutualInterests() {
                         )}
                       </div>
                       <div className="flex-grow">
-                        <h3 className="text-2xl font-bold text-efcaDark">{`${profile.first_name} ${profile.last_name}`}</h3>
+                        <h3 className="text-2xl font-bold text-efcaDark">{`${enrichedInterest.profile.user.first_name} ${enrichedInterest.profile.user.last_name}`}</h3>
                         <p className="text-gray-600">
-                          Interested in: <span className="font-semibold">{jobListing.title}</span>
+                          Interested in:{' '}
+                          <span className="font-semibold">{enrichedInterest.job_title}</span>
                         </p>
                         <p className="text-sm text-gray-500">
-                          Interest expressed: {new Date(interest.created_at).toLocaleDateString()}
+                          Interest expressed:{' '}
+                          {new Date(enrichedInterest.created_at).toLocaleDateString()}
                         </p>
                       </div>
                     </div>
@@ -241,16 +222,20 @@ export default function MutualInterests() {
                     {/* Action Buttons */}
                     <div className="w-full md:w-[200px] flex-shrink-0 flex flex-col gap-3">
                       <a
-                        href={`mailto:${profile.email}`}
+                        href={`mailto:${enrichedInterest.profile.user.email}`}
                         className="px-4 py-2 bg-blue-600 text-white text-center rounded-md font-semibold hover:bg-blue-700 transition flex-1"
                       >
                         Send Email
                       </a>
                       <button
-                        onClick={() => handleCopyContact(profile)}
-                        className="px-4 py-2 bg-white text-gray-700 border border-gray-300 text-center rounded-md font-semibold hover:bg-gray-50 transition flex-1"
+                        onClick={() => handleCopyContact(enrichedInterest.profile)}
+                        className={`px-4 py-2 text-center rounded-md font-semibold transition flex-1 border ${
+                          copyStatus[enrichedInterest.profile.id]?.success
+                            ? 'bg-green-100 text-green-800 border-green-300'
+                            : 'bg-white text-gray-700 border-gray-300 hover:bg-gray-50'
+                        }`}
                       >
-                        {copyStatus[profile.id] || 'Copy Contact Info'}
+                        {copyStatus[enrichedInterest.profile.id]?.message || 'Copy Contact Info'}
                       </button>
                     </div>
                   </div>
@@ -263,11 +248,15 @@ export default function MutualInterests() {
                     {/* Contact Info */}
                     <div>
                       <h4 className="font-semibold text-gray-700 mb-2">Contact Information</h4>
-                      <p className="text-sm text-gray-600">Email: {profile.email}</p>
-                      <p className="text-sm text-gray-600">Phone: {profile.phone}</p>
+                      <p className="text-sm text-gray-600">
+                        Email: {enrichedInterest.profile.user.email}
+                      </p>
+                      <p className="text-sm text-gray-600">
+                        Phone: {enrichedInterest.profile.phone}
+                      </p>
                       <p className="text-sm text-gray-600">
                         Location:{' '}
-                        {`${profile.street_address}, ${profile.city}, ${profile.state} ${profile.zipcode}`}
+                        {`${enrichedInterest.profile.street_address}, ${enrichedInterest.profile.city}, ${enrichedInterest.profile.state} ${enrichedInterest.profile.zipcode}`}
                       </p>
                     </div>
 
@@ -277,55 +266,33 @@ export default function MutualInterests() {
                       <div className="text-sm space-y-1">
                         <div>
                           <a
-                            href={profile.resume}
+                            href={enrichedInterest.profile.resume || ''}
                             target="_blank"
                             rel="noopener noreferrer"
                             className="text-efcaAccent hover:underline"
                           >
                             View Resume
                           </a>
-                          <button
-                            onClick={() =>
-                              handleViewResume(
-                                profile.resume,
-                                `${profile.first_name} ${profile.last_name}`
-                              )
-                            }
-                            className="ml-3 text-efcaAccent hover:underline"
-                          >
-                            Preview
-                          </button>
                         </div>
-                        {profile.video_url && (
+                        {enrichedInterest.profile.video_url && (
                           <div>
                             <a
-                              href={profile.video_url}
+                              href={enrichedInterest.profile.video_url}
                               target="_blank"
                               rel="noopener noreferrer"
                               className="text-efcaAccent hover:underline"
                             >
                               View Video
                             </a>
-                            <button
-                              onClick={() =>
-                                handleViewVideo(
-                                  profile.video_url,
-                                  `${profile.first_name} ${profile.last_name}`
-                                )
-                              }
-                              className="ml-3 text-efcaAccent hover:underline"
-                            >
-                              Preview
-                            </button>
                           </div>
                         )}
                       </div>
-                      {profile.placement_preferences &&
-                        profile.placement_preferences.length > 0 && (
+                      {enrichedInterest.profile.placement_preferences &&
+                        enrichedInterest.profile.placement_preferences.length > 0 && (
                           <div className="mt-2">
                             <h5 className="font-semibold text-gray-700 mb-1">Preferences</h5>
                             <div className="flex flex-wrap gap-1">
-                              {profile.placement_preferences.map((pref) => (
+                              {enrichedInterest.profile.placement_preferences.map((pref) => (
                                 <span
                                   key={pref}
                                   className="bg-gray-100 text-gray-800 text-xs font-medium px-2 py-0.5 rounded-full"
@@ -342,21 +309,33 @@ export default function MutualInterests() {
                     <div>
                       <h4 className="font-semibold text-gray-700 mb-2">Profile Details</h4>
                       <p className="text-sm text-gray-600">
-                        Status: {profile.status.charAt(0).toUpperCase() + profile.status.slice(1)}
+                        Status:{' '}
+                        {enrichedInterest.profile.status.charAt(0).toUpperCase() +
+                          enrichedInterest.profile.status.slice(1)}
                       </p>
-                      {inviteCode && (
-                        <p className="text-sm text-gray-600">Event: {inviteCode.event}</p>
-                      )}
-                      <p className="text-sm text-gray-600">
-                        Profile Created: {new Date(profile.created_at).toLocaleDateString()}
-                      </p>
-                      {profile.submitted_at && (
+                      {enrichedInterest.profile.invite_code && (
                         <p className="text-sm text-gray-600">
-                          Submitted: {new Date(profile.submitted_at).toLocaleDateString()}
+                          Event:{' '}
+                          {
+                            inviteCodes.find(
+                              (code) => code.id === enrichedInterest.profile.invite_code
+                            )?.event
+                          }
                         </p>
                       )}
                       <p className="text-sm text-gray-600">
-                        Last Updated: {new Date(profile.updated_at).toLocaleDateString()}
+                        Profile Created:{' '}
+                        {new Date(enrichedInterest.profile.created_at).toLocaleDateString()}
+                      </p>
+                      {enrichedInterest.profile.submitted_at && (
+                        <p className="text-sm text-gray-600">
+                          Submitted:{' '}
+                          {new Date(enrichedInterest.profile.submitted_at).toLocaleDateString()}
+                        </p>
+                      )}
+                      <p className="text-sm text-gray-600">
+                        Last Updated:{' '}
+                        {new Date(enrichedInterest.profile.updated_at).toLocaleDateString()}
                       </p>
                     </div>
                   </div>
@@ -366,39 +345,6 @@ export default function MutualInterests() {
           )}
         </section>
       </div>
-
-      <PDFViewer
-        isOpen={pdfViewer.isOpen}
-        onClose={() => setPdfViewer((prev) => ({ ...prev, isOpen: false }))}
-        pdfUrl={pdfViewer.url}
-        title={pdfViewer.title}
-      />
-
-      {/* Video Preview Modal */}
-      {videoViewer.isOpen && (
-        <div className="fixed inset-0 z-50 bg-black bg-opacity-75 flex items-center justify-center">
-          <div className="bg-white p-4 rounded-lg shadow-xl max-w-4xl w-full">
-            <div className="flex justify-between items-center mb-4">
-              <h2 className="text-xl font-bold">{videoViewer.title}</h2>
-              <button
-                onClick={() => setVideoViewer({ isOpen: false, url: '', title: '' })}
-                className="text-2xl font-bold"
-              >
-                &times;
-              </button>
-            </div>
-            <div className="aspect-w-16 aspect-h-9">
-              <iframe
-                src={getYouTubeEmbedUrl(videoViewer.url)}
-                frameBorder="0"
-                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                allowFullScreen
-                className="w-full h-full"
-              ></iframe>
-            </div>
-          </div>
-        </div>
-      )}
     </div>
   );
 }
