@@ -1,3 +1,5 @@
+import { Profile } from '@/context/ProfileContext';
+
 export interface TokenResponse {
   access: string;
   refresh: string;
@@ -43,8 +45,8 @@ export interface InviteCode {
 
 export interface PaginatedResponse<T> {
   count: number;
-  next: number | null;
-  previous: number | null;
+  next: string | null;
+  previous: string | null;
   results: T[];
 }
 
@@ -65,7 +67,7 @@ export interface JobListing {
   job_description: string;
   about_church: string;
   job_url_link: string;
-  status: 'draft' | 'pending' | 'approved' | 'rejected';
+  status: 'pending' | 'approved' | 'rejected';
   created_at: string;
   updated_at: string;
 }
@@ -86,6 +88,14 @@ export interface MutualInterest {
 
 export type JobWithInterest = JobListing & {
   interest?: MutualInterest;
+};
+
+export type ProfileWithInterest = Profile & {
+  interest?: MutualInterest;
+};
+
+export type EnrichedMutualInterest = Omit<MutualInterest, 'profile'> & {
+  profile: Profile;
 };
 
 export interface ActivityLog {

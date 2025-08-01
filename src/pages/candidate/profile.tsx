@@ -3,6 +3,7 @@ import React, { useState } from 'react';
 import { Profile, useProfile } from '@/context/ProfileContext';
 import { useUser } from '@/context/UserContext';
 import { patchProfileWithFile, resetProfileData } from '@/utils/api';
+import { formatPhone } from '@/utils/helpers';
 import UserIcon from '@/components/UserIcon';
 
 type Mode = 'view' | 'edit';
@@ -132,17 +133,6 @@ const CandidateProfilePage = () => {
 
   const normalizePhone = (phone: string) => {
     return phone.replace(/\D/g, '');
-  };
-
-  const formatPhone = (phone: string) => {
-    const cleaned = ('' + phone).replace(/\D/g, '');
-    if (cleaned.length === 10) {
-      return `(${cleaned.slice(0, 3)}) ${cleaned.slice(3, 6)}-${cleaned.slice(6)}`;
-    }
-    if (cleaned.length === 11 && cleaned[0] === '1') {
-      return `+1 (${cleaned.slice(1, 4)}) ${cleaned.slice(4, 7)}-${cleaned.slice(7)}`;
-    }
-    return phone;
   };
 
   const handleProfileUpdate = async (
@@ -606,6 +596,7 @@ const CandidateProfilePage = () => {
           'Music and worship',
           'Outreach/evangelism',
           'Pastoral care/counseling',
+          'Residency',
           'Seniors ministry',
           'Singles ministry',
           'Student/youth ministry',

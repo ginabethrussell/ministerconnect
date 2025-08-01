@@ -1,4 +1,4 @@
-import { JobListing, PaginatedResponse, MutualInterest, TokenResponse } from '@/types';
+import { JobListing, PaginatedResponse, MutualInterest, TokenResponse, InviteCode } from '@/types';
 import { User } from '@/context/UserContext';
 import { Profile } from '@/context/ProfileContext';
 // API client configuration for backend integration
@@ -89,7 +89,8 @@ export const apiClient = {
       const errorBody = await response.json().catch(() => ({}));
       throw errorBody;
     }
-    return response.json();
+    const data = await response.json();
+    return data as T;
   },
 
   async post<T>(endpoint: string, data: any, auth = true): Promise<T> {
@@ -248,6 +249,9 @@ export const API_ENDPOINTS = {
   // Churches (frontend routes)
   CHURCHES: '/api/churches/',
 
+  // Approved Candidates
+  APPROVED_CANDIDATES: '/api/approved-candidates/',
+
   // Job listings
   JOB_LISTINGS: '/api/jobs/',
 
@@ -267,11 +271,6 @@ export const API_ENDPOINTS = {
 // Superadmin
 export const getSuperAdminProfiles = async () => {
   return apiClient.get(API_ENDPOINTS.SUPERADMIN_PROFILES);
-};
-
-// Mutual Interests
-export const getMutualInterests = async () => {
-  return apiClient.get(API_ENDPOINTS.MUTUAL_INTERESTS);
 };
 
 // Admin Job Listings
@@ -300,8 +299,8 @@ export const updateChurch = async (id: number, data: any) => {
   return apiClient.put(`/api/admin/churches/${id}`, data);
 };
 
-// Admin Invite Codes
-export const getAdminInviteCodes = async () => {
+// Invite Codes
+export const getInviteCodes = async (): Promise<PaginatedResponse<InviteCode>> => {
   return apiClient.get(API_ENDPOINTS.INVITE_CODES);
 };
 
@@ -375,8 +374,28 @@ export const getApprovedJobs = async (): Promise<PaginatedResponse<JobListing>> 
   return apiClient.get(`${API_ENDPOINTS.JOB_LISTINGS}?status=approved`);
 };
 
+export const getChurchJobs = async (): Promise<PaginatedResponse<JobListing>> => {
+  return apiClient.get(API_ENDPOINTS.JOB_LISTINGS + 'my-jobs/');
+};
+
+export const createJob = async (jobData: Partial<JobListing>): Promise<JobListing> => {
+  return apiClient.post(API_ENDPOINTS.JOB_LISTINGS, jobData);
+};
+
+export const deleteJob = async (id: number): Promise<void> => {
+  await apiClient.delete(`${API_ENDPOINTS.JOB_LISTINGS}${id}/`);
+};
+
 export const getCandidateInterests = async (): Promise<PaginatedResponse<MutualInterest>> => {
   return apiClient.get(API_ENDPOINTS.MUTUAL_INTERESTS);
+};
+
+export const getChurchInterests = async (): Promise<PaginatedResponse<MutualInterest>> => {
+  return apiClient.get(`${API_ENDPOINTS.MUTUAL_INTERESTS}my-church-interests/`);
+};
+
+export const getMutualInterests = async (): Promise<PaginatedResponse<MutualInterest>> => {
+  return apiClient.get(`${API_ENDPOINTS.MUTUAL_INTERESTS}matches/`);
 };
 
 interface ExpressInterestInput {
@@ -405,4 +424,8 @@ export const expressChurchInterest = (jobId: number, profileId: number) =>
 
 export const withdrawInterest = async (id: number): Promise<void> => {
   await apiClient.delete(`${API_ENDPOINTS.MUTUAL_INTERESTS}${id}/`);
+};
+
+export const getApprovedCandidates = async (): Promise<PaginatedResponse<Profile>> => {
+  return apiClient.get(API_ENDPOINTS.APPROVED_CANDIDATES);
 };

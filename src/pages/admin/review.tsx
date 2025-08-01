@@ -1,7 +1,6 @@
 'use client';
 import React, { useEffect, useState } from 'react';
 import Image from 'next/image';
-import PDFViewer from '../../components/PDFViewer';
 import { getSuperAdminProfiles } from '../../utils/api'; // Using the centralized API
 import { Profile } from '@/context/ProfileContext'; // Using the centralized type
 
@@ -29,15 +28,7 @@ const AdminReview = () => {
   const [actionLoadingId, setActionLoadingId] = useState<string | null>(null);
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [events, setEvents] = useState<string[]>([]);
-  const [pdfViewer, setPdfViewer] = useState<{
-    isOpen: boolean;
-    url: string;
-    title: string;
-  }>({
-    isOpen: false,
-    url: '',
-    title: '',
-  });
+
   const [videoViewer, setVideoViewer] = useState<{
     isOpen: boolean;
     url: string;
@@ -72,14 +63,6 @@ const AdminReview = () => {
     await new Promise((resolve) => setTimeout(resolve, 500));
     setProfiles((prevProfiles) => prevProfiles.map((p) => (p.id === id ? { ...p, status } : p)));
     setActionLoadingId(null);
-  };
-
-  const handleViewResume = (resumeUrl: string, candidateName: string) => {
-    setPdfViewer({
-      isOpen: true,
-      url: resumeUrl,
-      title: `${candidateName}'s Resume`,
-    });
   };
 
   const handleViewVideo = (videoUrl: string, candidateName: string) => {
@@ -207,12 +190,6 @@ const AdminReview = () => {
                             >
                               View
                             </a>
-                            <button
-                              onClick={() => handleViewResume(profile.resume || '', fullName)}
-                              className="text-blue-600 hover:underline font-medium"
-                            >
-                              Preview
-                            </button>
                           </div>
                         )}
                         {profile.video_url && (
@@ -286,13 +263,6 @@ const AdminReview = () => {
           )}
         </section>
       </div>
-
-      <PDFViewer
-        isOpen={pdfViewer.isOpen}
-        onClose={() => setPdfViewer((prev) => ({ ...prev, isOpen: false }))}
-        pdfUrl={pdfViewer.url}
-        title={pdfViewer.title}
-      />
 
       {videoViewer.isOpen && (
         <div className="fixed inset-0 z-50 bg-black bg-opacity-75 flex items-center justify-center p-4">

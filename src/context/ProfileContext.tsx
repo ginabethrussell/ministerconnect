@@ -2,7 +2,7 @@ import React, { createContext, useContext, useState, useEffect } from 'react';
 
 export interface Profile {
   id: number;
-  user: number; // or user_id, depending on your serializer
+  user: UserSummary;
   invite_code: number | null;
   invite_code_string?: string; // if your serializer adds this for display
   street_address: string;
@@ -21,6 +21,13 @@ export interface Profile {
 }
 
 type ProfileStatus = 'draft' | 'pending' | 'approved' | 'rejected';
+
+type UserSummary = {
+  id: number;
+  first_name: string;
+  last_name: string;
+  email: string;
+};
 
 type ProfileContextType = {
   profile: Profile | null;

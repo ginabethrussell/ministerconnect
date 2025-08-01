@@ -205,6 +205,7 @@ export default function CandidateJobs() {
                               className="w-full"
                               size="md"
                               variant="primary"
+                              disabled={false}
                             />
                           )}
                           <button
