@@ -65,14 +65,6 @@ const AdminReview = () => {
     setActionLoadingId(null);
   };
 
-  const handleViewResume = (resumeUrl: string, candidateName: string) => {
-    setPdfViewer({
-      isOpen: true,
-      url: resumeUrl,
-      title: `${candidateName}'s Resume`,
-    });
-  };
-
   const handleViewVideo = (videoUrl: string, candidateName: string) => {
     setVideoViewer({
       isOpen: true,
@@ -198,12 +190,6 @@ const AdminReview = () => {
                             >
                               View
                             </a>
-                            <button
-                              onClick={() => handleViewResume(profile.resume || '', fullName)}
-                              className="text-blue-600 hover:underline font-medium"
-                            >
-                              Preview
-                            </button>
                           </div>
                         )}
                         {profile.video_url && (
