@@ -28,15 +28,7 @@ const AdminReview = () => {
   const [actionLoadingId, setActionLoadingId] = useState<string | null>(null);
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [events, setEvents] = useState<string[]>([]);
-  const [pdfViewer, setPdfViewer] = useState<{
-    isOpen: boolean;
-    url: string;
-    title: string;
-  }>({
-    isOpen: false,
-    url: '',
-    title: '',
-  });
+
   const [videoViewer, setVideoViewer] = useState<{
     isOpen: boolean;
     url: string;
