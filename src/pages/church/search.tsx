@@ -1,17 +1,19 @@
+'use client';
+
 import React, { useState, useEffect, useMemo } from 'react';
 import Link from 'next/link';
 import { ClipboardCopy, Check } from 'lucide-react';
-import UserIcon from '@/components/UserIcon';
-import ExpressInterestButton from '../../components/ExpressInterestButton';
 import { Profile } from '@/context/ProfileContext';
-import { JobListing, MutualInterest } from '../../types';
+import ExpressInterestButton from '@/components/ExpressInterestButton';
+import UserIcon from '@/components/UserIcon';
+import { JobListing, MutualInterest } from '@/types';
 import {
-  getApprovedCandidates,
-  getChurchJobs,
   expressChurchInterest,
-  withdrawInterest,
+  getApprovedCandidates,
   getChurchInterests,
-} from '../../utils/api';
+  getChurchJobs,
+  withdrawInterest,
+} from '@/utils/api';
 import { formatPhone, mergeProfilesWithInterest } from '@/utils/helpers';
 
 export default function ChurchSearch() {
@@ -21,6 +23,8 @@ export default function ChurchSearch() {
   const [profiles, setProfiles] = useState<Profile[]>([]);
   const [allInterests, setAllInterests] = useState<MutualInterest[]>([]);
   const [copyStatus, setCopyStatus] = useState<{ [key: string]: string }>({});
+  const [loadingError, setLoadingError] = useState('');
+  const [toggleInterestError, setToggleInterestError] = useState('');
 
   const profilesWithInterest = useMemo(() => {
     if (!selectedJobId || profiles.length === 0) return [];
@@ -43,7 +47,11 @@ export default function ChurchSearch() {
         setProfiles(profilesRes.results);
         setAllInterests(churchInterestsRes.results);
       } catch (error) {
-        console.error('Error fetching initial data:', error);
+        if (error instanceof Error) {
+          setLoadingError(error.message);
+        } else {
+          setLoadingError('Failed to load candidates, jobs, or interests.');
+        }
       }
     };
 
@@ -59,6 +67,7 @@ export default function ChurchSearch() {
   );
 
   const handleToggleInterest = async (profileId: number) => {
+    setToggleInterestError('');
     const existingInterest = allInterests.find(
       (interest) =>
         interest.profile === profileId &&
@@ -77,7 +86,11 @@ export default function ChurchSearch() {
       const updatedInterests = await getChurchInterests();
       setAllInterests(updatedInterests.results);
     } catch (error) {
-      console.error('Failed to toggle interest:', error);
+      if (error instanceof Error) {
+        setToggleInterestError(error.message);
+      } else {
+        setToggleInterestError('Failed to toggle interest.');
+      }
     }
   };
 
@@ -90,8 +103,7 @@ export default function ChurchSearch() {
           setCopyStatus((prev) => ({ ...prev, [profile.id]: '' }));
         }, 2000);
       },
-      (err) => {
-        console.error('Could not copy text: ', err);
+      () => {
         setCopyStatus((prev) => ({ ...prev, [profile.id]: 'Failed' }));
       }
     );
@@ -190,10 +202,15 @@ export default function ChurchSearch() {
               </p>
             </div>
           )}
-          {filteredProfiles.length === 0 ? (
-            <div className="py-8 text-center text-gray-500">
-              No candidates found matching your criteria.
-            </div>
+          {!filteredProfiles || filteredProfiles.length === 0 ? (
+            <>
+              <div className="py-8 text-center text-gray-500">
+                No candidates found matching your criteria.
+              </div>
+              {loadingError && (
+                <p className="mt-1 text-sm text-left text-[#FF5722]">{loadingError}</p>
+              )}
+            </>
           ) : (
             <ul className="space-y-6">
               {profilesWithInterest &&
@@ -243,6 +260,11 @@ export default function ChurchSearch() {
                             disabled={!selectedJobId}
                           />
                         </div>
+                        {toggleInterestError && (
+                          <p className="mt-1 text-sm text-left text-[#FF5722]">
+                            {toggleInterestError}
+                          </p>
+                        )}
                       </div>
 
                       {/* Separator */}

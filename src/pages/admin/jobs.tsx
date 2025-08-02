@@ -1,15 +1,18 @@
 'use client';
+
 import React, { useEffect, useState } from 'react';
-import { getAllJobs, reviewChurchJobs } from '../../utils/api';
-import { JobListing } from '../../types';
+import { JobListing } from '@/types';
+import { getAllJobs, reviewChurchJobs } from '@/utils/api';
 import { titleCase } from '@/utils/helpers';
 
-const AdminJobReview = () => {
+export default function AdminJobReview() {
   const [jobListings, setJobListings] = useState<JobListing[]>([]);
   const [filterStatus, setFilterStatus] = useState<string>('all');
   const [loading, setLoading] = useState(true);
   const [actionLoadingId, setActionLoadingId] = useState<number | null>(null);
   const [expandedJob, setExpandedJob] = useState<number | null>(null);
+  const [loadingError, setLoadingError] = useState('');
+  const [reviewError, setReviewError] = useState('');
 
   useEffect(() => {
     loadJobListings();
@@ -21,7 +24,11 @@ const AdminJobReview = () => {
       const jobsRes = await getAllJobs();
       setJobListings(jobsRes.results);
     } catch (error) {
-      console.error('Error loading job listings:', error);
+      if (error instanceof Error) {
+        setLoadingError(error.message);
+      } else {
+        setLoadingError('Failed to load job listings.');
+      }
     } finally {
       setLoading(false);
     }
@@ -29,14 +36,18 @@ const AdminJobReview = () => {
 
   const handleStatusUpdate = async (id: number, status: 'approved' | 'rejected') => {
     setActionLoadingId(id);
+    setReviewError('');
     try {
       await reviewChurchJobs(id, status);
       setJobListings((prevListings) =>
         prevListings.map((job) => (job.id === id ? { ...job, status: status } : job))
       );
     } catch (error) {
-      console.error('Error updating job status:', error);
-      // Optionally, revert the change on error
+      if (error instanceof Error) {
+        setReviewError(error.message);
+      } else {
+        setReviewError('Failed to update job status.');
+      }
     } finally {
       setActionLoadingId(null);
     }
@@ -127,10 +138,16 @@ const AdminJobReview = () => {
             <div className="text-center py-20">
               <p className="text-gray-500">Loading job listings...</p>
             </div>
-          ) : filteredListings.length === 0 ? (
-            <div className="text-center py-20 text-gray-500">
-              No job listings found for this filter.
-            </div>
+          ) : !filteredListings || filteredListings.length === 0 ? (
+            <>
+              {loadingError ? (
+                <p className="mt-1 text-sm text-left text-[#FF5722]">{loadingError}</p>
+              ) : (
+                <div className="text-center py-20 text-gray-500">
+                  No job listings found for this filter.
+                </div>
+              )}
+            </>
           ) : (
             <div className="divide-y divide-gray-200">
               {filteredListings.map((job) => (
@@ -144,6 +161,9 @@ const AdminJobReview = () => {
                         </span>
                         <span>
                           <strong>Ministry:</strong> {job.ministry_type}
+                        </span>
+                        <span>
+                          <strong>Employment Type:</strong> {job.employment_type}
                         </span>
                         <span>
                           <strong>Posted:</strong> {formatDate(job.created_at)}
@@ -174,6 +194,9 @@ const AdminJobReview = () => {
                           >
                             {actionLoadingId === job.id ? 'Rejecting...' : 'Reject'}
                           </button>
+                          {reviewError && (
+                            <p className="mt-1 text-sm text-left text-[#FF5722]">{reviewError}</p>
+                          )}
                         </>
                       )}
                       <button
@@ -244,6 +267,4 @@ const AdminJobReview = () => {
       </div>
     </div>
   );
-};
-
-export default AdminJobReview;
+}

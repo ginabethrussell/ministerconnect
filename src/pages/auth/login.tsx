@@ -1,13 +1,14 @@
 'use client';
+
 import React, { useState } from 'react';
-import { useRouter } from 'next/router';
 import Link from 'next/link';
-import { useUser } from '../../context/UserContext';
-import PasswordInput from '../../components/PasswordInput';
-import { login, getMe } from '../../utils/api';
+import { useRouter } from 'next/router';
+import { useUser } from '@/context/UserContext';
+import PasswordInput from '@/components/PasswordInput';
+import { login, getMe } from '@/utils/api';
 import { getUserDashboardRoute } from '@/utils/helpers';
 
-const Login = () => {
+export default function Login() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
@@ -112,6 +113,4 @@ const Login = () => {
       </div>
     </div>
   );
-};
-
-export default Login;
+}

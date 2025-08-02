@@ -1,9 +1,10 @@
 'use client';
+
 import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/router';
-import { useProfile } from '../../context/ProfileContext';
-import ExpressInterestButton from '../../components/ExpressInterestButton';
-import { JobWithInterest, MutualInterest } from '../../types';
+import { useProfile } from '@/context/ProfileContext';
+import ExpressInterestButton from '@/components/ExpressInterestButton';
+import { JobWithInterest, MutualInterest } from '@/types';
 import {
   getApprovedJobs,
   getCandidateInterests,
@@ -19,6 +20,8 @@ export default function CandidateJobs() {
   const [interests, setInterests] = useState<Record<number, MutualInterest>>({});
   const [jobsWithInterest, setJobsWithInterest] = useState<JobWithInterest[]>([]);
   const [expandedJobs, setExpandedJobs] = useState<number[]>([]);
+  const [loadingError, setLoadingError] = useState('');
+  const [toggleInterestError, setToggleInterestError] = useState('');
 
   useEffect(() => {
     if (!profile || !(profile?.status === 'approved')) {
@@ -40,9 +43,11 @@ export default function CandidateJobs() {
         });
         setInterests(interestMap);
       } catch (error) {
-        console.error('Failed to load jobs and/or interests', error);
-        router.push('/candidate');
-        return;
+        if (error instanceof Error) {
+          setLoadingError(error.message);
+        } else {
+          setLoadingError('Failed to load jobs and/or interests.');
+        }
       } finally {
         setLoading(false);
       }
@@ -52,6 +57,7 @@ export default function CandidateJobs() {
   }, [router, profile]);
 
   const handleToggleInterest = async (jobId: number) => {
+    setToggleInterestError('');
     const existingInterest = interests[jobId];
 
     try {
@@ -74,8 +80,11 @@ export default function CandidateJobs() {
         }
       }
     } catch (error) {
-      console.error('Failed to toggle interest:', error);
-      // Optional: show toast
+      if (error instanceof Error) {
+        setToggleInterestError(error.message);
+      } else {
+        setToggleInterestError('Failed to update expressed interest.');
+      }
     }
   };
 
@@ -131,6 +140,9 @@ export default function CandidateJobs() {
             <div className="text-center py-8">
               <h3 className="text-lg font-medium text-gray-900 mb-2">No positions found</h3>
               <p className="text-gray-600">Check back soon for new opportunities.</p>
+              {loadingError && (
+                <p className="mt-1 text-sm text-left text-[#FF5722]">{loadingError}</p>
+              )}
             </div>
           ) : (
             <div className="space-y-4">
@@ -207,6 +219,9 @@ export default function CandidateJobs() {
                               variant="primary"
                               disabled={false}
                             />
+                          )}
+                          {toggleInterestError && (
+                            <p className="mt-1 text-sm text-left text-[#FF5722]">{loadingError}</p>
                           )}
                           <button
                             onClick={() => toggleJobExpansion(job.id)}

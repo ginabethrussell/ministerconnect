@@ -210,7 +210,7 @@ export const apiClient = {
       },
       true,
       auth,
-      'none' // <--- tell fetchWithAuthRetry not to add Content-Type
+      'none'
     );
     if (!response.ok) {
       const errorBody = await response.json().catch(() => ({}));
@@ -220,50 +220,26 @@ export const apiClient = {
   },
 };
 
-// API endpoints configuration
 export const API_ENDPOINTS = {
-  // Authentication (Django backend)
-  LOGIN: '/api/token/',
-  REFRESH_TOKEN: '/api/token/refresh/',
-
-  // Churches (Django backend)
-  CHURCHES: '/api/churches/',
-
-  // Users (Django backend)
-  CREATE_USER: '/api/users/create/',
-
-  // Invite codes (Django backend)
-  INVITE_CODES: '/api/invite-codes/',
-
-  // Candidates (Django backend)
+  APPROVED_CANDIDATES: '/api/approved-candidates/',
   CANDIDATE_REGISTER: '/api/candidates/register/',
-
-  // Frontend routes (for MSW/fallback)
-  FORGOT_PASSWORD: '/api/auth/forgot-password/',
+  CHURCHES: '/api/churches/',
+  CREATE_USER: '/api/users/create/',
+  GET_ME: '/api/user/me/',
+  INVITE_CODES: '/api/invite-codes/',
+  JOB_LISTINGS: '/api/jobs/',
+  LOGIN: '/api/token/',
+  MUTUAL_INTERESTS: '/api/mutual-interests/',
+  PROFILE: '/api/profile/me/',
+  PROFILES: '/api/profiles/',
+  PROFILE_RESET: '/api/profile/reset/',
+  REFRESH_TOKEN: '/api/token/refresh/',
   RESET_PASSWORD: '/api/reset-password/',
-  FORCE_PASSWORD_CHANGE: '/api/auth/force-password-change/',
-
-  // User management
   USER: '/api/user/',
   USERS: '/api/users/',
-  GET_ME: '/api/user/me/',
-
-  // Profiles
-  PROFILE: '/api/profile/me/',
-  PROFILE_RESET: '/api/profile/reset/',
-  PROFILES: '/api/profiles/',
-
-  // Approved Candidates
-  APPROVED_CANDIDATES: '/api/approved-candidates/',
-
-  // Job listings
-  JOB_LISTINGS: '/api/jobs/',
-
-  // Mutual interests
-  MUTUAL_INTERESTS: '/api/mutual-interests/',
 } as const;
 
-// Admin Churches
+// Churches
 export const getChurches = async (): Promise<PaginatedResponse<Church>> => {
   return apiClient.get(API_ENDPOINTS.CHURCHES);
 };
@@ -312,10 +288,7 @@ export const patchInviteCodeStatus = async (id: number, data: { status: string }
   return apiClient.patch(`${API_ENDPOINTS.INVITE_CODES}${id}/`, data);
 };
 
-export const getMe = async (): Promise<User> => {
-  return apiClient.get(API_ENDPOINTS.GET_ME);
-};
-
+// Auth
 export const login = async (data: { email: string; password: string }): Promise<TokenResponse> => {
   return apiClient.post(API_ENDPOINTS.LOGIN, data, false); // auth = false
 };
@@ -348,6 +321,12 @@ export const resetPassword = async (data: {
   return apiClient.post(API_ENDPOINTS.RESET_PASSWORD, body);
 };
 
+// Users
+export const getMe = async (): Promise<User> => {
+  return apiClient.get(API_ENDPOINTS.GET_ME);
+};
+
+// Profiles
 export const getProfile = async (): Promise<Profile> => {
   return apiClient.get(API_ENDPOINTS.PROFILE);
 };
@@ -360,12 +339,28 @@ export const resetProfileData = async (): Promise<{ detail: string; profile: Pro
   return apiClient.post(API_ENDPOINTS.PROFILE_RESET, {}, true);
 };
 
+export const getApprovedCandidates = async (): Promise<PaginatedResponse<Profile>> => {
+  return apiClient.get(API_ENDPOINTS.APPROVED_CANDIDATES);
+};
+
+export const getCandidateProfiles = async (): Promise<PaginatedResponse<Profile>> => {
+  return apiClient.get(API_ENDPOINTS.PROFILES);
+};
+
+export const reviewCandidateProfiles = async (
+  id: number,
+  status: 'approved' | 'rejected'
+): Promise<PaginatedResponse<Profile>> => {
+  return apiClient.patch(`${API_ENDPOINTS.PROFILES}${id}/review/`, { id, status });
+};
+
+// Jobs
 export const getApprovedJobs = async (): Promise<PaginatedResponse<JobListing>> => {
-  return apiClient.get(`${API_ENDPOINTS.JOB_LISTINGS}?status=approved`);
+  return apiClient.get(`${API_ENDPOINTS.JOB_LISTINGS}approved-jobs/`);
 };
 
 export const getChurchJobs = async (): Promise<PaginatedResponse<JobListing>> => {
-  return apiClient.get(API_ENDPOINTS.JOB_LISTINGS + 'my-jobs/');
+  return apiClient.get(`${API_ENDPOINTS.JOB_LISTINGS}my-jobs/`);
 };
 
 export const createJob = async (jobData: Partial<JobListing>): Promise<JobListing> => {
@@ -380,6 +375,14 @@ export const deleteJob = async (id: number): Promise<void> => {
   await apiClient.delete(`${API_ENDPOINTS.JOB_LISTINGS}${id}/`);
 };
 
+export const reviewChurchJobs = async (
+  id: number,
+  status: 'approved' | 'rejected'
+): Promise<PaginatedResponse<JobListing>> => {
+  return apiClient.patch(`${API_ENDPOINTS.JOB_LISTINGS}${id}/review/`, { id, status });
+};
+
+// Interests
 export const getCandidateInterests = async (): Promise<PaginatedResponse<MutualInterest>> => {
   return apiClient.get(API_ENDPOINTS.MUTUAL_INTERESTS);
 };
@@ -418,26 +421,4 @@ export const expressChurchInterest = (jobId: number, profileId: number) =>
 
 export const withdrawInterest = async (id: number): Promise<void> => {
   await apiClient.delete(`${API_ENDPOINTS.MUTUAL_INTERESTS}${id}/`);
-};
-
-export const getApprovedCandidates = async (): Promise<PaginatedResponse<Profile>> => {
-  return apiClient.get(API_ENDPOINTS.APPROVED_CANDIDATES);
-};
-
-export const getCandidateProfiles = async (): Promise<PaginatedResponse<Profile>> => {
-  return apiClient.get(API_ENDPOINTS.PROFILES);
-};
-
-export const reviewCandidateProfiles = async (
-  id: number,
-  status: 'approved' | 'rejected'
-): Promise<PaginatedResponse<Profile>> => {
-  return apiClient.patch(`${API_ENDPOINTS.PROFILES}${id}/review/`, { id, status });
-};
-
-export const reviewChurchJobs = async (
-  id: number,
-  status: 'approved' | 'rejected'
-): Promise<PaginatedResponse<JobListing>> => {
-  return apiClient.patch(`${API_ENDPOINTS.JOB_LISTINGS}${id}/review/`, { id, status });
 };

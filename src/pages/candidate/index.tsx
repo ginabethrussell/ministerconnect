@@ -1,9 +1,10 @@
 'use client';
+
 import { useEffect, useState } from 'react';
+import Link from 'next/link';
 import { useRouter } from 'next/router';
 import { useUser } from '@/context/UserContext';
 import { useProfile, Profile } from '@/context/ProfileContext';
-import Link from 'next/link';
 import { getProfile } from '@/utils/api';
 
 export default function CandidateDashboard() {
@@ -44,13 +45,13 @@ export default function CandidateDashboard() {
   const getStatusMessage = (status: Profile['status']) => {
     switch (status) {
       case 'approved':
-        return 'Your profile is visible to churches';
+        return 'Your profile is visible to churches.';
       case 'rejected':
-        return 'Your profile needs updates';
+        return 'Your profile needs updates. Contact the site admin for more information.';
       case 'pending':
-        return 'Your profile is under review';
+        return 'Your profile is under review.';
       default:
-        return 'Complete your profile to view churches and open positions';
+        return 'Complete your profile to view churches and open positions.';
     }
   };
 

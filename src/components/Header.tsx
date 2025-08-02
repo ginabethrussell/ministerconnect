@@ -1,11 +1,12 @@
 'use client';
+
 import React, { useState } from 'react';
 import Link from 'next/link';
-import { useUser } from '@/context/UserContext';
 import { useRouter } from 'next/router';
 import { useProfile } from '@/context/ProfileContext';
+import { useUser } from '@/context/UserContext';
 
-const Header = () => {
+export default function Header() {
   const [menuOpen, setMenuOpen] = useState(false);
   const { user, logout } = useUser();
   const { profile } = useProfile();
@@ -323,6 +324,4 @@ const Header = () => {
       )}
     </header>
   );
-};
-
-export default Header;
+}

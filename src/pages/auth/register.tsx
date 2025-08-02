@@ -1,15 +1,17 @@
 'use client';
+
 import React, { useState, useEffect } from 'react';
+import Link from 'next/link';
 import { useSearchParams } from 'next/navigation';
 import { useRouter } from 'next/router';
-import Link from 'next/link';
-import { registerCandidate } from '../../utils/api';
+import PasswordInput from '@/components/PasswordInput';
+import PasswordRequirements from '@/components/PasswordRequirements';
+import { registerCandidate } from '@/utils/api';
 import {
   handleRegistrationErrorResponse,
   RegistrationError,
   sanitizeRegistrationFormValues,
 } from '@/utils/helpers';
-import PasswordInput from '../../components/PasswordInput';
 
 const initialRegistrationFormValues = {
   code: '',
@@ -19,7 +21,8 @@ const initialRegistrationFormValues = {
   password: '',
   confirmPassword: '',
 };
-const Register = () => {
+
+export default function Register() {
   const [formValues, setFormValues] = useState(initialRegistrationFormValues);
   const [error, setError] = useState('');
   const [success, setSuccess] = useState(false);
@@ -43,7 +46,6 @@ const Register = () => {
     }
   }, [code]);
 
-  // TODO: Add additional client side validation
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
     setFormValues({ ...formValues, [name]: value });
@@ -141,6 +143,7 @@ const Register = () => {
             placeholder="Re-enter Password"
             required
           />
+          <PasswordRequirements />
           <button className="btn-primary w-full" type="submit" disabled={loading}>
             {loading ? 'Registering...' : 'Register'}
           </button>
@@ -177,6 +180,4 @@ const Register = () => {
       </div>
     </div>
   );
-};
-
-export default Register;
+}

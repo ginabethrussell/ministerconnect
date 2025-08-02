@@ -1,15 +1,18 @@
 'use client';
-import React, { useEffect, useState } from 'react';
-import { getCandidateProfiles, reviewCandidateProfiles } from '../../utils/api'; // Using the centralized API
-import { Profile } from '@/context/ProfileContext';
-import { titleCase } from '@/utils/helpers';
-import { UserIcon } from 'lucide-react';
 
-const AdminReview = () => {
+import React, { useEffect, useState } from 'react';
+import { UserIcon } from 'lucide-react';
+import { Profile } from '@/context/ProfileContext';
+import { getCandidateProfiles, reviewCandidateProfiles } from '@/utils/api';
+import { titleCase } from '@/utils/helpers';
+
+export default function AdminReview() {
   const [profiles, setProfiles] = useState<Profile[]>([]);
   const [filterStatus, setFilterStatus] = useState<string>('all');
   const [loading, setLoading] = useState(true);
   const [actionLoadingId, setActionLoadingId] = useState<string | null>(null);
+  const [loadingError, setLoadingError] = useState('');
+  const [reviewError, setReviewError] = useState('');
 
   useEffect(() => {
     const fetchProfiles = async () => {
@@ -17,9 +20,12 @@ const AdminReview = () => {
         setLoading(true);
         const profilesRes = await getCandidateProfiles();
         setProfiles(profilesRes.results);
-        console.log(profilesRes.results);
       } catch (error) {
-        console.error('Failed to fetch profiles:', error);
+        if (error instanceof Error) {
+          setLoadingError(error.message);
+        } else {
+          setLoadingError('Failed to load profiles.');
+        }
       } finally {
         setLoading(false);
       }
@@ -29,11 +35,16 @@ const AdminReview = () => {
 
   const handleStatus = async (id: number, status: 'approved' | 'rejected') => {
     setActionLoadingId(id.toString());
+    setReviewError('');
     try {
       await reviewCandidateProfiles(id, status);
       setProfiles((prevProfiles) => prevProfiles.map((p) => (p.id === id ? { ...p, status } : p)));
     } catch (error) {
-      console.error('Failed to review profile:', error);
+      if (error instanceof Error) {
+        setLoadingError(error.message);
+      } else {
+        setLoadingError('Failed to update profile.');
+      }
     } finally {
       setActionLoadingId(null);
     }
@@ -102,10 +113,14 @@ const AdminReview = () => {
             <div className="text-center py-10">
               <p className="text-gray-500">Loading profiles...</p>
             </div>
-          ) : profiles.length === 0 ? (
-            <div className="text-center py-10">
-              <p className="text-gray-500">No candidate profiles found.</p>
-            </div>
+          ) : !profiles || profiles.length === 0 ? (
+            loadingError ? (
+              <p className="mt-1 text-sm text-left text-[#FF5722]">{loadingError}</p>
+            ) : (
+              <div className="text-center py-10">
+                <p className="text-gray-500">No candidate profiles found.</p>
+              </div>
+            )
           ) : (
             <div className="grid gap-6 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
               {filteredProfiles.map((profile, idx) => {
@@ -146,7 +161,7 @@ const AdminReview = () => {
                       <div className="space-y-2 text-sm">
                         <div className="flex items-center gap-2">
                           <span className="font-medium text-gray-600 w-20">Email:</span>
-                          <span className="text-gray-700">{profile.zipcode}</span>
+                          <span className="text-gray-700">{profile.user.email}</span>
                         </div>
                         <div className="flex items-center gap-2">
                           <span className="font-medium text-gray-600 w-20">Phone:</span>
@@ -236,6 +251,9 @@ const AdminReview = () => {
                         >
                           {actionLoadingId === profile.id.toString() ? 'Processing...' : 'Reject'}
                         </button>
+                        {reviewError && (
+                          <p className="mt-1 text-sm text-left text-[#FF5722]">{reviewError}</p>
+                        )}
                       </div>
                     )}
                   </div>
@@ -247,6 +265,4 @@ const AdminReview = () => {
       </div>
     </div>
   );
-};
-
-export default AdminReview;
+}

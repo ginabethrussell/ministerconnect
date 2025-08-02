@@ -1,8 +1,12 @@
+'use client';
+
 import React, { useState } from 'react';
-import { useRouter } from 'next/router';
 import Link from 'next/link';
-import { createChurch } from '@/utils/api';
+import { useRouter } from 'next/router';
+import PasswordInput from '@/components/PasswordInput';
+import PasswordRequirements from '@/components/PasswordRequirements';
 import { ChurchUserInput, ChurchInput } from '@/types';
+import { createChurch } from '@/utils/api';
 
 export default function CreateChurch() {
   const router = useRouter();
@@ -28,12 +32,15 @@ export default function CreateChurch() {
       status: 'active',
     },
   ]);
+  const [error, setError] = useState('');
 
   const handleChurchDataChange = (field: string, value: string) => {
+    setError('');
     setChurchData((prev) => ({ ...prev, [field]: value }));
   };
 
   const handleUserChange = (index: number, field: string, value: string | boolean) => {
+    setError('');
     setUsers((prev) => prev.map((user, i) => (i === index ? { ...user, [field]: value } : user)));
   };
 
@@ -94,7 +101,7 @@ export default function CreateChurch() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-
+    setError('');
     if (!validateForm()) {
       return;
     }
@@ -109,8 +116,11 @@ export default function CreateChurch() {
       await createChurch(newChurchWithUsers);
       router.push('/admin/churches');
     } catch (error) {
-      console.error('Error creating church:', error);
-      alert('Error creating church. Please try again.');
+      if (error instanceof Error) {
+        setError(error.message);
+      } else {
+        setError('An error occurred while creating the church.');
+      }
     } finally {
       setLoading(false);
     }
@@ -135,10 +145,12 @@ export default function CreateChurch() {
             <h2 className="text-xl font-semibold text-efcaDark mb-4">Church Information</h2>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
+                <label htmlFor="name" className="block text-sm font-medium text-gray-700 mb-2">
                   Church Name <span className="text-red-500">*</span>
                 </label>
                 <input
+                  id="name"
+                  name="name"
                   type="text"
                   value={churchData.name}
                   onChange={(e) => handleChurchDataChange('name', e.target.value)}
@@ -149,10 +161,12 @@ export default function CreateChurch() {
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
+                <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-2">
                   Email <span className="text-red-500">*</span>
                 </label>
                 <input
+                  id="email"
+                  name="name"
                   type="email"
                   value={churchData.email}
                   onChange={(e) => handleChurchDataChange('email', e.target.value)}
@@ -163,22 +177,28 @@ export default function CreateChurch() {
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
+                <label htmlFor="phone" className="block text-sm font-medium text-gray-700 mb-2">
                   Phone <span className="text-red-500">*</span>
                 </label>
                 <input
+                  id="phone"
+                  name="phone"
                   type="tel"
                   value={churchData.phone}
                   onChange={(e) => handleChurchDataChange('phone', e.target.value)}
                   className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-efcaAccent focus:border-efcaAccent"
-                  placeholder="555-123-4567"
+                  placeholder="Enter 10 numbers with no punctuation"
                   required
                 />
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">Website</label>
+                <label htmlFor="website" className="block text-sm font-medium text-gray-700 mb-2">
+                  Website
+                </label>
                 <input
+                  id="website"
+                  name="website"
                   type="url"
                   value={churchData.website}
                   onChange={(e) => handleChurchDataChange('website', e.target.value)}
@@ -188,10 +208,15 @@ export default function CreateChurch() {
               </div>
 
               <div className="md:col-span-2">
-                <label className="block text-sm font-medium text-gray-700 mb-2">
+                <label
+                  htmlFor="street_address"
+                  className="block text-sm font-medium text-gray-700 mb-2"
+                >
                   Street Address <span className="text-red-500">*</span>
                 </label>
                 <input
+                  id="street_address"
+                  name="street_address"
                   type="text"
                   value={churchData.street_address}
                   onChange={(e) => handleChurchDataChange('street_address', e.target.value)}
@@ -202,10 +227,12 @@ export default function CreateChurch() {
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
+                <label htmlFor="city" className="block text-sm font-medium text-gray-700 mb-2">
                   City <span className="text-red-500">*</span>
                 </label>
                 <input
+                  id="city"
+                  name="city"
                   type="text"
                   value={churchData.city}
                   onChange={(e) => handleChurchDataChange('city', e.target.value)}
@@ -216,10 +243,12 @@ export default function CreateChurch() {
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  State <span className="text-red-500">*</span>
+                <label htmlFor="state" className="block text-sm font-medium text-gray-700 mb-2">
+                  State Abbreviation<span className="text-red-500">*</span>
                 </label>
                 <input
+                  id="state"
+                  name="state"
                   type="text"
                   value={churchData.state}
                   onChange={(e) => handleChurchDataChange('state', e.target.value)}
@@ -230,10 +259,12 @@ export default function CreateChurch() {
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
+                <label htmlFor="zipcode" className="block text-sm font-medium text-gray-700 mb-2">
                   ZIP Code <span className="text-red-500">*</span>
                 </label>
                 <input
+                  id="zipcode"
+                  name="zipcode"
                   type="text"
                   value={churchData.zipcode}
                   onChange={(e) => handleChurchDataChange('zipcode', e.target.value)}
@@ -276,10 +307,15 @@ export default function CreateChurch() {
 
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-2">
+                      <label
+                        htmlFor="user_email"
+                        className="block text-sm font-medium text-gray-700 mb-2"
+                      >
                         Email <span className="text-red-500">*</span>
                       </label>
                       <input
+                        id="user_email"
+                        name="user_email"
                         type="email"
                         value={user.email}
                         onChange={(e) => handleUserChange(index, 'email', e.target.value)}
@@ -290,10 +326,14 @@ export default function CreateChurch() {
                     </div>
 
                     <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-2">
+                      <label
+                        htmlFor="first_name"
+                        className="block text-sm font-medium text-gray-700 mb-2"
+                      >
                         First Name <span className="text-red-500">*</span>
                       </label>
                       <input
+                        id="first_name"
                         name="first_name"
                         type="text"
                         value={user.first_name}
@@ -305,10 +345,14 @@ export default function CreateChurch() {
                     </div>
 
                     <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-2">
+                      <label
+                        htmlFor="last_name"
+                        className="block text-sm font-medium text-gray-700 mb-2"
+                      >
                         Last Name <span className="text-red-500">*</span>
                       </label>
                       <input
+                        id="last_name"
                         name="last_name"
                         type="text"
                         value={user.last_name}
@@ -320,23 +364,27 @@ export default function CreateChurch() {
                     </div>
 
                     <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-2">
+                      <label
+                        htmlFor="password"
+                        className="block text-sm font-medium text-gray-700 mb-2"
+                      >
                         Password <span className="text-red-500">*</span>
                       </label>
-                      <input
-                        type="password"
+                      <PasswordInput
                         value={user.password}
                         onChange={(e) => handleUserChange(index, 'password', e.target.value)}
-                        className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-efcaAccent focus:border-efcaAccent"
-                        placeholder="Minimum 8 characters"
+                        placeholder="Create a temporary password"
                         required
                       />
                     </div>
+                    <PasswordRequirements />
                   </div>
 
                   <div className="mt-3">
-                    <label className="flex items-center">
+                    <label htmlFor="require_password_change" className="flex items-center">
                       <input
+                        id="require_password_change"
+                        name="require_password_change"
                         type="checkbox"
                         checked={user.requires_password_change}
                         onChange={(e) =>
@@ -345,7 +393,7 @@ export default function CreateChurch() {
                         className="rounded border-gray-300 text-efcaAccent focus:ring-efcaAccent"
                       />
                       <span className="ml-2 text-sm text-gray-700">
-                        User must change password on first login
+                        User will be required to reset password on first login.
                       </span>
                     </label>
                   </div>
@@ -369,6 +417,7 @@ export default function CreateChurch() {
             >
               {loading ? 'Creating...' : 'Create Church'}
             </button>
+            {error && <p className="mt-1 text-sm text-left text-[#FF5722]">{error}</p>}
           </div>
         </form>
       </div>

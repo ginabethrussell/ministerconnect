@@ -1,6 +1,8 @@
+'use client';
+
 import React, { useState } from 'react';
-import { useRouter } from 'next/router';
 import Link from 'next/link';
+import { useRouter } from 'next/router';
 import { createJob } from '@/utils/api';
 
 export default function CreateJob() {
@@ -68,10 +70,12 @@ export default function CreateJob() {
           </p>
           {error && <p className="text-red-500 mb-4">{error}</p>}
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
+            <label htmlFor="title" className="block text-sm font-medium text-gray-700 mb-2">
               Job Title <span className="text-red-500">*</span>
             </label>
             <input
+              id="title"
+              name="title"
               type="text"
               value={formData.title}
               onChange={(e) => handleInputChange('title', e.target.value)}
@@ -82,10 +86,12 @@ export default function CreateJob() {
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
+            <label htmlFor="ministry_type" className="block text-sm font-medium text-gray-700 mb-2">
               Ministry Type <span className="text-red-500">*</span>
             </label>
             <select
+              id="ministry_type"
+              name="ministry_type"
               value={formData.ministry_type}
               onChange={(e) => handleInputChange('ministry_type', e.target.value)}
               className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-efcaAccent focus:border-efcaAccent bg-white"
@@ -114,6 +120,7 @@ export default function CreateJob() {
                 'Outreach/evangelism',
                 'Pastoral care/counseling',
                 'Residency',
+                'Internship',
                 'Seniors ministry',
                 'Singles ministry',
                 'Student/youth ministry',
@@ -127,10 +134,15 @@ export default function CreateJob() {
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
+            <label
+              htmlFor="employment_type"
+              className="block text-sm font-medium text-gray-700 mb-2"
+            >
               Employment Type <span className="text-red-500">*</span>
             </label>
             <select
+              id="employment_type"
+              name="employment_type"
               value={formData.employment_type}
               onChange={(e) => handleInputChange('employment_type', e.target.value)}
               className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-efcaAccent focus:border-efcaAccent bg-white"
@@ -146,10 +158,15 @@ export default function CreateJob() {
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
+            <label
+              htmlFor="job_description"
+              className="block text-sm font-medium text-gray-700 mb-2"
+            >
               Job Description <span className="text-red-500">*</span>
             </label>
             <textarea
+              id="job_description"
+              name="job_description"
               value={formData.job_description}
               onChange={(e) => handleInputChange('job_description', e.target.value)}
               className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-efcaAccent focus:border-efcaAccent"
@@ -160,10 +177,12 @@ export default function CreateJob() {
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
+            <label htmlFor="about_church" className="block text-sm font-medium text-gray-700 mb-2">
               About This Church <span className="text-red-500">*</span>
             </label>
             <textarea
+              id="about_church"
+              name="about_church"
               value={formData.about_church}
               onChange={(e) => handleInputChange('about_church', e.target.value)}
               className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-efcaAccent focus:border-efcaAccent"
@@ -174,14 +193,17 @@ export default function CreateJob() {
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">Job URL Link</label>
+            <label htmlFor="job_url_link" className="block text-sm font-medium text-gray-700 mb-2">
+              Job URL Link
+            </label>
             <input
+              id="job_url_link"
+              name="job_url_link"
               type="text"
               value={formData.job_url_link}
               onChange={(e) => handleInputChange('job_url_link', e.target.value)}
               className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-efcaAccent focus:border-efcaAccent"
               placeholder="Job URL Link"
-              required
             />
           </div>
 

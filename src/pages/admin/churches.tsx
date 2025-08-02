@@ -1,11 +1,14 @@
+'use client';
+
 import React, { useEffect, useState } from 'react';
 import Link from 'next/link';
-import { getChurches, patchChurchStatus } from '../../utils/api';
-import { Church } from '../../types';
+import { Church } from '@/types';
+import { getChurches, patchChurchStatus } from '@/utils/api';
 
-const AdminChurches = () => {
+export default function AdminChurches() {
   const [churches, setChurches] = useState<Church[]>([]);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState('');
 
   useEffect(() => {
     fetchChurches();
@@ -16,7 +19,11 @@ const AdminChurches = () => {
       const churchesRes = await getChurches();
       setChurches(churchesRes.results);
     } catch (error) {
-      console.error('Failed to fetch churches', error);
+      if (error instanceof Error) {
+        setError(error.message);
+      } else {
+        setError('Failed to load churches.');
+      }
     } finally {
       setLoading(false);
     }
@@ -29,7 +36,11 @@ const AdminChurches = () => {
         prev.map((church) => (church.id === id ? { ...church, status } : church))
       );
     } catch (error) {
-      console.error('Failed to delete church', error);
+      if (error instanceof Error) {
+        setError(error.message);
+      } else {
+        setError('Failed to deactivate church.');
+      }
     }
   };
 
@@ -64,6 +75,7 @@ const AdminChurches = () => {
           ) : churches.length === 0 ? (
             <div className="text-center py-20">
               <p className="text-lg mb-2 text-gray-600">No churches found</p>
+              {error && <p className="mt-1 text-sm text-left text-[#FF5722]">{error}</p>}
               <p className="text-sm text-gray-500 mb-4">Create your first church to get started.</p>
               <Link href="/admin/churches/create" className="btn-primary">
                 + New Church
@@ -178,6 +190,4 @@ const AdminChurches = () => {
       </div>
     </div>
   );
-};
-
-export default AdminChurches;
+}

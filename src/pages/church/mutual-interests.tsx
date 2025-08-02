@@ -1,9 +1,10 @@
 'use client';
+
 import React, { useState, useEffect, useMemo } from 'react';
+import { Profile } from '@/context/ProfileContext';
+import { MutualInterest, InviteCode, EnrichedMutualInterest } from '@/types';
 import { getApprovedCandidates, getMutualInterests, getInviteCodes } from '@/utils/api';
 import { normalizeProfiles, formatPhone } from '@/utils/helpers';
-import { Profile } from '@/context/ProfileContext';
-import { MutualInterest, InviteCode, EnrichedMutualInterest } from '../../types';
 
 export default function MutualInterests() {
   const [loading, setLoading] = useState(true);
@@ -14,6 +15,7 @@ export default function MutualInterests() {
   const [copyStatus, setCopyStatus] = useState<{
     [key: number]: { message: string; success: boolean };
   }>({});
+  const [loadingError, setLoadingError] = useState('');
 
   const profileMap = useMemo(() => normalizeProfiles(profiles), [profiles]);
 
@@ -40,7 +42,11 @@ export default function MutualInterests() {
         setMutualInterests(mutualInterestsRes.results);
         setInviteCodes(inviteCodesRes.results);
       } catch (error) {
-        console.error('Failed to fetch mutual interests:', error);
+        if (error instanceof Error) {
+          setLoadingError(error.message);
+        } else {
+          setLoadingError('Failed to fetch mutual interests.');
+        }
       } finally {
         setLoading(false);
       }
@@ -119,6 +125,9 @@ export default function MutualInterests() {
           <div className="bg-white rounded-lg shadow-sm p-6">
             <h3 className="text-lg font-semibold text-efcaDark mb-2">Total Interests</h3>
             <p className="text-3xl font-bold text-efcaAccent">{getTotalInterests()}</p>
+            {loadingError && (
+              <p className="mt-1 text-sm text-left text-[#FF5722]">{loadingError}</p>
+            )}
             <p className="text-sm text-gray-600">Candidates interested in your positions</p>
           </div>
           <div className="bg-white rounded-lg shadow-sm p-6">

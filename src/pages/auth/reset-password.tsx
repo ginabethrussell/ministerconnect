@@ -1,7 +1,10 @@
 'use client';
+
 import React, { useState } from 'react';
 import { useRouter } from 'next/router';
 import { useUser } from '@/context/UserContext';
+import PasswordInput from '@/components/PasswordInput';
+import PasswordRequirements from '@/components/PasswordRequirements';
 import { resetPassword } from '@/utils/api';
 
 export default function ResetPassword() {
@@ -67,16 +70,13 @@ export default function ResetPassword() {
               >
                 Temporary Password
               </label>
-              <input
+              <PasswordInput
                 id="temporaryPassword"
                 name="temporaryPassword"
-                type="password"
-                autoComplete="temporary-password"
-                required
                 value={temporaryPassword}
                 onChange={(e) => setTemporaryPassword(e.target.value)}
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-efcaAccent focus:border-efcaAccent"
                 placeholder="Enter your temporary password"
+                required
               />
             </div>
 
@@ -84,17 +84,13 @@ export default function ResetPassword() {
               <label htmlFor="newPassword" className="block text-sm font-medium text-gray-700 mb-2">
                 New Password
               </label>
-              <input
+              <PasswordInput
                 id="newPassword"
                 name="newPassword"
-                type="password"
-                autoComplete="new-password"
-                required
                 value={newPassword}
                 onChange={(e) => setNewPassword(e.target.value)}
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-efcaAccent focus:border-efcaAccent"
-                placeholder="Enter new password (min 8 characters)"
-                minLength={8}
+                placeholder="Enter new password"
+                required
               />
             </div>
 
@@ -105,18 +101,15 @@ export default function ResetPassword() {
               >
                 Confirm New Password
               </label>
-              <input
+              <PasswordInput
                 id="confirmPassword"
                 name="confirmPassword"
-                type="password"
-                autoComplete="new-password"
-                required
                 value={confirmPassword}
                 onChange={(e) => setConfirmPassword(e.target.value)}
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-efcaAccent focus:border-efcaAccent"
-                placeholder="Confirm new password"
-                minLength={8}
+                placeholder="Confirm your password"
+                required
               />
+              <PasswordRequirements />
             </div>
 
             <button

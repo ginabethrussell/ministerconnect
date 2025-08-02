@@ -1,15 +1,16 @@
 'use client';
+
 import React, { useEffect, useState } from 'react';
 import ReactDatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
 import { add } from 'date-fns';
+import { InviteCode } from '@/types';
 import {
   getInviteCodes,
   createInviteCode,
   updateInviteCode,
   patchInviteCodeStatus,
 } from '@/utils/api';
-import { InviteCode } from '@/types';
 
 const initialFormValues = {
   code: '',
@@ -21,6 +22,7 @@ export default function AdminCodes() {
   const [codes, setCodes] = useState<InviteCode[]>([]);
   const [loading, setLoading] = useState(true);
   const [formValues, setFormValues] = useState(initialFormValues);
+  const [error, setError] = useState('');
 
   useEffect(() => {
     loadCodes();
@@ -32,23 +34,30 @@ export default function AdminCodes() {
       const res = await getInviteCodes();
       setCodes(res.results);
     } catch (err) {
-      console.error('Error loading codes', err);
+      if (err instanceof Error) {
+        setError(err.message);
+      } else {
+        setError('Failed to load invite codes.');
+      }
     } finally {
       setLoading(false);
     }
   };
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setError('');
     const { name, value } = e.target;
     setFormValues((prev) => ({ ...prev, [name]: value }));
   };
 
   const handleDateChange = (date: Date | null) => {
+    setError('');
     setFormValues((prev) => ({ ...prev, expires_at: date ?? new Date() }));
   };
 
   const handleCreate = async (e: React.FormEvent) => {
     e.preventDefault();
+    setError('');
     try {
       await createInviteCode({
         ...formValues,
@@ -57,17 +66,24 @@ export default function AdminCodes() {
       setFormValues(initialFormValues);
       await loadCodes();
     } catch (err) {
-      console.error('Error creating code', err);
+      if (err instanceof Error) {
+        setError(err.message);
+      } else {
+        setError('An error occurred attempting to create the invite code.');
+      }
     }
   };
 
   const handleDeactivate = async (id: number) => {
     try {
-      const patchRes = await patchInviteCodeStatus(id, { status: 'inactive' });
-      console.log('PATCH RESP', patchRes);
+      await patchInviteCodeStatus(id, { status: 'inactive' });
       await loadCodes();
     } catch (err) {
-      console.error('Error deactivating code', err);
+      if (err instanceof Error) {
+        setError(err.message);
+      } else {
+        setError('An error occurred attempting to deactivate the invite code.');
+      }
     }
   };
 
@@ -122,12 +138,13 @@ export default function AdminCodes() {
           <button type="submit" className="btn-primary self-end">
             + Add Code
           </button>
+          {error && <p className="mt-1 text-sm text-left text-[#FF5722]">{error}</p>}
         </form>
 
         <div className="bg-white p-6 rounded-lg shadow">
           {loading ? (
             <p>Loading...</p>
-          ) : (
+          ) : codes?.length > 0 ? (
             <div className="space-y-6">
               {codes.map((code) => (
                 <InviteCodeRow
@@ -138,6 +155,8 @@ export default function AdminCodes() {
                 />
               ))}
             </div>
+          ) : (
+            <div className="text-center py-20 text-gray-500">No Invite Codes exist.</div>
           )}
         </div>
       </div>
@@ -161,17 +180,21 @@ function InviteCodeRow({
     expires_at: new Date(code.expires_at),
     status: code.status,
   });
+  const [error, setError] = useState('');
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setError('');
     const { name, value } = e.target;
     setLocalValues((prev) => ({ ...prev, [name]: value }));
   };
 
   const handleDateChange = (date: Date | null) => {
+    setError('');
     setLocalValues((prev) => ({ ...prev, expires_at: date ?? prev.expires_at }));
   };
 
   const handleSave = async () => {
+    setError('');
     try {
       await updateInviteCode(code.id, {
         ...localValues,
@@ -180,7 +203,11 @@ function InviteCodeRow({
       onSaveSuccess();
       setIsEditing(false);
     } catch (err) {
-      console.error('Error updating code', err);
+      if (err instanceof Error) {
+        setError(err.message);
+      } else {
+        setError('An error occurred while updating the Invite Code.');
+      }
     }
   };
 
@@ -232,6 +259,7 @@ function InviteCodeRow({
             <button onClick={() => setIsEditing(false)} className="btn-secondary w-full md:w-auto">
               Cancel
             </button>
+            {error && <p className="mt-1 text-sm text-left text-[#FF5722]">{error}</p>}
           </div>
         </>
       ) : (
@@ -253,6 +281,7 @@ function InviteCodeRow({
               <button onClick={() => onDeactivate(code.id)} className="btn-danger w-full md:w-auto">
                 Deactivate
               </button>
+              {error && <p className="mt-1 text-sm text-left text-[#FF5722]">{error}</p>}
             </div>
           )}
         </div>
