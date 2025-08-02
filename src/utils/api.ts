@@ -1,4 +1,12 @@
-import { JobListing, PaginatedResponse, MutualInterest, TokenResponse, InviteCode } from '@/types';
+import {
+  Church,
+  JobListing,
+  PaginatedResponse,
+  MutualInterest,
+  TokenResponse,
+  InviteCode,
+  ChurchInput,
+} from '@/types';
 import { User } from '@/context/UserContext';
 import { Profile } from '@/context/ProfileContext';
 // API client configuration for backend integration
@@ -219,7 +227,7 @@ export const API_ENDPOINTS = {
   REFRESH_TOKEN: '/api/token/refresh/',
 
   // Churches (Django backend)
-  CREATE_CHURCH: '/api/churches/',
+  CHURCHES: '/api/churches/',
 
   // Users (Django backend)
   CREATE_USER: '/api/users/create/',
@@ -245,9 +253,6 @@ export const API_ENDPOINTS = {
   PROFILE_RESET: '/api/profile/reset/',
   PROFILES: '/api/profiles/',
 
-  // Churches (frontend routes)
-  CHURCHES: '/api/churches/',
-
   // Approved Candidates
   APPROVED_CANDIDATES: '/api/approved-candidates/',
 
@@ -259,20 +264,28 @@ export const API_ENDPOINTS = {
 } as const;
 
 // Admin Churches
-export const getAdminChurches = async () => {
+export const getChurches = async (): Promise<PaginatedResponse<Church>> => {
   return apiClient.get(API_ENDPOINTS.CHURCHES);
 };
 
-export const deleteChurch = async (id: number) => {
-  return apiClient.delete(`/api/admin/churches/${id}`);
+export const getChurchById = async (id: string): Promise<Church> => {
+  return apiClient.get(`${API_ENDPOINTS.CHURCHES}${id}/`);
 };
 
-export const getAdminChurchById = async (id: string) => {
-  return apiClient.get(`/api/admin/churches/${id}`);
+export const getUsersByChurchId = async (id: string): Promise<PaginatedResponse<User>> => {
+  return apiClient.get(`${API_ENDPOINTS.USERS}?church_id=${id}`);
 };
 
-export const updateChurch = async (id: number, data: any) => {
-  return apiClient.put(`/api/admin/churches/${id}`, data);
+export const createChurch = async (data: ChurchInput): Promise<PaginatedResponse<Church>> => {
+  return apiClient.post(API_ENDPOINTS.CHURCHES, data);
+};
+
+export const updateChurchById = async (id: number, data: any) => {
+  return apiClient.put(`${API_ENDPOINTS.CHURCHES}${id}/`, data);
+};
+
+export const patchChurchStatus = async (id: number, data: { status: string }) => {
+  return apiClient.patch(`${API_ENDPOINTS.CHURCHES}${id}/`, data);
 };
 
 // Invite Codes
@@ -297,10 +310,6 @@ export const updateInviteCode = async (
 
 export const patchInviteCodeStatus = async (id: number, data: { status: string }) => {
   return apiClient.patch(`${API_ENDPOINTS.INVITE_CODES}${id}/`, data);
-};
-
-export const deleteInviteCode = async (id: number) => {
-  return apiClient.delete(`/api/admin/invite-codes/${id}`);
 };
 
 export const getMe = async (): Promise<User> => {

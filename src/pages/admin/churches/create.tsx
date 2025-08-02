@@ -1,17 +1,13 @@
 import React, { useState } from 'react';
 import { useRouter } from 'next/router';
 import Link from 'next/link';
-
-interface ChurchUser {
-  email: string;
-  password: string;
-  requires_password_change: boolean;
-}
+import { createChurch } from '@/utils/api';
+import { ChurchUserInput, ChurchInput } from '@/types';
 
 export default function CreateChurch() {
   const router = useRouter();
   const [loading, setLoading] = useState(false);
-  const [churchData, setChurchData] = useState({
+  const [churchData, setChurchData] = useState<ChurchInput>({
     name: '',
     email: '',
     phone: '',
@@ -20,12 +16,16 @@ export default function CreateChurch() {
     city: '',
     state: '',
     zipcode: '',
+    status: 'active',
   });
-  const [users, setUsers] = useState<ChurchUser[]>([
+  const [users, setUsers] = useState<ChurchUserInput[]>([
     {
       email: '',
       password: '',
+      first_name: '',
+      last_name: '',
       requires_password_change: true,
+      status: 'active',
     },
   ]);
 
@@ -43,7 +43,10 @@ export default function CreateChurch() {
       {
         email: '',
         password: '',
+        first_name: '',
+        last_name: '',
         requires_password_change: true,
+        status: 'active',
       },
     ]);
   };
@@ -65,7 +68,6 @@ export default function CreateChurch() {
       !churchData.state ||
       !churchData.zipcode
     ) {
-      alert('Please fill in all required church fields.');
       return false;
     }
 
@@ -73,11 +75,9 @@ export default function CreateChurch() {
     for (let i = 0; i < users.length; i++) {
       const user = users[i];
       if (!user.email || !user.password) {
-        alert(`Please fill in all required fields for user ${i + 1}.`);
         return false;
       }
       if (user.password.length < 8) {
-        alert(`Password for user ${i + 1} must be at least 8 characters long.`);
         return false;
       }
     }
@@ -86,7 +86,6 @@ export default function CreateChurch() {
     const emails = users.map((u) => u.email);
     const uniqueEmails = new Set(emails);
     if (emails.length !== uniqueEmails.size) {
-      alert('All user emails must be unique.');
       return false;
     }
 
@@ -101,26 +100,14 @@ export default function CreateChurch() {
     }
 
     setLoading(true);
+    const newChurchWithUsers = {
+      ...churchData,
+      users,
+    };
 
     try {
-      const response = await fetch('/api/churches', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          ...churchData,
-          users,
-        }),
-      });
-
-      if (response.ok) {
-        alert('Church created successfully!');
-        router.push('/admin/churches');
-      } else {
-        const errorData: { message?: string } = await response.json();
-        alert(`Error creating church: ${errorData.message || 'Unknown error'}`);
-      }
+      await createChurch(newChurchWithUsers);
+      router.push('/admin/churches');
     } catch (error) {
       console.error('Error creating church:', error);
       alert('Error creating church. Please try again.');
@@ -237,7 +224,7 @@ export default function CreateChurch() {
                   value={churchData.state}
                   onChange={(e) => handleChurchDataChange('state', e.target.value)}
                   className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-efcaAccent focus:border-efcaAccent"
-                  placeholder="IL"
+                  placeholder="2 Letter Abbreviation - OH"
                   required
                 />
               </div>
@@ -298,6 +285,36 @@ export default function CreateChurch() {
                         onChange={(e) => handleUserChange(index, 'email', e.target.value)}
                         className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-efcaAccent focus:border-efcaAccent"
                         placeholder="user@church.org"
+                        required
+                      />
+                    </div>
+
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-2">
+                        First Name <span className="text-red-500">*</span>
+                      </label>
+                      <input
+                        name="first_name"
+                        type="text"
+                        value={user.first_name}
+                        onChange={(e) => handleUserChange(index, 'first_name', e.target.value)}
+                        className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-efcaAccent focus:border-efcaAccent"
+                        placeholder="First Name"
+                        required
+                      />
+                    </div>
+
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-2">
+                        Last Name <span className="text-red-500">*</span>
+                      </label>
+                      <input
+                        name="last_name"
+                        type="text"
+                        value={user.last_name}
+                        onChange={(e) => handleUserChange(index, 'last_name', e.target.value)}
+                        className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-efcaAccent focus:border-efcaAccent"
+                        placeholder="Last Name"
                         required
                       />
                     </div>

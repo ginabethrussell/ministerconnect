@@ -1,12 +1,11 @@
 import React, { useEffect, useState } from 'react';
 import Link from 'next/link';
-import { getAdminChurches, deleteChurch } from '../../utils/api';
-import { Church, User } from '../../types';
-
-type ChurchWithUsers = Church & { users: User[] };
+import { User } from '@/context/UserContext';
+import { getChurches, patchChurchStatus } from '../../utils/api';
+import { Church } from '../../types';
 
 const AdminChurches = () => {
-  const [churches, setChurches] = useState<ChurchWithUsers[]>([]);
+  const [churches, setChurches] = useState<Church[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -14,10 +13,9 @@ const AdminChurches = () => {
   }, []);
 
   const fetchChurches = async () => {
-    setLoading(true);
     try {
-      const data = await getAdminChurches();
-      setChurches(data);
+      const churchesRes = await getChurches();
+      setChurches(churchesRes.results);
     } catch (error) {
       console.error('Failed to fetch churches', error);
     } finally {
@@ -25,21 +23,14 @@ const AdminChurches = () => {
     }
   };
 
-  const handleDelete = async (id: number) => {
-    if (
-      !confirm(
-        'Are you sure you want to delete this church and all associated users? This action cannot be undone.'
-      )
-    ) {
-      return;
-    }
-
+  const handleDeactivate = async (id: number, status: 'inactive') => {
     try {
-      await deleteChurch(id);
-      setChurches((prevChurches) => prevChurches.filter((c) => c.id !== id));
+      await patchChurchStatus(id, { status });
+      setChurches((prev) =>
+        prev.map((church) => (church.id === id ? { ...church, status } : church))
+      );
     } catch (error) {
       console.error('Failed to delete church', error);
-      alert('Error deleting church. Please try again.');
     }
   };
 
@@ -89,7 +80,6 @@ const AdminChurches = () => {
                       <th className="py-3 px-6 font-semibold text-gray-600">Church Name</th>
                       <th className="py-3 px-6 font-semibold text-gray-600">Contact</th>
                       <th className="py-3 px-6 font-semibold text-gray-600">Location</th>
-                      <th className="py-3 px-6 font-semibold text-gray-600">Lead User</th>
                       <th className="py-3 px-6 font-semibold text-gray-600">Status</th>
                       <th className="py-3 px-6 font-semibold text-gray-600 text-center">Actions</th>
                     </tr>
@@ -104,14 +94,6 @@ const AdminChurches = () => {
                         <td className="py-4 px-6 text-sm text-gray-600">
                           {church.city}, {church.state}
                         </td>
-                        <td className="py-4 px-6 text-sm text-gray-600">
-                          {church.users[0]?.name || 'N/A'}
-                          {church.users.length > 1 && (
-                            <span className="text-xs text-gray-500 ml-2">
-                              (+{church.users.length - 1} more)
-                            </span>
-                          )}
-                        </td>
                         <td className="py-4 px-6">
                           <span
                             className={`inline-block capitalize px-3 py-1 rounded-full text-xs font-semibold ${getStatusColor(
@@ -122,19 +104,21 @@ const AdminChurches = () => {
                           </span>
                         </td>
                         <td className="py-4 px-6 text-center">
-                          <div className="flex justify-center gap-2">
+                          <div className="flex justify-end gap-2 ">
                             <Link
                               href={`/admin/churches/edit?id=${church.id}`}
                               className="btn-secondary-sm"
                             >
                               Edit
                             </Link>
-                            <button
-                              onClick={() => handleDelete(church.id)}
-                              className="btn-danger-sm"
-                            >
-                              Delete
-                            </button>
+                            {church.status !== 'inactive' && (
+                              <button
+                                onClick={() => handleDeactivate(church.id, 'inactive')}
+                                className="btn-danger-sm"
+                              >
+                                Deactivate
+                              </button>
+                            )}
                           </div>
                         </td>
                       </tr>
@@ -168,17 +152,6 @@ const AdminChurches = () => {
                           {church.city}, {church.state}
                         </p>
                       </div>
-                      <div>
-                        <span className="font-medium text-gray-600">Lead User:</span>
-                        <p className="text-gray-800">
-                          {church.users[0]?.name || 'N/A'}
-                          {church.users.length > 1 && (
-                            <span className="text-xs text-gray-500 ml-1">
-                              (+{church.users.length - 1} more)
-                            </span>
-                          )}
-                        </p>
-                      </div>
                     </div>
 
                     <div className="flex gap-2 pt-2 border-t border-gray-100">
@@ -188,12 +161,14 @@ const AdminChurches = () => {
                       >
                         Edit
                       </Link>
-                      <button
-                        onClick={() => handleDelete(church.id)}
-                        className="flex-1 btn-danger-sm"
-                      >
-                        Delete
-                      </button>
+                      {church.status !== 'inactive' && (
+                        <button
+                          onClick={() => handleDeactivate(church.id, 'inactive')}
+                          className="flex-1 btn-danger-sm"
+                        >
+                          Deactivate
+                        </button>
+                      )}
                     </div>
                   </div>
                 ))}

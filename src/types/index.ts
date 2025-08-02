@@ -14,6 +14,28 @@ export interface CandidateRegistrationFormValues {
   confirmPassword: string;
 }
 
+export interface ChurchUserInput {
+  email: string;
+  password: string;
+  first_name: string;
+  last_name: string;
+  requires_password_change: boolean;
+  status: string;
+}
+
+export interface ChurchInput {
+  name: string;
+  email: string;
+  phone: string;
+  website: string;
+  street_address: string;
+  city: string;
+  state: string;
+  zipcode: string;
+  status: string;
+  users?: ChurchUserInput[];
+}
+
 export interface Church {
   id: number;
   name: string;
@@ -24,9 +46,9 @@ export interface Church {
   city: string;
   state: string;
   zipcode: string;
-  location: string; // Formatted location (city, state)
-  status: 'active' | 'pending' | 'suspended';
-  job_listings_count: number; // Number of job listings for this church
+  location: string;
+  status: 'active' | 'inactive';
+  job_listings_count: number;
   created_at: string;
   updated_at: string;
 }
