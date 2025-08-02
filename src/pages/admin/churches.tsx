@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from 'react';
 import Link from 'next/link';
-import { User } from '@/context/UserContext';
 import { getChurches, patchChurchStatus } from '../../utils/api';
 import { Church } from '../../types';
 
