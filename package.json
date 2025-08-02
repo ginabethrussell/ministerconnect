@@ -34,17 +34,11 @@
     "eslint-plugin-prettier": "^5.5.0",
     "eslint-plugin-react": "^7.37.5",
     "eslint-plugin-react-hooks": "^5.2.0",
-    "msw": "^2.10.2",
     "postcss": "^8.5.4",
     "prettier": "^3.5.3",
     "tailwindcss": "3.4.3",
     "typescript": "latest"
   },
   "main": "index.js",
-  "license": "MIT",
-  "msw": {
-    "workerDirectory": [
-      "public"
-    ]
-  }
+  "license": "MIT"
 }
