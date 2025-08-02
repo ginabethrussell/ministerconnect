@@ -1,4 +1,12 @@
-import { JobListing, PaginatedResponse, MutualInterest, TokenResponse, InviteCode } from '@/types';
+import {
+  Church,
+  JobListing,
+  PaginatedResponse,
+  MutualInterest,
+  TokenResponse,
+  InviteCode,
+  ChurchInput,
+} from '@/types';
 import { User } from '@/context/UserContext';
 import { Profile } from '@/context/ProfileContext';
 // API client configuration for backend integration
@@ -219,14 +227,13 @@ export const API_ENDPOINTS = {
   REFRESH_TOKEN: '/api/token/refresh/',
 
   // Churches (Django backend)
-  CREATE_CHURCH: '/api/churches/',
+  CHURCHES: '/api/churches/',
 
   // Users (Django backend)
   CREATE_USER: '/api/users/create/',
 
   // Invite codes (Django backend)
-  CREATE_INVITE_CODE: '/api/invite-codes/create/',
-  LIST_INVITE_CODES: '/api/invite-codes/',
+  INVITE_CODES: '/api/invite-codes/',
 
   // Candidates (Django backend)
   CANDIDATE_REGISTER: '/api/candidates/register/',
@@ -246,9 +253,6 @@ export const API_ENDPOINTS = {
   PROFILE_RESET: '/api/profile/reset/',
   PROFILES: '/api/profiles/',
 
-  // Churches (frontend routes)
-  CHURCHES: '/api/churches/',
-
   // Approved Candidates
   APPROVED_CANDIDATES: '/api/approved-candidates/',
 
@@ -257,46 +261,31 @@ export const API_ENDPOINTS = {
 
   // Mutual interests
   MUTUAL_INTERESTS: '/api/mutual-interests/',
-
-  // Invite codes (frontend routes)
-  INVITE_CODES: '/api/invite-codes/',
-
-  // Superadmin
-  SUPERADMIN_DASHBOARD: '/api/superadmin/dashboard/',
-  SUPERADMIN_USERS: '/api/superadmin/users/',
-  SUPERADMIN_PROFILES: '/api/superadmin/profiles/',
-  SUPERADMIN_CHURCHES: '/api/superadmin/churches/',
 } as const;
 
-// Superadmin
-export const getSuperAdminProfiles = async () => {
-  return apiClient.get(API_ENDPOINTS.SUPERADMIN_PROFILES);
-};
-
-// Admin Job Listings
-export const getAdminJobListings = async () => {
-  return apiClient.get(API_ENDPOINTS.JOB_LISTINGS);
-};
-
-export const updateJobListingStatus = async (id: number, status: 'approved' | 'rejected') => {
-  return apiClient.post(`/api/admin/jobs/${id}`, { status });
-};
-
 // Admin Churches
-export const getAdminChurches = async () => {
+export const getChurches = async (): Promise<PaginatedResponse<Church>> => {
   return apiClient.get(API_ENDPOINTS.CHURCHES);
 };
 
-export const deleteChurch = async (id: number) => {
-  return apiClient.delete(`/api/admin/churches/${id}`);
+export const getChurchById = async (id: string): Promise<Church> => {
+  return apiClient.get(`${API_ENDPOINTS.CHURCHES}${id}/`);
 };
 
-export const getAdminChurchById = async (id: string) => {
-  return apiClient.get(`/api/admin/churches/${id}`);
+export const getUsersByChurchId = async (id: string): Promise<PaginatedResponse<User>> => {
+  return apiClient.get(`${API_ENDPOINTS.USERS}?church_id=${id}`);
 };
 
-export const updateChurch = async (id: number, data: any) => {
-  return apiClient.put(`/api/admin/churches/${id}`, data);
+export const createChurch = async (data: ChurchInput): Promise<PaginatedResponse<Church>> => {
+  return apiClient.post(API_ENDPOINTS.CHURCHES, data);
+};
+
+export const updateChurchById = async (id: number, data: any) => {
+  return apiClient.put(`${API_ENDPOINTS.CHURCHES}${id}/`, data);
+};
+
+export const patchChurchStatus = async (id: number, data: { status: string }) => {
+  return apiClient.patch(`${API_ENDPOINTS.CHURCHES}${id}/`, data);
 };
 
 // Invite Codes
@@ -304,21 +293,23 @@ export const getInviteCodes = async (): Promise<PaginatedResponse<InviteCode>> =
   return apiClient.get(API_ENDPOINTS.INVITE_CODES);
 };
 
-export const createInviteCode = async (data: { code: string; event: string }) => {
+export const createInviteCode = async (data: {
+  code: string;
+  event: string;
+  expires_at: string;
+}) => {
   return apiClient.post(API_ENDPOINTS.INVITE_CODES, data);
 };
 
-export const updateInviteCode = async (id: number, data: { code: string; event: string }) => {
-  return apiClient.put(`/api/admin/invite-codes/${id}`, data);
+export const updateInviteCode = async (
+  id: number,
+  data: { code: string; event: string; expires_at: string; status: string }
+) => {
+  return apiClient.put(`${API_ENDPOINTS.INVITE_CODES}${id}/`, data);
 };
 
-export const deleteInviteCode = async (id: number) => {
-  return apiClient.delete(`/api/admin/invite-codes/${id}`);
-};
-
-// Church Dashboard (stub, update as needed)
-export const getChurchDashboard = async () => {
-  // ... implement as needed ...
+export const patchInviteCodeStatus = async (id: number, data: { status: string }) => {
+  return apiClient.patch(`${API_ENDPOINTS.INVITE_CODES}${id}/`, data);
 };
 
 export const getMe = async (): Promise<User> => {
@@ -357,7 +348,6 @@ export const resetPassword = async (data: {
   return apiClient.post(API_ENDPOINTS.RESET_PASSWORD, body);
 };
 
-// Fetch current authenticated user profile
 export const getProfile = async (): Promise<Profile> => {
   return apiClient.get(API_ENDPOINTS.PROFILE);
 };
@@ -380,6 +370,10 @@ export const getChurchJobs = async (): Promise<PaginatedResponse<JobListing>> =>
 
 export const createJob = async (jobData: Partial<JobListing>): Promise<JobListing> => {
   return apiClient.post(API_ENDPOINTS.JOB_LISTINGS, jobData);
+};
+
+export const getAllJobs = async (): Promise<PaginatedResponse<JobListing>> => {
+  return apiClient.get(API_ENDPOINTS.JOB_LISTINGS);
 };
 
 export const deleteJob = async (id: number): Promise<void> => {
@@ -428,4 +422,22 @@ export const withdrawInterest = async (id: number): Promise<void> => {
 
 export const getApprovedCandidates = async (): Promise<PaginatedResponse<Profile>> => {
   return apiClient.get(API_ENDPOINTS.APPROVED_CANDIDATES);
+};
+
+export const getCandidateProfiles = async (): Promise<PaginatedResponse<Profile>> => {
+  return apiClient.get(API_ENDPOINTS.PROFILES);
+};
+
+export const reviewCandidateProfiles = async (
+  id: number,
+  status: 'approved' | 'rejected'
+): Promise<PaginatedResponse<Profile>> => {
+  return apiClient.patch(`${API_ENDPOINTS.PROFILES}${id}/review/`, { id, status });
+};
+
+export const reviewChurchJobs = async (
+  id: number,
+  status: 'approved' | 'rejected'
+): Promise<PaginatedResponse<JobListing>> => {
+  return apiClient.patch(`${API_ENDPOINTS.JOB_LISTINGS}${id}/review/`, { id, status });
 };

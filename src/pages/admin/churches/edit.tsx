@@ -1,29 +1,41 @@
 import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/router';
 import Link from 'next/link';
-import { getAdminChurchById, updateChurch, deleteChurch } from '../../../utils/api';
+import { X } from 'lucide-react';
+import {
+  getChurchById,
+  updateChurchById,
+  patchChurchStatus,
+  getUsersByChurchId,
+} from '../../../utils/api';
 import { Church } from '../../../types';
 import { User } from '@/context/UserContext';
 import PasswordInput from '../../../components/PasswordInput';
+import { formatPhone, titleCase } from '@/utils/helpers';
 
-type ChurchWithUsers = Church & { users: User[] };
+type ChurchWithUsers = Church & { users: User[]; existingUsers: User[] };
 
 export default function EditChurch() {
   const router = useRouter();
   const { id } = router.query;
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
-  const [, setDeleting] = useState(false);
   const [churchData, setChurchData] = useState<ChurchWithUsers | null>(null);
 
   useEffect(() => {
     const loadChurch = async (churchId: string) => {
       try {
-        const data = await getAdminChurchById(churchId);
-        setChurchData(data as ChurchWithUsers);
+        const data = await getChurchById(churchId);
+        const usersRes = await getUsersByChurchId(churchId);
+        console.log(data, usersRes);
+        console.log({ ...data, users: usersRes.results });
+        setChurchData({
+          ...data,
+          existingUsers: usersRes.results,
+          users: [],
+        });
       } catch (error) {
         console.error('Error loading church:', error);
-        alert('Error loading church data');
         router.push('/admin/churches');
       } finally {
         setLoading(false);
@@ -54,6 +66,8 @@ export default function EditChurch() {
         id: Date.now(), // Temporary ID for new user
         email: '',
         name: '',
+        first_name: '',
+        last_name: '',
         groups: ['Church User'],
         password: '',
         church_id: prev.id,
@@ -82,7 +96,7 @@ export default function EditChurch() {
 
     setSaving(true);
     try {
-      await updateChurch(churchData.id, churchData);
+      await updateChurchById(churchData.id, churchData);
       alert('Church updated successfully!');
       router.push('/admin/churches');
     } catch (error) {
@@ -94,23 +108,17 @@ export default function EditChurch() {
   };
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const handleDeleteChurch = async () => {
+  const handleDeactivateChurch = async () => {
     if (!churchData) return;
 
-    if (!confirm('Are you sure you want to delete this church? This action cannot be undone.')) {
-      return;
-    }
-
-    setDeleting(true);
     try {
-      await deleteChurch(churchData.id);
-      alert('Church deleted successfully!');
+      await patchChurchStatus(churchData.id, { status: 'inactive' });
+      alert('Church deactivated successfully!');
       router.push('/admin/churches');
     } catch (error) {
       console.error('Error deleting church:', error);
       alert('Error deleting church. Please try again.');
     } finally {
-      setDeleting(false);
     }
   };
 
@@ -151,6 +159,7 @@ export default function EditChurch() {
             <h2 className="text-xl font-semibold text-gray-700 mb-6">Church Information</h2>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <input
+                name="name"
                 type="text"
                 value={churchData.name}
                 onChange={(e) => handleChurchDataChange('name', e.target.value)}
@@ -159,6 +168,7 @@ export default function EditChurch() {
                 required
               />
               <input
+                name="email"
                 type="email"
                 value={churchData.email}
                 onChange={(e) => handleChurchDataChange('email', e.target.value)}
@@ -167,14 +177,16 @@ export default function EditChurch() {
                 required
               />
               <input
+                name="phone"
                 type="tel"
-                value={churchData.phone}
+                value={formatPhone(churchData.phone)}
                 onChange={(e) => handleChurchDataChange('phone', e.target.value)}
                 className="input-field"
                 placeholder="Phone Number"
                 required
               />
               <input
+                name="website"
                 type="text"
                 value={churchData.website}
                 onChange={(e) => handleChurchDataChange('website', e.target.value)}
@@ -182,6 +194,7 @@ export default function EditChurch() {
                 placeholder="Website"
               />
               <input
+                name="street_address"
                 type="text"
                 value={churchData.street_address}
                 onChange={(e) => handleChurchDataChange('street_address', e.target.value)}
@@ -190,6 +203,7 @@ export default function EditChurch() {
                 required
               />
               <input
+                name="city"
                 type="text"
                 value={churchData.city}
                 onChange={(e) => handleChurchDataChange('city', e.target.value)}
@@ -198,6 +212,7 @@ export default function EditChurch() {
                 required
               />
               <input
+                name="state"
                 type="text"
                 value={churchData.state}
                 onChange={(e) => handleChurchDataChange('state', e.target.value)}
@@ -206,6 +221,7 @@ export default function EditChurch() {
                 required
               />
               <input
+                name="zipcode"
                 type="text"
                 value={churchData.zipcode}
                 onChange={(e) => handleChurchDataChange('zipcode', e.target.value)}
@@ -214,13 +230,13 @@ export default function EditChurch() {
                 required
               />
               <select
+                name="status"
                 value={churchData.status}
                 onChange={(e) => handleChurchDataChange('status', e.target.value)}
                 className="input-field"
               >
                 <option value="active">Active</option>
-                <option value="pending">Pending</option>
-                <option value="suspended">Suspended</option>
+                <option value="inactive">Inactive</option>
               </select>
             </div>
           </section>
@@ -228,11 +244,45 @@ export default function EditChurch() {
           {/* User Credentials */}
           <section>
             <h2 className="text-xl font-semibold text-gray-700 mb-6">User Credentials</h2>
+            <div>
+              {churchData.existingUsers.map((user: User, idx: number) => (
+                <div key={`${user.id}-${idx}`} className="p-4 mb-4 bg-gray-50 rounded border">
+                  <p>
+                    <strong>Name:</strong> {user.name}
+                  </p>
+                  <p>
+                    <strong>Email:</strong> {user.email}
+                  </p>
+                  <p>
+                    <strong>Status:</strong> {titleCase(user?.status || '')}
+                  </p>
+                </div>
+              ))}
+            </div>
             <div className="space-y-6">
               {churchData.users.map((user, index) => (
                 <div key={user.id} className="p-4 border rounded-md bg-gray-50 relative">
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <input
+                      name="first_name"
+                      type="text"
+                      value={user.first_name}
+                      onChange={(e) => handleUserChange(index, 'first_name', e.target.value)}
+                      className="input-field"
+                      placeholder="User First Name"
+                      required
+                    />
+                    <input
+                      name="last_name"
+                      type="text"
+                      value={user.last_name}
+                      onChange={(e) => handleUserChange(index, 'last_name', e.target.value)}
+                      className="input-field"
+                      placeholder="User Last Name"
+                      required
+                    />
+                    <input
+                      name="email"
                       type="email"
                       value={user.email}
                       onChange={(e) => handleUserChange(index, 'email', e.target.value)}
@@ -243,7 +293,7 @@ export default function EditChurch() {
                     <PasswordInput
                       value={user.password || ''}
                       onChange={(e) => handleUserChange(index, 'password', e.target.value)}
-                      placeholder={user.id ? 'New Password (optional)' : 'Password'}
+                      placeholder="Temporary Password"
                     />
                     <div className="flex items-center gap-2">
                       <input
@@ -265,7 +315,7 @@ export default function EditChurch() {
                       onClick={() => removeUser(index)}
                       className="absolute top-2 right-2 text-red-500 hover:text-red-700"
                     >
-                      &times;
+                      <X />
                     </button>
                   )}
                 </div>
