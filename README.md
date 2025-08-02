@@ -101,44 +101,13 @@ The application now includes a fully functional Django REST API backend with:
 
 ### API Integration
 
-The frontend uses a centralized API client that automatically switches between:
+The frontend uses a centralized API client that connects to the following:
 
-- Mock API (development without backend)
 - Real backend API (when `NEXT_PUBLIC_API_URL` is set)
+  - Locally running at http://localhost:8000
+  - Or on the deployed backend URL
 
 All API endpoints are defined in `src/utils/api.ts` and match the Django backend implementation.
-
-## Test Accounts
-
-### **Super Admin**
-
-- Email: `superadminuser@gmail.com`
-- Password: `password123`
-
-### **Admin**
-
-- Email: `admin@ministerconnect.com`
-- Password: `password123`
-
-### **Church (Grace Fellowship)**
-
-- Email: `pastor.bob@gracefellowship.org`
-- Password: `password123`
-
-### **Church (New Hope Community)**
-
-- Email: `pastor.sarah@newhope.com`
-- Password: `password123`
-
-### **Candidate (Approved Profile)**
-
-- Email: `john.candidate@email.com`
-- Password: `password123`
-
-### **Candidate (Pending Profile)**
-
-- Email: `jane.candidate@email.com`
-- Password: `password123`
 
 ## Documentation
 
@@ -146,105 +115,134 @@ All API endpoints are defined in `src/utils/api.ts` and match the Django backend
 - **API Data Model**: See `API_DATA_MODEL.md` for detailed data structure information
 - **User Scenarios**: See `docs/user_scenarios/` for detailed user workflows
 - **Documentation**: See `docs/README.md` for additional documentation
+- **MVP Testing Requirements**: See `docs/mvp_testing_requirements/` for mvp delivery criteria
 - **Backend Documentation**: See `ministerconnect_backend/README.md` for backend setup and API details
 
 ### Use Case Diagram
 
 ![Use Case Diagram](docs/usecase_diagram.png)
 
-## User Journey Screenshots
+## 📸 User Journey Screenshots
+
+Below are example views from the MinisterConnect backend and frontend:
 
 ### Landing Page
 
-![Landing Page](screenshots/landingpage.png)
+<p align="center">
+  <img src="" alt="landing-page" width="280" />
+  <br />
+  <em>Landing Page</em>
+</p>
 
-### Login Page
+### Authentication & Candidate Registration
 
-![Login](screenshots/login.png)
+<table>
+  <tr>
+    <td align="center">
+      <img src="" width="280" alt="login" /><br/>
+      <em>Login Screen</em>
+    </td>
+    <td align="center">
+      <img src="" width="280" alt="registration" /><br/>
+      <em>Registration</em>
+    </td>
+    <td align="center">
+      <img src="" width="280" alt="reset-password" /><br/>
+      <em>Reset Password</em>
+    </td>
+  </tr>
+</table>
 
-### Register Page
+### Candidate User Journeys
 
-![Register](screenshots/register.png)
+<table>
+  <tr>
+    <td align="center">
+      <img src="" width="280" alt="dashboard" /><br/>
+      <em>Dashboard</em>
+    </td>
+    <td align="center">
+      <img src="" width="280" alt="view-profile" /><br/>
+      <em>Profile View</em>
+    </td>
+   <td align="center">
+      <img src="" width="280" alt="edit-profile" /><br/>
+      <em>Edit Profile</em>
+    </td>
+    <td align="center">
+      <img src="" width="280" alt="view-jobs" /><br/>
+      <em>View and Express Interest in Jobs</em>
+    </td>
+  </tr>
+</table>
 
-### Candidate Dashboard
+### Church User Journeys
 
-![Candidate Dashboard](screenshots/candidatedashboard.png)
+<table>
+  <tr>
+    <td align="center">
+      <img src="" width="280" alt="dashboard" /><br/>
+      <em>Dashboard</em>
+    </td>
+    <td align="center">
+      <img src="" width="280" alt="view-church" /><br/>
+      <em>Church View</em>
+    </td>
+   <td align="center">
+      <img src="" width="280" alt="edit-church" /><br/>
+      <em>Edit Church</em>
+    </td>
+    <td align="center">
+      <img src="" width="280" alt="view-candidates" /><br/>
+      <em>View and Express Interest in Candidates</em>
+    </td>
+    <td align="center">
+      <img src="" width="280" alt="view-jobs" /><br/>
+      <em>View and Create Jobs</em>
+    </td>
+    <td align="center">
+      <img src="" width="280" alt="view-mutual-interests" /><br/>
+      <em>View Mutual Interests</em>
+    </td>
+  </tr>
+</table>
 
-### Candidate Profile Form
+### Admin User Journeys
 
-![Candidate Profile Form](screenshots/candidateprofile.png)
+<table>
+  <tr>
+    <td align="center">
+      <img src="" width="280" alt="dashboard" /><br/>
+      <em>Dashboard</em>
+    </td>
+    <td align="center">
+      <img src="" width="280" alt="create-church" /><br/>
+      <em>Create Church</em>
+    </td>
+    <td align="center">
+      <img src="" width="280" alt="view-church" /><br/>
+      <em>View Church</em>
+    </td>
+   <td align="center">
+      <img src="" width="280" alt="edit-church" /><br/>
+      <em>Edit Church</em>
+    </td>
+    <td align="center">
+      <img src="" width="280" alt="review-candidates" /><br/>
+      <em>Review Candidates</em>
+    </td>
+    <td align="center">
+      <img src="" width="280" alt="review-jobs" /><br/>
+      <em>Review Jobs</em>
+    </td>
+    <td align="center">
+      <img src="" width="280" alt="manage-invite-codes" /><br/>
+      <em>Manage Invite Codes</em>
+    </td>
+  </tr>
+</table>
 
-### Candidate Job Listings
-
-![Candidate Job Listings](screenshots/candidatejoblistings.png)
-
-### Church Dashboard
-
-![Church Dashboard](screenshots/churchdashboard.png)
-
-### Church Create Job Listing
-
-![Church Create Job Listing](screenshots/churchcreatejob.png)
-
-### Church Manage Jobs
-
-![Church Manage Jobs](screenshots/churchmanagejobs.png)
-
-### Church Candidate Search
-
-![Church Candidate Search](screenshots/churchsearchcandidates.png)
-
-### Church Mutual Interests
-
-![Church Mutual Interests](screenshots/churchmutualinterests.png)
-
-### Admin Dashboard
-
-![Admin Dashboard](screenshots/admindashboard.png)
-
-### Admin Review Profiles
-
-![Admin Review Profiles](screenshots/adminreviewprofiles.png)
-
-### Admin Church Management
-
-![Admin Manage Churches](screenshots/adminmanagechurches.png)
-
-### Admin Create Church
-
-![Admin Create Church](screenshots/admincreatechurch.png)
-
-### Admin Edit Church
-
-![Admin Edit Church](screenshots/admineditchurch.png)
-
-### Admin Review Job Listings
-
-![Admin Review Job Listings](screenshots/adminreviewjoblistings.png)
-
-### Admin Manage Invite Codes
-
-![Admin Manage Invite Codes](screenshots/adminmanageinvitecodes.png)
-
-### Super Admin Dashboard
-
-![Super Admin Dashboard](screenshots/superadmindashboard.png)
-
-### Super Admin User Management
-
-![Super Admin User Management](screenshots/superadminmanageusers.png)
-
-### Super Admin Profile Management
-
-![Super Admin Manage Profiles](screenshots/superadminmanageprofiles.png)
-
-### Super Admin Church Management
-
-![Super Admin Manage Churches](screenshots/superadminmanagechurches.png)
-
-### Super Admin Invite Code Management
-
-![Super Admin Manage Invite Codes](screenshots/superadminmanageinvitecodes.png)
+## 🚧 Roadmap Super Admin Journeys
 
 ## Tech Stack
 
@@ -254,14 +252,6 @@ All API endpoints are defined in `src/utils/api.ts` and match the Django backend
 - [React](https://react.dev/) (v19+)
 - [TypeScript](https://www.typescriptlang.org/)
 - [Tailwind CSS](https://tailwindcss.com/)
-- [MSW (Mock Service Worker)](https://mswjs.io/)
-
-### Backend
-
-- [Django](https://www.djangoproject.com/) (v5.x)
-- [Django REST Framework](https://www.django-rest-framework.org/)
-- [PostgreSQL](https://www.postgresql.org/)
-- [JWT Authentication](https://django-rest-framework-simplejwt.readthedocs.io/)
 
 ---
 
@@ -333,116 +323,24 @@ ministerconnect/
 │   ├── README.md                  # Additional documentation
 │   ├── db_diagram.png            # Database schema diagram
 │   ├── use-case-diagram.puml     # PlantUML source for use case diagram
-│   ├── usecase_diagram.png       # Generated use case diagram
+│   ├── usecase_diagram.png
+|   ├── mvp_testing_requirements/
 │   └── user_scenarios/           # Detailed user workflow documentation
-│       ├── admin_dashboard.md
-│       ├── admin_manage_invite_codes.md
-│       ├── admin_manage_users.md
-│       ├── admin_moderate_listings.md
-│       ├── admin_moderate_profiles.md
-│       ├── candidate_browse_jobs.md
-│       ├── candidate_edit_profile.md
-│       ├── candidate_express_interest.md
-│       ├── candidate_register_login.md
-│       ├── church_edit_profile.md
-│       ├── church_express_interest.md
-│       ├── church_manage_jobs.md
-│       ├── church_post_job_listing.md
-│       ├── church_register_login.md
-│       ├── church_view_matches.md
-│       ├── superadmin_dashboard.md
-│       ├── superadmin_manage_churches.md
-│       ├── superadmin_manage_invite_codes.md
-│       ├── superadmin_manage_profiles.md
-│       ├── superadmin_manage_users.md
-│       ├── user_force_password_change.md
-│       └── user_forgot_password.md
 ├── public/                        # Static assets
-│   ├── assistant-pastor-resume.pdf
-│   ├── family.jpg
-│   ├── gldlogo.png
-│   ├── mockServiceWorker.js      # MSW service worker
-│   ├── sampleman.jpg
-│   ├── student-pastor-resume.pdf
-│   └── woman.jpg
 ├── screenshots/                   # Application screenshots
-│   ├── admincreatechurch.png
-│   ├── admindashboard.png
-│   ├── admineditchurch.png
-│   ├── adminmanagechurches.png
-│   ├── adminmanageinvitecodes.png
-│   ├── adminreviewjoblistings.png
-│   ├── adminreviewprofiles.png
-│   ├── candidatedashboard.png
-│   ├── candidatejoblistings.png
-│   ├── candidateprofile.png
-│   ├── churchcreatejob.png
-│   ├── churchdashboard.png
-│   ├── churchmanagejobs.png
-│   ├── churchmutualinterests.png
-│   ├── churchsearchcandidates.png
-│   ├── landingpage.png
-│   ├── login.png
-│   ├── register.png
-│   ├── superadmindashboard.png
-│   ├── superadminmanagechurches.png
-│   ├── superadminmanageinvitecodes.png
-│   ├── superadminmanageprofiles.png
-│   └── superadminmanageusers.png
 ├── src/                          # Source code
 │   ├── components/               # Reusable React components
-│   │   ├── ExpressInterestButton.tsx
-│   │   ├── Footer.tsx
-│   │   ├── Header.tsx
-│   │   ├── PasswordInput.tsx
-│   │   └── PDFViewer.tsx
-│   ├── mocks/                    # MSW mock service worker files
-│   │   ├── browser.ts           # Browser setup for MSW
-│   │   ├── data.ts              # Mock data definitions
-│   │   └── handlers.ts          # API mock handlers
 │   ├── pages/                    # Next.js pages organized by role
 │   │   ├── _app.tsx             # App wrapper component
 │   │   ├── index.tsx            # Landing page
 │   │   ├── admin/               # Admin role pages
-│   │   │   ├── churches/        # Church management
-│   │   │   │   ├── create.tsx
-│   │   │   │   └── edit.tsx
-│   │   │   ├── churches.tsx
-│   │   │   ├── codes.tsx
-│   │   │   ├── index.tsx
-│   │   │   ├── jobs.tsx
-│   │   │   └── review.tsx
 │   │   ├── auth/                # Authentication pages
-│   │   │   ├── force-password-change.tsx
-│   │   │   ├── forgot-password.tsx
-│   │   │   ├── login.tsx
-│   │   │   ├── register.tsx
-│   │   │   └── reset-password.tsx
 │   │   ├── candidate/           # Candidate role pages
-│   │   │   ├── index.tsx
-│   │   │   ├── jobs.tsx
-│   │   │   └── profile.tsx
 │   │   ├── church/              # Church role pages
-│   │   │   ├── index.tsx
-│   │   │   ├── jobs/            # Job management
-│   │   │   │   └── create.tsx
-│   │   │   ├── jobs.tsx
-│   │   │   ├── mutual-interests.tsx
-│   │   │   └── search.tsx
 │   │   └── superadmin/          # Super admin role pages
-│   │       ├── churches.tsx
-│   │       ├── index.tsx
-│   │       ├── invite-codes.tsx
-│   │       ├── profiles.tsx
-│   │       └── users.tsx
-│   ├── styles/                   # Styling files
-│   │   └── globals.css          # Global CSS styles
+│   ├── styles/                   # Styling files        # Global CSS styles
 │   ├── types/                    # TypeScript type definitions
-│   │   └── index.ts             # All type interfaces
 │   └── utils/                    # Utility functions
-│       ├── api.ts               # Centralized API client
-│       └── pdfUtils.ts          # PDF handling utilities
-├── API_DATA_MODEL.md            # Detailed API data model documentation
 ├── env.example                  # Environment variables template
 ├── package-lock.json            # NPM lock file
 ├── package.json                 # Project dependencies and scripts
@@ -456,11 +354,11 @@ ministerconnect/
 
 - **`src/pages/`**: Next.js pages organized by user role (admin, auth, candidate, church, superadmin)
 - **`src/components/`**: Reusable React components used across multiple pages
-- **`src/mocks/`**: Mock Service Worker (MSW) files for API mocking during development
+- **`src/context/`**: Reusable React context used across multiple pages
 - **`src/utils/`**: Utility functions including the centralized API client
-- **`src/types/`**: TypeScript type definitions for all data models
-- **`docs/user_scenarios/`**: Detailed documentation of user workflows for each role
-- **`public/`**: Static assets including images, PDFs, and the MSW service worker
+- **`src/types/`**: TypeScript type definitions for data models
+- **`docs/`**: Detailed documentation
+- **`public/`**: Static assets
 - **`screenshots/`**: Application screenshots used in documentation
 
 ## User Creation & Data Cleaning

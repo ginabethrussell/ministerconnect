@@ -138,6 +138,14 @@ Table password_resets {
 - `db_diagram.png` - Generated database schema diagram
 - `README.md` - This documentation file
 
+## User Scenarios
+
+- This folder contains initial details for role functionality
+
+## MVP Testing Requirements
+
+- This folder contains candidate, church, and admin manual testing scenarios for MVP delivery
+
 ## Notes
 
 - Update diagram source code when making changes to the application's user flows or data model
