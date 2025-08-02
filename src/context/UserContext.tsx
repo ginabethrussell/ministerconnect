@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useState, useEffect } from 'react';
+import React, { createContext, useContext, useEffect, useState } from 'react';
 
 export type User = {
   id: number;
@@ -34,20 +34,18 @@ export const UserProvider = ({ children }: { children: React.ReactNode }) => {
   const isAuthenticated = !!user;
 
   useEffect(() => {
-    // Load user from localStorage on mount
     const stored = localStorage.getItem('userInfo');
     if (stored) setUser(JSON.parse(stored));
-    // Optionally, load profileStatus from localStorage or fetch here
   }, []);
 
   const logout = () => {
     setUser(null);
     setProfileStatus(undefined);
     localStorage.removeItem('userInfo');
+    localStorage.removeItem('userEmail');
     localStorage.removeItem('accessToken');
     localStorage.removeItem('refreshToken');
     localStorage.removeItem('isAuthenticated');
-    // ...any other cleanup
   };
 
   return (

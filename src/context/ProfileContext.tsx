@@ -1,23 +1,23 @@
-import React, { createContext, useContext, useState, useEffect } from 'react';
+import React, { createContext, useContext, useEffect, useState } from 'react';
 
 export interface Profile {
   id: number;
   user: UserSummary;
   invite_code: number | null;
-  invite_code_string?: string; // if your serializer adds this for display
+  invite_code_string?: string;
   street_address: string;
   city: string;
   state: string;
   zipcode: string;
   phone: string;
   status: 'draft' | 'pending' | 'approved' | 'rejected';
-  resume: string | null; // URL to the file, or null if not uploaded
-  profile_image: string | null; // URL to the file, or null if not uploaded
+  resume: string | null;
+  profile_image: string | null;
   video_url: string | null;
-  placement_preferences: string[]; // or any[] if not always string
-  submitted_at: string | null; // ISO date string or null
-  created_at: string; // ISO date string
-  updated_at: string; // ISO date string
+  placement_preferences: string[];
+  submitted_at: string | null;
+  created_at: string;
+  updated_at: string;
 }
 
 type ProfileStatus = 'draft' | 'pending' | 'approved' | 'rejected';

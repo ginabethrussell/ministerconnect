@@ -1,10 +1,11 @@
 'use client';
+
 import React, { useState } from 'react';
 import { Profile, useProfile } from '@/context/ProfileContext';
 import { useUser } from '@/context/UserContext';
+import UserIcon from '@/components/UserIcon';
 import { patchProfileWithFile, resetProfileData } from '@/utils/api';
 import { formatPhone } from '@/utils/helpers';
-import UserIcon from '@/components/UserIcon';
 
 type Mode = 'view' | 'edit';
 
@@ -33,9 +34,9 @@ interface FormErrors {
 }
 
 const MAX_FILE_SIZE = 5 * 1024 * 1024; // 5MB limit for localStorage
-const MAX_IMAGE_FILE_SIZE = 3 * 1024 * 1024; // 1MB
+const MAX_IMAGE_FILE_SIZE = 3 * 1024 * 1024; // 3MB
 
-const CandidateProfilePage = () => {
+export default function CandidateProfilePage() {
   const { profile, setProfile } = useProfile();
   const { user } = useUser();
   const [mode, setMode] = useState<Mode>('view');
@@ -352,8 +353,11 @@ const CandidateProfilePage = () => {
       <h3 className="mb-2 text-base font-semibold text-efcaDark">Contact Information</h3>
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         <div>
-          <label className="block text-sm font-medium text-gray-700">First Name</label>
+          <label htmlFor="name" className="block text-sm font-medium text-gray-700">
+            First Name
+          </label>
           <input
+            id="first_name"
             className="mt-1 block w-full rounded-lg border p-2.5 text-sm focus:border-efcaAccent focus:ring-efcaAccent border-gray-300"
             name="first_name"
             value={user?.first_name}
@@ -361,8 +365,11 @@ const CandidateProfilePage = () => {
           />
         </div>
         <div>
-          <label className="block text-sm font-medium text-gray-700">Last Name</label>
+          <label htmlFor="last_name" className="block text-sm font-medium text-gray-700">
+            Last Name
+          </label>
           <input
+            id="last_name"
             className="mt-1 block w-full rounded-lg border p-2.5 text-sm focus:border-efcaAccent focus:ring-efcaAccent border-gray-300"
             name="last_name"
             value={user?.last_name}
@@ -372,8 +379,11 @@ const CandidateProfilePage = () => {
       </div>
 
       <div>
-        <label className="block text-sm font-medium text-gray-700">Email</label>
+        <label htmlFor="email" className="block text-sm font-medium text-gray-700">
+          Email
+        </label>
         <input
+          id="email"
           className="mt-1 block w-full rounded-lg border p-2.5 text-sm focus:border-efcaAccent focus:ring-efcaAccent border-gray-300"
           name="email"
           type="email"
@@ -383,28 +393,36 @@ const CandidateProfilePage = () => {
       </div>
 
       <div>
-        <label className="block text-sm font-medium text-gray-700">Phone</label>
+        <label htmlFor="phone" className="block text-sm font-medium text-gray-700">
+          Phone <span className="text-red-500">*</span>
+        </label>
         <input
           className={`mt-1 block w-full rounded-lg border p-2.5 text-sm focus:border-efcaAccent focus:ring-efcaAccent ${
             formErrors.phone ? 'border-red-500' : 'border-gray-300'
           }`}
+          id="phone"
           name="phone"
           value={form.phone}
           onChange={handleChange}
+          placeholder="8592143456"
           required
         />
         {formErrors.phone && <p className="mt-1 text-sm text-red-600">{formErrors.phone}</p>}
       </div>
 
       <div>
-        <label className="block text-sm font-medium text-gray-700">Street Address</label>
+        <label htmlFor="street_address" className="block text-sm font-medium text-gray-700">
+          Street Address <span className="text-red-500">*</span>
+        </label>
         <input
+          id="street_address"
           className={`mt-1 block w-full rounded-lg border p-2.5 text-sm focus:border-efcaAccent focus:ring-efcaAccent ${
             formErrors.street_address ? 'border-red-500' : 'border-gray-300'
           }`}
           name="street_address"
           value={form.street_address}
           onChange={handleChange}
+          placeholder="105 Orchard Dr"
           required
         />
         {formErrors.street_address && (
@@ -414,42 +432,54 @@ const CandidateProfilePage = () => {
 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
         <div>
-          <label className="block text-sm font-medium text-gray-700">City</label>
+          <label htmlFor="city" className="block text-sm font-medium text-gray-700">
+            City <span className="text-red-500">*</span>
+          </label>
           <input
+            id="city "
             className={`mt-1 block w-full rounded-lg border p-2.5 text-sm focus:border-efcaAccent focus:ring-efcaAccent ${
               formErrors.city ? 'border-red-500' : 'border-gray-300'
             }`}
             name="city"
             value={form.city}
             onChange={handleChange}
+            placeholder="Cincinnati"
             required
           />
           {formErrors.city && <p className="mt-1 text-sm text-red-600">{formErrors.city}</p>}
         </div>
 
         <div>
-          <label className="block text-sm font-medium text-gray-700">State</label>
+          <label htmlFor="state" className="block text-sm font-medium text-gray-700">
+            State Abbreviation <span className="text-red-500">*</span>
+          </label>
           <input
+            id="state"
             className={`mt-1 block w-full rounded-lg border p-2.5 text-sm focus:border-efcaAccent focus:ring-efcaAccent ${
               formErrors.state ? 'border-red-500' : 'border-gray-300'
             }`}
             name="state"
             value={form.state}
             onChange={handleChange}
+            placeholder="OH"
             required
           />
           {formErrors.state && <p className="mt-1 text-sm text-red-600">{formErrors.state}</p>}
         </div>
 
         <div>
-          <label className="block text-sm font-medium text-gray-700">ZIP Code</label>
+          <label htmlFor="zipcode" className="block text-sm font-medium text-gray-700">
+            ZIP Code <span className="text-red-500">*</span>
+          </label>
           <input
+            id="zipcode"
             className={`mt-1 block w-full rounded-lg border p-2.5 text-sm focus:border-efcaAccent focus:ring-efcaAccent ${
               formErrors.zipcode ? 'border-red-500' : 'border-gray-300'
             }`}
             name="zipcode"
             value={form.zipcode}
             onChange={handleChange}
+            placeholder="45069"
             required
           />
           {formErrors.zipcode && <p className="mt-1 text-sm text-red-600">{formErrors.zipcode}</p>}
@@ -460,13 +490,13 @@ const CandidateProfilePage = () => {
       <h3 className="mb-2 text-base font-semibold text-efcaDark">Documents & Media</h3>
       <div className="mb-4">
         <div>
-          <label htmlFor="resumeFile" className="block mb-2 text-sm text-gray-700">
-            Resume PDF Required (max 5MB)
+          <label htmlFor="resume" className="block mb-2 text-sm text-gray-700">
+            Resume PDF Required (max 5MB) <span className="text-red-500">*</span>
           </label>
           <div className="flex gap-2 mt-1">
             <input
               type="file"
-              id="resumeFile"
+              id="resume"
               name="resume"
               onChange={handleFileChange}
               accept=".pdf"
@@ -597,6 +627,7 @@ const CandidateProfilePage = () => {
           'Outreach/evangelism',
           'Pastoral care/counseling',
           'Residency',
+          'Internship',
           'Seniors ministry',
           'Singles ministry',
           'Student/youth ministry',
@@ -670,6 +701,4 @@ const CandidateProfilePage = () => {
       </div>
     </div>
   );
-};
-
-export default CandidateProfilePage;
+}

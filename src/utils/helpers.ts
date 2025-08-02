@@ -3,24 +3,10 @@ import { Profile } from '@/context/ProfileContext';
 import {
   CandidateRegistrationFormValues,
   JobListing,
-  MutualInterest,
   JobWithInterest,
+  MutualInterest,
   ProfileWithInterest,
 } from '@/types';
-
-export type RegistrationError = {
-  invite_code?: string | string[];
-  email?: string | string[];
-  password?: string[];
-  [key: string]: any; // for any other unexpected properties
-};
-
-export const handleRegistrationErrorResponse = (error: RegistrationError): string => {
-  if (error.invite_code) return 'Please verify the invite code.';
-  if (error.email) return 'An account already exists for this email.';
-  if (error.password) return error.password[0];
-  return 'An error occurred during registration.';
-};
 
 export const formatPhone = (phone: string) => {
   const cleaned = ('' + phone).replace(/\D/g, '');
@@ -31,24 +17,6 @@ export const formatPhone = (phone: string) => {
     return `+1 (${cleaned.slice(1, 4)}) ${cleaned.slice(4, 7)}-${cleaned.slice(7)}`;
   }
   return phone;
-};
-
-export const titleCase = (str: string) => {
-  return str
-    .toLowerCase()
-    .split(' ')
-    .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
-    .join(' ');
-};
-
-export const sanitizeRegistrationFormValues = (formValues: CandidateRegistrationFormValues) => {
-  return {
-    ...formValues,
-    code: formValues.code.trim(),
-    email: formValues.email.trim().toLowerCase(),
-    firstname: titleCase(formValues.firstname),
-    lastname: titleCase(formValues.lastname),
-  };
 };
 
 // Determines dashboard url for User
@@ -67,12 +35,18 @@ export const getUserDashboardRoute = (userInfo: User) => {
   }
 };
 
-export const normalizeJobInterests = (interests: MutualInterest[]) => {
-  const interestMap: Record<number, MutualInterest> = {};
-  interests.forEach((interest) => {
-    interestMap[interest.job_listing] = interest;
-  });
-  return interestMap;
+export type RegistrationError = {
+  invite_code?: string | string[];
+  email?: string | string[];
+  password?: string[];
+  [key: string]: any; // for any other unexpected properties
+};
+
+export const handleRegistrationErrorResponse = (error: RegistrationError): string => {
+  if (error.invite_code) return 'Please verify the invite code.';
+  if (error.email) return 'An account already exists for this email.';
+  if (error.password) return error.password[0];
+  return 'An error occurred during registration.';
 };
 
 export const mergeJobsWithInterest = (
@@ -86,15 +60,11 @@ export const mergeJobsWithInterest = (
   }));
 };
 
-export const normalizeProfileInterests = (
-  interests: MutualInterest[]
-): Record<string, MutualInterest> => {
-  const interestMap: Record<string, MutualInterest> = {};
+export const normalizeJobInterests = (interests: MutualInterest[]) => {
+  const interestMap: Record<number, MutualInterest> = {};
   interests.forEach((interest) => {
-    const key = `${interest.profile}-${interest.job_listing}`; // compound key
-    interestMap[key] = interest;
+    interestMap[interest.job_listing] = interest;
   });
-
   return interestMap;
 };
 
@@ -114,10 +84,40 @@ export const mergeProfilesWithInterest = (
   });
 };
 
+export const normalizeProfileInterests = (
+  interests: MutualInterest[]
+): Record<string, MutualInterest> => {
+  const interestMap: Record<string, MutualInterest> = {};
+  interests.forEach((interest) => {
+    const key = `${interest.profile}-${interest.job_listing}`; // compound key
+    interestMap[key] = interest;
+  });
+
+  return interestMap;
+};
+
 export const normalizeProfiles = (profiles: Profile[]) => {
   const map: Record<number, Profile> = {};
   profiles.forEach((p) => {
     map[p.id] = p;
   });
   return map;
+};
+
+export const sanitizeRegistrationFormValues = (formValues: CandidateRegistrationFormValues) => {
+  return {
+    ...formValues,
+    code: formValues.code.trim(),
+    email: formValues.email.trim().toLowerCase(),
+    firstname: titleCase(formValues.firstname),
+    lastname: titleCase(formValues.lastname),
+  };
+};
+
+export const titleCase = (str: string) => {
+  return str
+    .toLowerCase()
+    .split(' ')
+    .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
+    .join(' ');
 };

@@ -1,16 +1,13 @@
+'use client';
+
 import React, { useState, useEffect } from 'react';
-import { useRouter } from 'next/router';
 import Link from 'next/link';
+import { useRouter } from 'next/router';
 import { X } from 'lucide-react';
-import {
-  getChurchById,
-  updateChurchById,
-  patchChurchStatus,
-  getUsersByChurchId,
-} from '../../../utils/api';
-import { Church } from '../../../types';
 import { User } from '@/context/UserContext';
-import PasswordInput from '../../../components/PasswordInput';
+import PasswordInput from '@/components/PasswordInput';
+import { Church } from '@/types';
+import { getChurchById, updateChurchById, getUsersByChurchId } from '@/utils/api';
 import { formatPhone, titleCase } from '@/utils/helpers';
 
 type ChurchWithUsers = Church & { users: User[]; existingUsers: User[] };
@@ -21,22 +18,22 @@ export default function EditChurch() {
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [churchData, setChurchData] = useState<ChurchWithUsers | null>(null);
+  const [error, setError] = useState('');
 
   useEffect(() => {
     const loadChurch = async (churchId: string) => {
       try {
         const data = await getChurchById(churchId);
         const usersRes = await getUsersByChurchId(churchId);
-        console.log(data, usersRes);
-        console.log({ ...data, users: usersRes.results });
         setChurchData({
           ...data,
           existingUsers: usersRes.results,
           users: [],
         });
       } catch (error) {
-        console.error('Error loading church:', error);
-        router.push('/admin/churches');
+        if (error instanceof Error) {
+          setError('Unable to load church.');
+        }
       } finally {
         setLoading(false);
       }
@@ -47,10 +44,12 @@ export default function EditChurch() {
   }, [id, router]);
 
   const handleChurchDataChange = (field: string, value: string) => {
+    setError('');
     setChurchData((prev) => (prev ? { ...prev, [field]: value } : null));
   };
 
   const handleUserChange = (index: number, field: string, value: string | boolean) => {
+    setError('');
     setChurchData((prev) => {
       if (!prev) return null;
       const newUsers = [...prev.users];
@@ -93,32 +92,19 @@ export default function EditChurch() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!churchData) return;
-
+    setError('');
     setSaving(true);
     try {
       await updateChurchById(churchData.id, churchData);
-      alert('Church updated successfully!');
       router.push('/admin/churches');
     } catch (error) {
-      console.error('Error updating church:', error);
-      alert('Error updating church. Please try again.');
+      if (error instanceof Error) {
+        setError(error.message);
+      } else {
+        setError('Failed to update church.');
+      }
     } finally {
       setSaving(false);
-    }
-  };
-
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const handleDeactivateChurch = async () => {
-    if (!churchData) return;
-
-    try {
-      await patchChurchStatus(churchData.id, { status: 'inactive' });
-      alert('Church deactivated successfully!');
-      router.push('/admin/churches');
-    } catch (error) {
-      console.error('Error deleting church:', error);
-      alert('Error deleting church. Please try again.');
-    } finally {
     }
   };
 
@@ -182,7 +168,7 @@ export default function EditChurch() {
                 value={formatPhone(churchData.phone)}
                 onChange={(e) => handleChurchDataChange('phone', e.target.value)}
                 className="input-field"
-                placeholder="Phone Number"
+                placeholder="Enter 10 numbers with no punctuation"
                 required
               />
               <input
@@ -342,6 +328,7 @@ export default function EditChurch() {
             >
               {saving ? 'Saving...' : 'Save Changes'}
             </button>
+            {error && <p className="mt-1 text-sm text-left text-[#FF5722]">{error}</p>}
           </div>
         </form>
       </div>

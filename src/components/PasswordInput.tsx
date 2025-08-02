@@ -1,4 +1,5 @@
 'use client';
+
 import React, { useState } from 'react';
 
 interface PasswordInputProps extends React.InputHTMLAttributes<HTMLInputElement> {
@@ -6,7 +7,12 @@ interface PasswordInputProps extends React.InputHTMLAttributes<HTMLInputElement>
   error?: string;
 }
 
-const PasswordInput = ({ label, error, className = '', ...props }: PasswordInputProps) => {
+export default function PasswordInput({
+  label,
+  error,
+  className = '',
+  ...props
+}: PasswordInputProps) {
   const [showPassword, setShowPassword] = useState(false);
 
   return (
@@ -67,6 +73,4 @@ const PasswordInput = ({ label, error, className = '', ...props }: PasswordInput
       {error && <p className="mt-1 text-sm text-red-600">{error}</p>}
     </div>
   );
-};
-
-export default PasswordInput;
+}

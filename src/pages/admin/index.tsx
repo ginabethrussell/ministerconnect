@@ -32,7 +32,7 @@ const features = [
   },
 ];
 
-const AdminDashboard = () => {
+export default function AdminDashboard() {
   return (
     <div className="min-h-screen bg-efcaGray p-8">
       <div className="max-w-4xl mx-auto">
@@ -41,7 +41,7 @@ const AdminDashboard = () => {
         </header>
 
         <section className="bg-white rounded-lg shadow-sm p-6 mb-8">
-          <h2 className="text-xl font-bold text-efcaDark mb-2">Welcome to Admin Dashboard</h2>
+          <h2 className="text-xl font-bold text-efcaDark mb-2">Welcome to the Admin Dashboard</h2>
           <p className="text-gray-600 mb-4">
             Manage the Minister Connect platform by reviewing candidate profiles, job listings, and
             managing church access. Use the tools below to maintain platform quality and security.
@@ -105,6 +105,4 @@ const AdminDashboard = () => {
       </div>
     </div>
   );
-};
-
-export default AdminDashboard;
+}

@@ -1,5 +1,8 @@
+'use client';
+
+import React from 'react';
 import Link from 'next/link';
-import { useUser } from '../context/UserContext';
+import { useUser } from '@/context/UserContext';
 
 const HomePage = () => {
   const { user } = useUser();

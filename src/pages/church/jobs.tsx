@@ -1,20 +1,28 @@
+'use client';
+
 import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
-import { JobListing } from '../../types';
+import { JobListing } from '@/types';
 import { deleteJob, getChurchJobs } from '@/utils/api';
 
 export default function ChurchJobs() {
   const [loading, setLoading] = useState(true);
   const [jobs, setJobs] = useState<JobListing[]>([]);
   const [expandedJobs, setExpandedJobs] = useState<number[]>([]);
+  const [loadingError, setLoadingError] = useState('');
+  const [deletingError, setDeletingError] = useState('');
 
   useEffect(() => {
     const loadJobs = async () => {
       try {
         const jobListingsRes = await getChurchJobs();
         setJobs(jobListingsRes.results);
-      } catch {
-        console.error('An error occurred while retrieving jobs');
+      } catch (error) {
+        if (error instanceof Error) {
+          setLoadingError(error.message);
+        } else {
+          setLoadingError('An error occurred while retrieving jobs.');
+        }
       } finally {
         setLoading(false);
       }
@@ -22,14 +30,17 @@ export default function ChurchJobs() {
     loadJobs();
   }, []);
 
-  console.log('JOBS', jobs);
-
   const handleDeleteJob = async (jobId: number) => {
+    setDeletingError('');
     try {
       await deleteJob(jobId);
       setJobs(jobs.filter((job) => job.id !== jobId));
     } catch (error) {
-      console.error(error);
+      if (error instanceof Error) {
+        setDeletingError(error.message);
+      } else {
+        setDeletingError('An error occurred while deleting the job.');
+      }
     }
   };
 
@@ -99,6 +110,9 @@ export default function ChurchJobs() {
               <p className="text-gray-600 mb-4">
                 Click &quot;Post New Job&quot; to create your first listing.
               </p>
+              {loadingError && (
+                <p className="mt-1 text-sm text-left text-[#FF5722]">{loadingError}</p>
+              )}
             </div>
           ) : (
             <div className="space-y-4">
@@ -180,6 +194,9 @@ export default function ChurchJobs() {
                           >
                             Delete Job
                           </button>
+                          {deletingError && (
+                            <p className="mt-1 text-sm text-left text-[#FF5722]">{deletingError}</p>
+                          )}
                         </div>
                       </div>
                     </div>
