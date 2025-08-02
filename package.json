@@ -40,5 +40,5 @@
     "typescript": "latest"
   },
   "main": "index.js",
-  "license": "MIT"
+  "license": "UNLICENSED"
 }
