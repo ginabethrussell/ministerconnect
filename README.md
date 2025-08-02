@@ -32,17 +32,6 @@ A multi-role Next.js application for connecting ministry candidates with churche
 - **Invite Code Management**: Generate and manage registration invite codes
 - **Church Oversight**: Review and manage church accounts
 
-### **For Super Admins**
-
-- **Complete Platform Management**: Full administrative control over the entire platform
-- **User Management**: View, edit, and manage all user accounts (candidates, churches, admins)
-- **Password Reset**: Reset passwords for any user with secure temporary password generation
-- **Church Management**: Comprehensive church account oversight and status management
-- **Profile Review**: Approve or reject candidate profiles with detailed review process
-- **Invite Code System**: Advanced invite code management with usage tracking and expiration
-- **Activity Monitoring**: Real-time dashboard with platform statistics and activity logs
-- **Audit Trail**: Complete tracking of all administrative actions
-
 ## Quick Start
 
 ### Full Stack Development (Frontend + Backend)
@@ -72,14 +61,20 @@ A multi-role Next.js application for connecting ministry candidates with churche
 
 ## Backend Integration
 
-The application now includes a fully functional Django REST API backend with:
+This frontend connects to a Django REST API that provides:
 
-- **JWT Authentication**: Secure token-based authentication
-- **PostgreSQL Database**: Robust data storage
-- **User Management**: Complete user creation and management
-- **Church Management**: Church profile creation and management
-- **Invite Code System**: Registration code generation and tracking
-- **Candidate Registration**: Secure candidate onboarding
+- JWT-based authentication
+- Role-based user accounts and permissions
+- Candidate and church profile data
+- Job listing management
+- Mutual interest tracking
+
+For full backend features and setup, see the [MinisterConnect Backend](https://github.com/ginabethrussell/ministerconnect_backend).
+
+### Backend API Documentation
+
+The backend provides Swagger documentation at:
+[![View API Docs](https://img.shields.io/badge/View-API_Docs-blue)](https://minister-connect-backend.onrender.com/api/docs/)
 
 ### Environment Setup
 
@@ -92,10 +87,7 @@ The application now includes a fully functional Django REST API backend with:
    ```
 
 2. **Backend Environment:**
-   ```bash
-   cd ministerconnect_backend
-   # Create .env file with SECRET_KEY and database settings
-   ```
+   Follow the backend setup instructions in [ministerconnect_backend/README.md](https://github.com/ginabethrussell/ministerconnect_backend)
 
 ### API Integration
 
@@ -122,7 +114,7 @@ All API endpoints are defined in `src/utils/api.ts` and match the Django backend
 
 ## 📸 User Journey Screenshots
 
-Below are example views from the MinisterConnect backend and frontend:
+Below are example views from the MinisterConnect frontend:
 
 <!-- Screenshot paths will be updated after user flow testing -->
 
@@ -242,8 +234,6 @@ Below are example views from the MinisterConnect backend and frontend:
   </tr>
 </table>
 
-## 🚧 Roadmap Super Admin Journeys
-
 ## Tech Stack
 
 ### Frontend
@@ -271,7 +261,6 @@ Below are example views from the MinisterConnect backend and frontend:
    ```bash
    git clone https://github.com/ginabethrussell/ministerconnect.git
    cd ministerconnect
-   cd ministerconnect-app
    ```
 
 2. **Set up the Backend:**
@@ -368,6 +357,14 @@ ministerconnect/
 For the MVP, password resets are handled manually by the site administrator. If you forget your password, please contact the admin at [ginabeth.russell@gmail.com](mailto:ginabeth.russell@gmail.com?subject=Minister%20Connect%20Password%20Reset%20Request) to request a password reset. The admin will reset your password and provide you with a temporary password.
 
 Automated password reset via email will be implemented in a future release.
+
+## 🚧 Roadmap
+
+- [ ] Super Admin full dashboard
+- [ ] Email notifications
+- [ ] Forgot password email reset flow
+- [ ] Admin dashboard metrics
+- [ ] Audit log
 
 ## Contact
 
