@@ -209,6 +209,11 @@ Below are example views from the MinisterConnect frontend:
       <img src="screenshots/edit-church.png" width="280" alt="edit-church" /><br/>
       <em>Edit Church</em>
     </td>
+  </tr>
+</table>
+
+<table>
+  <tr>
     <td align="center">
       <img src="screenshots/admin-profile-review.png" width="280" alt="review-candidates" /><br/>
       <em>Review Candidates</em>
