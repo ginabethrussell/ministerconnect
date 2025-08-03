@@ -96,9 +96,9 @@ export default function CandidateJobs() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-efcaGray flex items-center justify-center">
+      <div className="flex min-h-screen items-center justify-center bg-efcaGray">
         <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-efcaAccent mx-auto mb-4"></div>
+          <div className="mx-auto mb-4 h-12 w-12 animate-spin rounded-full border-b-2 border-efcaAccent"></div>
           <p className="text-gray-600">Loading job listings...</p>
         </div>
       </div>
@@ -107,17 +107,17 @@ export default function CandidateJobs() {
 
   return (
     <div className="min-h-screen bg-efcaGray p-8">
-      <div className="max-w-6xl mx-auto">
-        <header className="flex justify-between items-center mb-8">
-          <h1 className="text-3xl font-bold text-efcaDark">Available Positions</h1>
+      <div className="mx-auto max-w-6xl">
+        <header className="mb-8 flex items-center justify-between">
+          <h1 className="text-efcaDark text-3xl font-bold">Available Positions</h1>
         </header>
 
         {/* Information Section */}
-        <section className="bg-blue-50 border border-blue-200 rounded-lg p-6 my-6">
-          <h3 className="text-lg font-semibold text-blue-800 mb-2">
+        <section className="my-6 rounded-lg border border-blue-200 bg-blue-50 p-6">
+          <h3 className="mb-2 text-lg font-semibold text-blue-800">
             How Expressing Interest Works
           </h3>
-          <div className="text-blue-700 space-y-2">
+          <div className="space-y-2 text-blue-700">
             <p>
               • Click &quot;Express Interest&quot; to let churches know you&apos;re interested in
               their position
@@ -134,14 +134,14 @@ export default function CandidateJobs() {
         </section>
 
         {/* Job Listings */}
-        <section className="bg-white rounded-lg shadow-sm p-6">
-          <h2 className="text-2xl font-semibold text-gray-700 mb-4">Job Listings</h2>
+        <section className="rounded-lg bg-white p-6 shadow-sm">
+          <h2 className="mb-4 text-2xl font-semibold text-gray-700">Job Listings</h2>
           {jobsWithInterest && jobsWithInterest.length === 0 ? (
-            <div className="text-center py-8">
-              <h3 className="text-lg font-medium text-gray-900 mb-2">No positions found</h3>
+            <div className="py-8 text-center">
+              <h3 className="mb-2 text-lg font-medium text-gray-900">No positions found</h3>
               <p className="text-gray-600">Check back soon for new opportunities.</p>
               {loadingError && (
-                <p className="mt-1 text-sm text-left text-[#FF5722]">{loadingError}</p>
+                <p className="mt-1 text-left text-sm text-[#FF5722]">{loadingError}</p>
               )}
             </div>
           ) : (
@@ -154,23 +154,23 @@ export default function CandidateJobs() {
                   return (
                     <div
                       key={job.id}
-                      className="border border-gray-200 rounded-lg p-6 hover:shadow-md transition-shadow"
+                      className="rounded-lg border border-gray-200 p-6 transition-shadow hover:shadow-md"
                     >
-                      <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
+                      <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
                         <div className="flex-1">
-                          <h3 className="text-xl font-semibold text-efcaDark mb-2">{job.title}</h3>
+                          <h3 className="text-efcaDark mb-2 text-xl font-semibold">{job.title}</h3>
 
-                          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+                          <div className="mb-4 grid grid-cols-1 gap-4 md:grid-cols-2">
                             <div>
                               <p className="text-lg font-medium text-gray-800">{job.church.name}</p>
                               <p className="text-gray-600">{job.ministry_type}</p>
                               <p className="text-sm text-gray-500">{`${job.church.city}, ${job.church.state}`}</p>
                             </div>
                             <div className="text-right md:text-left">
-                              <span className="inline-block px-3 py-1 bg-blue-100 text-blue-800 text-sm font-medium rounded-full">
+                              <span className="inline-block rounded-full bg-blue-100 px-3 py-1 text-sm font-medium text-blue-800">
                                 {job.employment_type}
                               </span>
-                              <p className="text-sm text-gray-500 mt-2">
+                              <p className="mt-2 text-sm text-gray-500">
                                 Posted on: {new Date(job.created_at).toLocaleDateString()}
                               </p>
                             </div>
@@ -180,21 +180,21 @@ export default function CandidateJobs() {
                           {isExpanded && (
                             <div className="mt-4 space-y-4 border-t pt-4">
                               <div>
-                                <h4 className="font-semibold text-gray-800 mb-2">
+                                <h4 className="mb-2 font-semibold text-gray-800">
                                   Job Description
                                 </h4>
-                                <p className="text-gray-700 leading-relaxed">
+                                <p className="leading-relaxed text-gray-700">
                                   {job.job_description}
                                 </p>
                               </div>
                               <div>
-                                <h4 className="font-semibold text-gray-800 mb-2">
+                                <h4 className="mb-2 font-semibold text-gray-800">
                                   About This Church
                                 </h4>
-                                <p className="text-gray-700 leading-relaxed">{job.about_church}</p>
+                                <p className="leading-relaxed text-gray-700">{job.about_church}</p>
                               </div>
                               <div>
-                                <h4 className="font-semibold text-gray-800 mb-2">Job Link</h4>
+                                <h4 className="mb-2 font-semibold text-gray-800">Job Link</h4>
                                 <a
                                   href={job.job_url_link}
                                   target="_blank"
@@ -208,7 +208,7 @@ export default function CandidateJobs() {
                           )}
                         </div>
 
-                        <div className="flex flex-col gap-2 min-w-[200px]">
+                        <div className="flex min-w-[200px] flex-col gap-2">
                           {profile?.id && (
                             <ExpressInterestButton
                               id={job.id.toString()}
@@ -221,11 +221,11 @@ export default function CandidateJobs() {
                             />
                           )}
                           {toggleInterestError && (
-                            <p className="mt-1 text-sm text-left text-[#FF5722]">{loadingError}</p>
+                            <p className="mt-1 text-left text-sm text-[#FF5722]">{loadingError}</p>
                           )}
                           <button
                             onClick={() => toggleJobExpansion(job.id)}
-                            className="px-4 py-2 border border-gray-300 text-gray-700 rounded font-semibold hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-gray-400 transition-colors text-center"
+                            className="rounded border border-gray-300 px-4 py-2 text-center font-semibold text-gray-700 transition-colors hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-gray-400"
                           >
                             {isExpanded ? 'Show Less' : 'View Details'}
                           </button>

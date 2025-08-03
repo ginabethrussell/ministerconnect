@@ -14,9 +14,9 @@ const HomePage = () => {
 
   if (user)
     return (
-      <div className="min-h-screen flex flex-col items-center justify-center bg-efcaGray font-sans">
-        <div className="max-w-xl p-8 bg-white rounded shadow text-center">
-          <h1 className="text-3xl font-bold mb-4 text-efcaBlue">
+      <div className="flex min-h-screen flex-col items-center justify-center bg-efcaGray font-sans">
+        <div className="max-w-xl rounded bg-white p-8 text-center shadow">
+          <h1 className="mb-4 text-3xl font-bold text-efcaBlue">
             Welcome to EFCA Great Lakes District Minister Connect
           </h1>
           <p className="mb-6 text-gray-700">
@@ -28,7 +28,7 @@ const HomePage = () => {
             <a
               // TODO: update this to the correct email address
               href="mailto:ginabeth.russell@gmail.com?subject=Minister%20Connect%20Access%20Request"
-              className="text-efcaAccent underline hover:text-efcaAccent-dark"
+              className="hover:text-efcaAccent-dark text-efcaAccent underline"
             >
               contact the site admin
             </a>{' '}
@@ -39,9 +39,9 @@ const HomePage = () => {
     );
   // Landing Page for an Anonymous User
   return (
-    <div className="min-h-screen flex flex-col items-center justify-center bg-efcaGray font-sans">
-      <div className="max-w-xl p-8 bg-white rounded shadow text-center">
-        <h1 className="text-3xl font-bold mb-4 text-efcaBlue">
+    <div className="flex min-h-screen flex-col items-center justify-center bg-efcaGray font-sans">
+      <div className="max-w-xl rounded bg-white p-8 text-center shadow">
+        <h1 className="mb-4 text-3xl font-bold text-efcaBlue">
           Welcome to EFCA Great Lakes District Minister Connect
         </h1>
         <p className="mb-6 text-gray-700">
@@ -51,13 +51,13 @@ const HomePage = () => {
         <div className="space-y-4">
           <Link
             href="/auth/login"
-            className="block bg-efcaAccent text-white px-4 py-2 rounded font-bold hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-efcaAccent transition-colors"
+            className="block rounded bg-efcaAccent px-4 py-2 font-bold text-white transition-colors hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-efcaAccent"
           >
             Login (All Users)
           </Link>
           <Link
             href="/auth/register"
-            className="block bg-green-600 text-white px-4 py-2 rounded font-bold hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-600 transition-colors"
+            className="block rounded bg-green-600 px-4 py-2 font-bold text-white transition-colors hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-600"
           >
             Candidate Registration
           </Link>
@@ -68,7 +68,7 @@ const HomePage = () => {
             <a
               // TODO: update this to the correct email address
               href="mailto:ginabeth.russell@gmail.com?subject=Minister%20Connect%20Access%20Request"
-              className="text-efcaAccent underline hover:text-efcaAccent-dark"
+              className="hover:text-efcaAccent-dark text-efcaAccent underline"
             >
               contact the admin
             </a>{' '}

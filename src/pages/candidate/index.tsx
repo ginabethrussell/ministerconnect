@@ -58,11 +58,11 @@ export default function CandidateDashboard() {
   if (loading) {
     return (
       <div className="min-h-screen bg-efcaGray p-8">
-        <div className="max-w-4xl mx-auto">
+        <div className="mx-auto max-w-4xl">
           <div className="animate-pulse">
-            <div className="h-8 bg-gray-200 rounded w-1/4 mb-4"></div>
-            <div className="h-32 bg-gray-200 rounded mb-4"></div>
-            <div className="h-8 bg-gray-200 rounded w-1/2"></div>
+            <div className="mb-4 h-8 w-1/4 rounded bg-gray-200"></div>
+            <div className="mb-4 h-32 rounded bg-gray-200"></div>
+            <div className="h-8 w-1/2 rounded bg-gray-200"></div>
           </div>
         </div>
       </div>
@@ -72,8 +72,8 @@ export default function CandidateDashboard() {
   if (error) {
     return (
       <div className="min-h-screen bg-efcaGray p-8">
-        <div className="max-w-4xl mx-auto">
-          <div className="bg-red-50 border border-red-200 rounded-lg p-4">
+        <div className="mx-auto max-w-4xl">
+          <div className="rounded-lg border border-red-200 bg-red-50 p-4">
             <p className="text-red-800">{error}</p>
           </div>
         </div>
@@ -83,24 +83,24 @@ export default function CandidateDashboard() {
 
   return (
     <div className="min-h-screen bg-efcaGray p-8">
-      <div className="max-w-4xl mx-auto">
-        <h1 className="text-3xl font-bold text-efcaDark mb-8">Candidate Dashboard</h1>
-        <div className="bg-blue-50 border border-blue-200 text-blue-800 rounded-lg p-4 mb-8 text-center">
+      <div className="mx-auto max-w-4xl">
+        <h1 className="text-efcaDark mb-8 text-3xl font-bold">Candidate Dashboard</h1>
+        <div className="mb-8 rounded-lg border border-blue-200 bg-blue-50 p-4 text-center text-blue-800">
           Once your profile has been submitted and approved, you will be able to view open church
           positions and indicate your interest on individual church job listings. If there is mutual
           interest, churches will contact you directly.
         </div>
 
         {/* Profile Status Section */}
-        <section className="bg-white rounded-lg shadow-sm p-6 mb-8">
-          <h2 className="text-xl font-bold text-efcaDark mb-2">Profile Status</h2>
-          <p className="text-gray-500 mb-4">
+        <section className="mb-8 rounded-lg bg-white p-6 shadow-sm">
+          <h2 className="text-efcaDark mb-2 text-xl font-bold">Profile Status</h2>
+          <p className="mb-4 text-gray-500">
             Check the current status of your profile and see if any action is needed.
           </p>
-          <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+          <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
             <div className="flex items-center gap-2">
               <span
-                className={`px-3 py-1 rounded-full text-sm font-medium ${getStatusColor(profile?.status ?? 'draft')}`}
+                className={`rounded-full px-3 py-1 text-sm font-medium ${getStatusColor(profile?.status ?? 'draft')}`}
               >
                 {profile?.status && typeof profile.status === 'string'
                   ? profile.status.charAt(0).toUpperCase() + profile.status.slice(1)
@@ -110,38 +110,38 @@ export default function CandidateDashboard() {
             </div>
             <Link
               href="/candidate/profile"
-              className="px-4 py-2 bg-efcaAccent text-white rounded font-semibold hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-efcaAccent transition-colors"
+              className="rounded bg-efcaAccent px-4 py-2 font-semibold text-white transition-colors hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-efcaAccent"
             >
               {profile?.status === 'pending' ? 'View Profile' : 'Edit Profile'}
             </Link>
           </div>
-          <p className="text-sm text-gray-400 mt-4">
+          <p className="mt-4 text-sm text-gray-400">
             Last updated:{' '}
             {profile?.updated_at ? new Date(profile.updated_at).toLocaleDateString() : 'N/A'}
           </p>
-          <p className="text-xs text-gray-400 mt-1">
+          <p className="mt-1 text-xs text-gray-400">
             Profiles will be retained for 1 year after your last update.
           </p>
         </section>
 
         {/* Profile Actions & Contact Info */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
-          <section className="bg-white rounded-lg shadow-sm p-6">
-            <h3 className="text-lg font-bold text-efcaDark mb-2">Profile Actions</h3>
-            <p className="text-gray-500 mb-4">
+        <div className="mb-8 grid grid-cols-1 gap-6 md:grid-cols-2">
+          <section className="rounded-lg bg-white p-6 shadow-sm">
+            <h3 className="text-efcaDark mb-2 text-lg font-bold">Profile Actions</h3>
+            <p className="mb-4 text-gray-500">
               Update your profile or submit it for review when ready.
             </p>
             <div className="space-y-3">
               <Link
                 href="/candidate/profile"
-                className="block w-full px-4 py-2 text-center bg-efcaAccent text-white rounded font-semibold hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-efcaAccent transition-colors"
+                className="block w-full rounded bg-efcaAccent px-4 py-2 text-center font-semibold text-white transition-colors hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-efcaAccent"
               >
                 {profile?.status === 'pending' ? 'View Profile' : 'Edit Profile'}
               </Link>
               {profile?.status === 'approved' && (
                 <Link
                   href="/candidate/jobs"
-                  className="block w-full px-4 py-2 text-center bg-green-600 text-white rounded font-semibold hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-500 transition-colors"
+                  className="block w-full rounded bg-green-600 px-4 py-2 text-center font-semibold text-white transition-colors hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-500"
                 >
                   View Job Listings
                 </Link>
@@ -149,7 +149,7 @@ export default function CandidateDashboard() {
               {profile?.status === 'draft' && (
                 <button
                   onClick={() => router.push('/candidate/profile?submit=true')}
-                  className="block w-full px-4 py-2 text-center bg-green-600 text-white rounded font-semibold hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-500 transition-colors"
+                  className="block w-full rounded bg-green-600 px-4 py-2 text-center font-semibold text-white transition-colors hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-500"
                 >
                   Submit for Review
                 </button>
@@ -157,9 +157,9 @@ export default function CandidateDashboard() {
             </div>
           </section>
 
-          <section className="bg-white rounded-lg shadow-sm p-6">
-            <h3 className="text-lg font-bold text-efcaDark mb-2">Contact Information</h3>
-            <p className="text-gray-500 mb-4">
+          <section className="rounded-lg bg-white p-6 shadow-sm">
+            <h3 className="text-efcaDark mb-2 text-lg font-bold">Contact Information</h3>
+            <p className="mb-4 text-gray-500">
               If there is mutual interest, churches will reach out to you directly using your
               contact information.
             </p>
@@ -181,49 +181,49 @@ export default function CandidateDashboard() {
         </div>
 
         {/* How It Works Info Card */}
-        <section className="bg-white rounded-lg shadow-sm p-6">
-          <h3 className="text-lg font-bold text-efcaDark mb-4">How It Works</h3>
-          <p className="text-gray-500 mb-6">
+        <section className="rounded-lg bg-white p-6 shadow-sm">
+          <h3 className="text-efcaDark mb-4 text-lg font-bold">How It Works</h3>
+          <p className="mb-6 text-gray-500">
             Follow these steps to get your profile in front of churches with open positions.
           </p>
           <div className="space-y-4">
             <div className="flex items-start gap-3">
-              <div className="flex-shrink-0 w-8 h-8 bg-efcaAccent/10 rounded-full flex items-center justify-center">
-                <span className="text-efcaAccent font-semibold">1</span>
+              <div className="flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-full bg-efcaAccent/10">
+                <span className="font-semibold text-efcaAccent">1</span>
               </div>
               <div>
-                <h4 className="font-medium text-efcaDark">Create Your Profile</h4>
+                <h4 className="text-efcaDark font-medium">Create Your Profile</h4>
                 <p className="text-gray-600">
                   Fill out your profile with your experience, resume, and contact information.
                 </p>
               </div>
             </div>
             <div className="flex items-start gap-3">
-              <div className="flex-shrink-0 w-8 h-8 bg-efcaAccent/10 rounded-full flex items-center justify-center">
-                <span className="text-efcaAccent font-semibold">2</span>
+              <div className="flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-full bg-efcaAccent/10">
+                <span className="font-semibold text-efcaAccent">2</span>
               </div>
               <div>
-                <h4 className="font-medium text-efcaDark">Submit for Review</h4>
+                <h4 className="text-efcaDark font-medium">Submit for Review</h4>
                 <p className="text-gray-600">Submit your profile for admin review and approval.</p>
               </div>
             </div>
             <div className="flex items-start gap-3">
-              <div className="flex-shrink-0 w-8 h-8 bg-efcaAccent/10 rounded-full flex items-center justify-center">
-                <span className="text-efcaAccent font-semibold">3</span>
+              <div className="flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-full bg-efcaAccent/10">
+                <span className="font-semibold text-efcaAccent">3</span>
               </div>
               <div>
-                <h4 className="font-medium text-efcaDark">Get Noticed</h4>
+                <h4 className="text-efcaDark font-medium">Get Noticed</h4>
                 <p className="text-gray-600">
                   Churches can view your approved profile and express interest in you.
                 </p>
               </div>
             </div>
             <div className="flex items-start gap-3">
-              <div className="flex-shrink-0 w-8 h-8 bg-efcaAccent/10 rounded-full flex items-center justify-center">
-                <span className="text-efcaAccent font-semibold">4</span>
+              <div className="flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-full bg-efcaAccent/10">
+                <span className="font-semibold text-efcaAccent">4</span>
               </div>
               <div>
-                <h4 className="font-medium text-efcaDark">View and Indicate Interest</h4>
+                <h4 className="text-efcaDark font-medium">View and Indicate Interest</h4>
                 <p className="text-gray-600">
                   You can view open church positions and indicate your interest on individual job
                   listings.
@@ -231,11 +231,11 @@ export default function CandidateDashboard() {
               </div>
             </div>
             <div className="flex items-start gap-3">
-              <div className="flex-shrink-0 w-8 h-8 bg-efcaAccent/10 rounded-full flex items-center justify-center">
-                <span className="text-efcaAccent font-semibold">5</span>
+              <div className="flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-full bg-efcaAccent/10">
+                <span className="font-semibold text-efcaAccent">5</span>
               </div>
               <div>
-                <h4 className="font-medium text-efcaDark">Connect for Ministry</h4>
+                <h4 className="text-efcaDark font-medium">Connect for Ministry</h4>
                 <p className="text-gray-600">
                   If there is mutual interest, churches will reach out to you directly using your
                   contact information.

@@ -128,81 +128,81 @@ export default function CreateChurch() {
 
   return (
     <div className="min-h-screen bg-efcaGray p-8">
-      <div className="max-w-4xl mx-auto">
-        <header className="flex flex-col md:flex-row justify-between md:items-center gap-4 mb-8">
-          <h1 className="text-3xl font-bold text-efcaDark">Create New Church</h1>
+      <div className="mx-auto max-w-4xl">
+        <header className="mb-8 flex flex-col justify-between gap-4 md:flex-row md:items-center">
+          <h1 className="text-efcaDark text-3xl font-bold">Create New Church</h1>
           <Link
             href="/admin/churches"
-            className="px-4 py-2 bg-gray-600 text-white rounded hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-gray-500 transition-colors text-center"
+            className="rounded bg-gray-600 px-4 py-2 text-center text-white transition-colors hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-gray-500"
           >
             Back to Churches
           </Link>
         </header>
 
-        <form onSubmit={handleSubmit} className="bg-white rounded-lg shadow-lg p-8 space-y-8">
+        <form onSubmit={handleSubmit} className="space-y-8 rounded-lg bg-white p-8 shadow-lg">
           {/* Church Information */}
           <div>
-            <h2 className="text-xl font-semibold text-efcaDark mb-4">Church Information</h2>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <h2 className="text-efcaDark mb-4 text-xl font-semibold">Church Information</h2>
+            <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
               <div>
-                <label htmlFor="name" className="block text-sm font-medium text-gray-700 mb-2">
+                <label htmlFor="name" className="mb-2 block text-sm font-medium text-gray-700">
                   Church Name <span className="text-red-500">*</span>
                 </label>
                 <input
                   id="name"
                   name="name"
                   type="text"
+                  className="w-full rounded-lg border border-gray-300 px-3 py-2 focus:border-efcaAccent focus:outline-none focus:ring-2 focus:ring-efcaAccent"
                   value={churchData.name}
                   onChange={(e) => handleChurchDataChange('name', e.target.value)}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-efcaAccent focus:border-efcaAccent"
                   placeholder="e.g., Grace Fellowship Church"
                   required
                 />
               </div>
 
               <div>
-                <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-2">
+                <label htmlFor="email" className="mb-2 block text-sm font-medium text-gray-700">
                   Email <span className="text-red-500">*</span>
                 </label>
                 <input
                   id="email"
-                  name="name"
+                  name="email"
                   type="email"
+                  className="w-full rounded-lg border border-gray-300 px-3 py-2 focus:border-efcaAccent focus:outline-none focus:ring-2 focus:ring-efcaAccent"
                   value={churchData.email}
                   onChange={(e) => handleChurchDataChange('email', e.target.value)}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-efcaAccent focus:border-efcaAccent"
                   placeholder="contact@church.org"
                   required
                 />
               </div>
 
               <div>
-                <label htmlFor="phone" className="block text-sm font-medium text-gray-700 mb-2">
+                <label htmlFor="phone" className="mb-2 block text-sm font-medium text-gray-700">
                   Phone <span className="text-red-500">*</span>
                 </label>
                 <input
                   id="phone"
                   name="phone"
                   type="tel"
+                  className="w-full rounded-lg border border-gray-300 px-3 py-2 focus:border-efcaAccent focus:outline-none focus:ring-2 focus:ring-efcaAccent"
                   value={churchData.phone}
                   onChange={(e) => handleChurchDataChange('phone', e.target.value)}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-efcaAccent focus:border-efcaAccent"
                   placeholder="Enter 10 numbers with no punctuation"
                   required
                 />
               </div>
 
               <div>
-                <label htmlFor="website" className="block text-sm font-medium text-gray-700 mb-2">
+                <label htmlFor="website" className="mb-2 block text-sm font-medium text-gray-700">
                   Website
                 </label>
                 <input
                   id="website"
                   name="website"
                   type="url"
+                  className="w-full rounded-lg border border-gray-300 px-3 py-2 focus:border-efcaAccent focus:outline-none focus:ring-2 focus:ring-efcaAccent"
                   value={churchData.website}
                   onChange={(e) => handleChurchDataChange('website', e.target.value)}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-efcaAccent focus:border-efcaAccent"
                   placeholder="https://church.org"
                 />
               </div>
@@ -210,7 +210,7 @@ export default function CreateChurch() {
               <div className="md:col-span-2">
                 <label
                   htmlFor="street_address"
-                  className="block text-sm font-medium text-gray-700 mb-2"
+                  className="mb-2 block text-sm font-medium text-gray-700"
                 >
                   Street Address <span className="text-red-500">*</span>
                 </label>
@@ -218,57 +218,57 @@ export default function CreateChurch() {
                   id="street_address"
                   name="street_address"
                   type="text"
+                  className="w-full rounded-lg border border-gray-300 px-3 py-2 focus:border-efcaAccent focus:outline-none focus:ring-2 focus:ring-efcaAccent"
                   value={churchData.street_address}
                   onChange={(e) => handleChurchDataChange('street_address', e.target.value)}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-efcaAccent focus:border-efcaAccent"
                   placeholder="123 Church St"
                   required
                 />
               </div>
 
               <div>
-                <label htmlFor="city" className="block text-sm font-medium text-gray-700 mb-2">
+                <label htmlFor="city" className="mb-2 block text-sm font-medium text-gray-700">
                   City <span className="text-red-500">*</span>
                 </label>
                 <input
                   id="city"
                   name="city"
                   type="text"
+                  className="w-full rounded-lg border border-gray-300 px-3 py-2 focus:border-efcaAccent focus:outline-none focus:ring-2 focus:ring-efcaAccent"
                   value={churchData.city}
                   onChange={(e) => handleChurchDataChange('city', e.target.value)}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-efcaAccent focus:border-efcaAccent"
                   placeholder="Springfield"
                   required
                 />
               </div>
 
               <div>
-                <label htmlFor="state" className="block text-sm font-medium text-gray-700 mb-2">
+                <label htmlFor="state" className="mb-2 block text-sm font-medium text-gray-700">
                   State Abbreviation<span className="text-red-500">*</span>
                 </label>
                 <input
                   id="state"
                   name="state"
                   type="text"
+                  className="w-full rounded-lg border border-gray-300 px-3 py-2 focus:border-efcaAccent focus:outline-none focus:ring-2 focus:ring-efcaAccent"
                   value={churchData.state}
                   onChange={(e) => handleChurchDataChange('state', e.target.value)}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-efcaAccent focus:border-efcaAccent"
                   placeholder="2 Letter Abbreviation - OH"
                   required
                 />
               </div>
 
               <div>
-                <label htmlFor="zipcode" className="block text-sm font-medium text-gray-700 mb-2">
+                <label htmlFor="zipcode" className="mb-2 block text-sm font-medium text-gray-700">
                   ZIP Code <span className="text-red-500">*</span>
                 </label>
                 <input
                   id="zipcode"
                   name="zipcode"
                   type="text"
+                  className="w-full rounded-lg border border-gray-300 px-3 py-2 focus:border-efcaAccent focus:outline-none focus:ring-2 focus:ring-efcaAccent"
                   value={churchData.zipcode}
                   onChange={(e) => handleChurchDataChange('zipcode', e.target.value)}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-efcaAccent focus:border-efcaAccent"
                   placeholder="62704"
                   required
                 />
@@ -278,12 +278,12 @@ export default function CreateChurch() {
 
           {/* Church Users */}
           <div>
-            <div className="flex justify-between items-center mb-4">
-              <h2 className="text-xl font-semibold text-efcaDark">Church Users</h2>
+            <div className="mb-4 flex items-center justify-between">
+              <h2 className="text-efcaDark text-xl font-semibold">Church Users</h2>
               <button
                 type="button"
                 onClick={addUser}
-                className="px-3 py-1 bg-green-600 text-white rounded hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-500 transition-colors text-sm"
+                className="rounded bg-green-600 px-3 py-1 text-sm text-white transition-colors hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-500"
               >
                 + Add User
               </button>
@@ -291,35 +291,35 @@ export default function CreateChurch() {
 
             <div className="space-y-4">
               {users.map((user, index) => (
-                <div key={index} className="border border-gray-200 rounded-lg p-4">
-                  <div className="flex justify-between items-center mb-3">
+                <div key={index} className="rounded-lg border border-gray-200 p-4">
+                  <div className="mb-3 flex items-center justify-between">
                     <h3 className="font-medium text-gray-800">User {index + 1}</h3>
                     {users.length > 1 && (
                       <button
                         type="button"
                         onClick={() => removeUser(index)}
-                        className="text-red-600 hover:text-red-800 text-sm"
+                        className="text-sm text-red-600 hover:text-red-800"
                       >
                         Remove
                       </button>
                     )}
                   </div>
 
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
                     <div>
                       <label
                         htmlFor="user_email"
-                        className="block text-sm font-medium text-gray-700 mb-2"
+                        className="mb-2 block text-sm font-medium text-gray-700"
                       >
                         Email <span className="text-red-500">*</span>
                       </label>
                       <input
                         id="user_email"
-                        name="user_email"
+                        name="email"
                         type="email"
+                        className="w-full rounded-lg border border-gray-300 px-3 py-2 focus:border-efcaAccent focus:outline-none focus:ring-2 focus:ring-efcaAccent"
                         value={user.email}
                         onChange={(e) => handleUserChange(index, 'email', e.target.value)}
-                        className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-efcaAccent focus:border-efcaAccent"
                         placeholder="user@church.org"
                         required
                       />
@@ -328,7 +328,7 @@ export default function CreateChurch() {
                     <div>
                       <label
                         htmlFor="first_name"
-                        className="block text-sm font-medium text-gray-700 mb-2"
+                        className="mb-2 block text-sm font-medium text-gray-700"
                       >
                         First Name <span className="text-red-500">*</span>
                       </label>
@@ -336,9 +336,9 @@ export default function CreateChurch() {
                         id="first_name"
                         name="first_name"
                         type="text"
+                        className="w-full rounded-lg border border-gray-300 px-3 py-2 focus:border-efcaAccent focus:outline-none focus:ring-2 focus:ring-efcaAccent"
                         value={user.first_name}
                         onChange={(e) => handleUserChange(index, 'first_name', e.target.value)}
-                        className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-efcaAccent focus:border-efcaAccent"
                         placeholder="First Name"
                         required
                       />
@@ -347,7 +347,7 @@ export default function CreateChurch() {
                     <div>
                       <label
                         htmlFor="last_name"
-                        className="block text-sm font-medium text-gray-700 mb-2"
+                        className="mb-2 block text-sm font-medium text-gray-700"
                       >
                         Last Name <span className="text-red-500">*</span>
                       </label>
@@ -355,9 +355,9 @@ export default function CreateChurch() {
                         id="last_name"
                         name="last_name"
                         type="text"
+                        className="w-full rounded-lg border border-gray-300 px-3 py-2 focus:border-efcaAccent focus:outline-none focus:ring-2 focus:ring-efcaAccent"
                         value={user.last_name}
                         onChange={(e) => handleUserChange(index, 'last_name', e.target.value)}
-                        className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-efcaAccent focus:border-efcaAccent"
                         placeholder="Last Name"
                         required
                       />
@@ -366,11 +366,13 @@ export default function CreateChurch() {
                     <div>
                       <label
                         htmlFor="password"
-                        className="block text-sm font-medium text-gray-700 mb-2"
+                        className="mb-2 block text-sm font-medium text-gray-700"
                       >
                         Password <span className="text-red-500">*</span>
                       </label>
                       <PasswordInput
+                        id="password"
+                        name="password"
                         value={user.password}
                         onChange={(e) => handleUserChange(index, 'password', e.target.value)}
                         placeholder="Create a temporary password"
@@ -381,16 +383,16 @@ export default function CreateChurch() {
                   </div>
 
                   <div className="mt-3">
-                    <label htmlFor="require_password_change" className="flex items-center">
+                    <label htmlFor="requires_password_change" className="flex items-center">
                       <input
-                        id="require_password_change"
-                        name="require_password_change"
+                        id="requires_password_change"
+                        name="requires_password_change"
                         type="checkbox"
+                        className="rounded border-gray-300 text-efcaAccent focus:ring-efcaAccent"
                         checked={user.requires_password_change}
                         onChange={(e) =>
                           handleUserChange(index, 'requires_password_change', e.target.checked)
                         }
-                        className="rounded border-gray-300 text-efcaAccent focus:ring-efcaAccent"
                       />
                       <span className="ml-2 text-sm text-gray-700">
                         User will be required to reset password on first login.
@@ -403,21 +405,21 @@ export default function CreateChurch() {
           </div>
 
           {/* Submit Buttons */}
-          <div className="flex justify-end gap-4 pt-4 border-t">
+          <div className="flex justify-end gap-4 border-t pt-4">
             <Link
               href="/admin/churches"
-              className="px-6 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors"
+              className="rounded-lg border border-gray-300 px-6 py-2 text-gray-700 transition-colors hover:bg-gray-50"
             >
               Cancel
             </Link>
             <button
               type="submit"
               disabled={loading}
-              className="px-6 py-2 bg-efcaAccent text-white rounded-lg hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-efcaAccent focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+              className="rounded-lg bg-efcaAccent px-6 py-2 text-white transition-colors hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-efcaAccent focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
             >
               {loading ? 'Creating...' : 'Create Church'}
             </button>
-            {error && <p className="mt-1 text-sm text-left text-[#FF5722]">{error}</p>}
+            {error && <p className="mt-1 text-left text-sm text-[#FF5722]">{error}</p>}
           </div>
         </form>
       </div>

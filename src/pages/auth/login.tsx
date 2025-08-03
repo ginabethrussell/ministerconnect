@@ -52,14 +52,15 @@ export default function Login() {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-efcaGray font-sans">
-      <div className="max-w-md mx-auto p-6 bg-white rounded shadow">
-        <h2 className="text-xl font-bold mb-4 text-efcaBlue">Login</h2>
+    <div className="flex min-h-screen items-center justify-center bg-efcaGray font-sans">
+      <div className="mx-auto max-w-md rounded bg-white p-6 shadow">
+        <h2 className="mb-4 text-xl font-bold text-efcaBlue">Login</h2>
         <p className="mb-4 text-gray-600">All users (candidates, churches, admins) log in here.</p>
         <form onSubmit={handleSubmit} className="space-y-4">
           <input
-            className="input-field"
+            name="email"
             type="email"
+            className="input-field"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
             placeholder="Email"
@@ -67,6 +68,7 @@ export default function Login() {
             autoFocus
           />
           <PasswordInput
+            name="password"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
             placeholder="Password"
@@ -78,7 +80,7 @@ export default function Login() {
               Forgot Password? Please{' '}
               <a
                 href="mailto:ginabeth.russell@gmail.com?subject=Minister%20Connect%20Password%20Reset%20Request"
-                className="text-efcaAccent underline hover:text-efcaAccent-dark"
+                className="hover:text-efcaAccent-dark text-efcaAccent underline"
               >
                 contact the admin
               </a>{' '}
@@ -89,13 +91,13 @@ export default function Login() {
             Login
           </button>
         </form>
-        {error && <p className="text-red-500 mt-2">{error}</p>}
-        {success && <p className="text-green-600 mt-2">Login successful! Redirecting...</p>}
+        {error && <p className="mt-2 text-red-500">{error}</p>}
+        {success && <p className="mt-2 text-green-600">Login successful! Redirecting...</p>}
         <p className="mt-4 text-sm text-gray-600">
           Are you a church or organization? Please{' '}
           <a
             href="mailto:ginabeth.russell@gmail.com?subject=Minister%20Connect%20Access%20Request"
-            className="text-efcaAccent underline hover:text-efcaAccent-dark"
+            className="hover:text-efcaAccent-dark text-efcaAccent underline"
           >
             contact the admin
           </a>{' '}
@@ -105,7 +107,7 @@ export default function Login() {
           Are you a candidate without an account?{' '}
           <Link
             href="/auth/register"
-            className="text-efcaAccent underline hover:text-blue-700 focus:underline focus:text-efcaAccent focus:outline-none"
+            className="text-efcaAccent underline hover:text-blue-700 focus:text-efcaAccent focus:underline focus:outline-none"
           >
             Register here
           </Link>
