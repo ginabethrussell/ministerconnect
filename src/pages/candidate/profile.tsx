@@ -210,47 +210,47 @@ export default function CandidateProfilePage() {
     });
   };
 
-  if (loading) return <div className="text-center mt-10">Loading...</div>;
+  if (loading) return <div className="mt-10 text-center">Loading...</div>;
 
   const renderView = () => {
     return (
-      <div className="min-h-screen bg-efcaGray md:flex md:items-center md:justify-center md:py-8 md:px-8">
-        <div className="w-full md:max-w-3xl bg-white rounded-lg shadow-lg p-6 md:p-8 border border-gray-200">
+      <div className="min-h-screen bg-efcaGray md:flex md:items-center md:justify-center md:px-8 md:py-8">
+        <div className="w-full rounded-lg border border-gray-200 bg-white p-6 shadow-lg md:max-w-3xl md:p-8">
           {/* Profile Header */}
-          <div className="flex flex-col items-center space-y-4 mb-8">
+          <div className="mb-8 flex flex-col items-center space-y-4">
             {profile && profile?.profile_image ? (
               <img
                 src={profile.profile_image}
                 alt="Profile"
-                className="w-60 h-60 rounded-full border-4 border-gray-300 shadow-xlg object-cover"
+                className="shadow-xlg h-60 w-60 rounded-full border-4 border-gray-300 object-cover"
               />
             ) : (
-              <div className="w-60 h-60 flex items-center justify-center rounded-full bg-gray-100 text-gray-400 border-2 border-gray-300">
+              <div className="flex h-60 w-60 items-center justify-center rounded-full border-2 border-gray-300 bg-gray-100 text-gray-400">
                 <UserIcon />
               </div>
             )}
-            <h2 className="text-3xl font-bold text-efcaDark">{user?.name}</h2>
+            <h2 className="text-efcaDark text-3xl font-bold">{user?.name}</h2>
           </div>
 
           {/* Contact Info */}
           <div className="border-t pt-6">
-            <h3 className="text-sm font-semibold text-gray-700 uppercase tracking-wide mb-4">
+            <h3 className="mb-4 text-sm font-semibold uppercase tracking-wide text-gray-700">
               Contact Information
             </h3>
             <div className="space-y-2 text-gray-600">
               <div>
-                <p className="text-sm font-semibold text-efcaDark">Email</p>
+                <p className="text-efcaDark text-sm font-semibold">Email</p>
                 <p>{user?.email}</p>
               </div>
               {profile?.phone && (
                 <div>
-                  <p className="text-sm font-semibold text-efcaDark">Phone</p>
+                  <p className="text-efcaDark text-sm font-semibold">Phone</p>
                   <p>{formatPhone(profile.phone)}</p>
                 </div>
               )}
               {profile?.street_address && (
                 <div>
-                  <p className="text-sm font-semibold text-efcaDark">Address</p>
+                  <p className="text-efcaDark text-sm font-semibold">Address</p>
                   <p>{profile.street_address}</p>
                   <p>
                     {profile.city}, {profile.state} {profile.zipcode}
@@ -261,13 +261,13 @@ export default function CandidateProfilePage() {
           </div>
 
           {/* Documents */}
-          <div className="border-t pt-6 mt-8">
-            <h3 className="text-sm font-semibold text-gray-700 uppercase tracking-wide mb-4">
+          <div className="mt-8 border-t pt-6">
+            <h3 className="mb-4 text-sm font-semibold uppercase tracking-wide text-gray-700">
               Documents & Media
             </h3>
             <div className="space-y-4 text-gray-600">
               <div>
-                <p className="text-sm font-semibold text-efcaDark">Resume</p>
+                <p className="text-efcaDark text-sm font-semibold">Resume</p>
                 {typeof form.resume === 'string' && form.resume ? (
                   <a
                     href={form.resume}
@@ -282,7 +282,7 @@ export default function CandidateProfilePage() {
                 )}
               </div>
               <div>
-                <p className="text-sm font-semibold text-efcaDark">Preaching / Teaching Video</p>
+                <p className="text-efcaDark text-sm font-semibold">Preaching / Teaching Video</p>
                 {profile?.video_url ? (
                   <a
                     href={profile.video_url}
@@ -300,8 +300,8 @@ export default function CandidateProfilePage() {
           </div>
 
           {/* Preferences */}
-          <div className="border-t pt-6 mt-8">
-            <h3 className="text-sm font-semibold text-gray-700 uppercase tracking-wide mb-4">
+          <div className="mt-8 border-t pt-6">
+            <h3 className="mb-4 text-sm font-semibold uppercase tracking-wide text-gray-700">
               Placement Preferences
             </h3>
             {profile?.placement_preferences && profile?.placement_preferences?.length > 0 ? (
@@ -309,7 +309,7 @@ export default function CandidateProfilePage() {
                 {profile.placement_preferences.map((pref) => (
                   <span
                     key={pref}
-                    className="bg-gray-100 text-gray-800 px-3 py-1 rounded-full text-sm"
+                    className="rounded-full bg-gray-100 px-3 py-1 text-sm text-gray-800"
                   >
                     {pref}
                   </span>
@@ -331,7 +331,7 @@ export default function CandidateProfilePage() {
             ) : (
               <p className="text-center text-gray-500">
                 Profile is in{' '}
-                <span className="px-3 py-1 rounded-full text-sm font-medium bg-blue-100 text-blue-800">
+                <span className="rounded-full bg-blue-100 px-3 py-1 text-sm font-medium text-blue-800">
                   Pending
                 </span>{' '}
                 status and awaiting Admin review.
@@ -350,15 +350,15 @@ export default function CandidateProfilePage() {
       }}
       className="space-y-4"
     >
-      <h3 className="mb-2 text-base font-semibold text-efcaDark">Contact Information</h3>
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+      <h3 className="text-efcaDark mb-2 text-base font-semibold">Contact Information</h3>
+      <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
         <div>
           <label htmlFor="name" className="block text-sm font-medium text-gray-700">
             First Name
           </label>
           <input
             id="first_name"
-            className="mt-1 block w-full rounded-lg border p-2.5 text-sm focus:border-efcaAccent focus:ring-efcaAccent border-gray-300"
+            className="mt-1 block w-full rounded-lg border border-gray-300 p-2.5 text-sm focus:border-efcaAccent focus:ring-efcaAccent"
             name="first_name"
             value={user?.first_name}
             disabled
@@ -370,7 +370,7 @@ export default function CandidateProfilePage() {
           </label>
           <input
             id="last_name"
-            className="mt-1 block w-full rounded-lg border p-2.5 text-sm focus:border-efcaAccent focus:ring-efcaAccent border-gray-300"
+            className="mt-1 block w-full rounded-lg border border-gray-300 p-2.5 text-sm focus:border-efcaAccent focus:ring-efcaAccent"
             name="last_name"
             value={user?.last_name}
             disabled
@@ -384,7 +384,7 @@ export default function CandidateProfilePage() {
         </label>
         <input
           id="email"
-          className="mt-1 block w-full rounded-lg border p-2.5 text-sm focus:border-efcaAccent focus:ring-efcaAccent border-gray-300"
+          className="mt-1 block w-full rounded-lg border border-gray-300 p-2.5 text-sm focus:border-efcaAccent focus:ring-efcaAccent"
           name="email"
           type="email"
           value={user?.email}
@@ -430,7 +430,7 @@ export default function CandidateProfilePage() {
         )}
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+      <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
         <div>
           <label htmlFor="city" className="block text-sm font-medium text-gray-700">
             City <span className="text-red-500">*</span>
@@ -487,13 +487,13 @@ export default function CandidateProfilePage() {
       </div>
 
       <hr className="my-6 border-gray-200" />
-      <h3 className="mb-2 text-base font-semibold text-efcaDark">Documents & Media</h3>
+      <h3 className="text-efcaDark mb-2 text-base font-semibold">Documents & Media</h3>
       <div className="mb-4">
         <div>
-          <label htmlFor="resume" className="block mb-2 text-sm text-gray-700">
+          <label htmlFor="resume" className="mb-2 block text-sm text-gray-700">
             Resume PDF Required (max 5MB) <span className="text-red-500">*</span>
           </label>
-          <div className="flex gap-2 mt-1">
+          <div className="mt-1 flex gap-2">
             <input
               type="file"
               id="resume"
@@ -501,7 +501,7 @@ export default function CandidateProfilePage() {
               onChange={handleFileChange}
               accept=".pdf"
               required={!(typeof form.resume === 'string' && form.resume)}
-              className="flex-1 rounded-lg border p-2.5 text-sm focus:border-efcaAccent focus:ring-efcaAccent border-gray-300"
+              className="flex-1 rounded-lg border border-gray-300 p-2.5 text-sm focus:border-efcaAccent focus:ring-efcaAccent"
             />
           </div>
           {formErrors.resume && <p className="mt-1 text-sm text-red-600">{formErrors.resume}</p>}
@@ -512,14 +512,14 @@ export default function CandidateProfilePage() {
           )}
           {typeof form.resume === 'string' && form.resume && (
             <div className="mb-2 mt-2 flex items-center gap-2">
-              <span className="inline-block bg-green-100 text-green-800 text-xs px-2 py-1 rounded">
+              <span className="inline-block rounded bg-green-100 px-2 py-1 text-xs text-green-800">
                 Uploaded
               </span>
               <a
                 href={form.resume}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="text-efcaAccent text-sm hover:underline"
+                className="text-sm text-efcaAccent hover:underline"
               >
                 View Current Resume
               </a>
@@ -528,7 +528,7 @@ export default function CandidateProfilePage() {
         </div>
       </div>
       <div className="mb-4">
-        <label htmlFor="profileImage" className="block mb-2 text-sm text-gray-700">
+        <label htmlFor="profileImage" className="mb-2 block text-sm text-gray-700">
           Profile Photo (Optional, JPG/PNG, max 1MB)
         </label>
         <input
@@ -537,18 +537,18 @@ export default function CandidateProfilePage() {
           name="profile_image"
           accept="image/*"
           onChange={handleFileChange}
-          className="flex-1 rounded-lg border p-2.5 text-sm focus:border-efcaAccent focus:ring-efcaAccent border-gray-300"
+          className="flex-1 rounded-lg border border-gray-300 p-2.5 text-sm focus:border-efcaAccent focus:ring-efcaAccent"
         />
         {typeof form.profile_image === 'string' && form.profile_image && (
           <div className="mt-2 flex items-center gap-2">
-            <span className="inline-block bg-green-100 text-green-800 text-xs px-2 py-1 rounded">
+            <span className="inline-block rounded bg-green-100 px-2 py-1 text-xs text-green-800">
               Uploaded
             </span>
             <a
               href={form.profile_image}
               target="_blank"
               rel="noopener noreferrer"
-              className="text-efcaAccent text-sm hover:underline"
+              className="text-sm text-efcaAccent hover:underline"
             >
               View Current Photo
             </a>
@@ -560,12 +560,12 @@ export default function CandidateProfilePage() {
       </div>
 
       <div>
-        <label className="block mb-2 text-sm text-gray-700">
+        <label className="mb-2 block text-sm text-gray-700">
           Teaching/Preaching Video URL (Optional)
         </label>
-        <div className="flex gap-2 mt-1">
+        <div className="mt-1 flex gap-2">
           <input
-            className="flex-1 rounded-lg border p-2.5 text-sm focus:border-efcaAccent focus:ring-efcaAccent border-gray-300"
+            className="flex-1 rounded-lg border border-gray-300 p-2.5 text-sm focus:border-efcaAccent focus:ring-efcaAccent"
             name="video_url"
             value={form.video_url ?? ''}
             onChange={handleChange}
@@ -578,14 +578,14 @@ export default function CandidateProfilePage() {
       </div>
 
       <hr className="my-6 border-gray-200" />
-      <h3 className="mb-2 text-base font-semibold text-efcaDark">Placement Preferences</h3>
-      <p className="text-sm text-gray-700 mb-4">
+      <h3 className="text-efcaDark mb-2 text-base font-semibold">Placement Preferences</h3>
+      <p className="mb-4 text-sm text-gray-700">
         Choose up to 5 positions for which you are most qualified and interested.
       </p>
-      <div className="block mb-2 font-semibold text-sm text-gray-700">
+      <div className="mb-2 block text-sm font-semibold text-gray-700">
         Senior/Solo Pastor Positions
       </div>
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-2 mb-4">
+      <div className="mb-4 grid grid-cols-1 gap-2 md:grid-cols-2">
         {[
           'Solo pastor',
           'Church-planting pastor',
@@ -609,8 +609,8 @@ export default function CandidateProfilePage() {
           </label>
         ))}
       </div>
-      <div className="block mb-2 font-semibold text-sm text-gray-700">Associate Staff Roles</div>
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-2 mb-4">
+      <div className="mb-2 block text-sm font-semibold text-gray-700">Associate Staff Roles</div>
+      <div className="mb-4 grid grid-cols-1 gap-2 md:grid-cols-2">
         {[
           'Administration/operations/business',
           'Adult education/small groups/discipleship',
@@ -651,15 +651,15 @@ export default function CandidateProfilePage() {
         ))}
       </div>
 
-      <div className="flex flex-col justify-evenly md:flex-row gap-2 pt-4">
+      <div className="flex flex-col justify-evenly gap-2 pt-4 md:flex-row">
         <button
-          className="bg-efcaAccent text-white px-4 py-2.5 rounded-lg font-bold hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-efcaAccent transition-colors"
+          className="rounded-lg bg-efcaAccent px-4 py-2.5 font-bold text-white transition-colors hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-efcaAccent"
           type="submit"
         >
           Submit Profile
         </button>
         <button
-          className="bg-gray-400 text-white px-4 py-2.5 rounded-lg font-bold hover:bg-gray-500 focus:outline-none focus:ring-2 focus:ring-gray-400 transition-colors"
+          className="rounded-lg bg-gray-400 px-4 py-2.5 font-bold text-white transition-colors hover:bg-gray-500 focus:outline-none focus:ring-2 focus:ring-gray-400"
           type="button"
           onClick={(e) => {
             handleProfileUpdate(e, 'draft');
@@ -669,7 +669,7 @@ export default function CandidateProfilePage() {
         </button>
         {mode === 'edit' && (
           <button
-            className="bg-gray-200 text-gray-700 px-4 py-2.5 rounded-lg font-bold hover:bg-gray-300 focus:outline-none focus:ring-2 focus:ring-gray-200 transition-colors"
+            className="rounded-lg bg-gray-200 px-4 py-2.5 font-bold text-gray-700 transition-colors hover:bg-gray-300 focus:outline-none focus:ring-2 focus:ring-gray-200"
             type="button"
             onClick={() => setMode('view')}
           >
@@ -678,7 +678,7 @@ export default function CandidateProfilePage() {
         )}
         {mode === 'edit' && (
           <button
-            className="bg-red-600 text-white px-4 py-2.5 rounded-lg font-bold hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-600 transition-colors"
+            className="rounded-lg bg-red-600 px-4 py-2.5 font-bold text-white transition-colors hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-600"
             type="button"
             onClick={handleResetProfile}
           >
@@ -690,12 +690,12 @@ export default function CandidateProfilePage() {
   );
 
   return (
-    <div className="min-h-screen bg-efcaGray font-sans py-8">
-      <div className="max-w-2xl mx-auto px-4">
-        <div className="bg-white rounded-lg shadow-lg p-6">
-          <h2 className="text-2xl font-bold mb-6 text-efcaBlue">Candidate Profile</h2>
-          {error && <p className="text-red-500 mb-4">{error}</p>}
-          {success && <p className="text-green-600 mb-4">{success}</p>}
+    <div className="min-h-screen bg-efcaGray py-8 font-sans">
+      <div className="mx-auto max-w-2xl px-4">
+        <div className="rounded-lg bg-white p-6 shadow-lg">
+          <h2 className="mb-6 text-2xl font-bold text-efcaBlue">Candidate Profile</h2>
+          {error && <p className="mb-4 text-red-500">{error}</p>}
+          {success && <p className="mb-4 text-green-600">{success}</p>}
           {mode === 'view' && profile ? renderView() : renderForm()}
         </div>
       </div>

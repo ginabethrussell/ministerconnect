@@ -44,17 +44,17 @@ export default function Header() {
     }`;
 
   return (
-    <header className="bg-efcaBlue text-white py-4 px-6 shadow">
-      <div className="flex justify-between items-center max-w-7xl mx-auto pl-4">
+    <header className="bg-efcaBlue px-6 py-4 text-white shadow">
+      <div className="mx-auto flex max-w-7xl items-center justify-between pl-4">
         <Link
           href={roleHref}
-          className="flex items-center font-bold text-xl uppercase tracking-wide cursor-pointer opacity-100"
+          className="flex cursor-pointer items-center text-xl font-bold uppercase tracking-wide opacity-100"
         >
           <span>MinisterConnect</span>
         </Link>
         {!hideNav && (
           <button
-            className="md:hidden text-white ml-2"
+            className="ml-2 text-white md:hidden"
             onClick={() => setMenuOpen((open) => !open)}
             aria-label="Toggle menu"
           >
@@ -78,7 +78,7 @@ export default function Header() {
           </button>
         )}
         {!hideNav && (
-          <nav className="h-16 hidden md:flex items-center space-x-6">
+          <nav className="hidden h-16 items-center space-x-6 md:flex">
             {roleHref === '/candidate' && (
               <>
                 <Link href="/candidate" className={navLinkClass('/candidate')}>
@@ -148,7 +148,7 @@ export default function Header() {
             {user != null && (
               <button
                 onClick={handleLogout}
-                className="px-3 py-2 rounded-md text-md font-medium text-white hover:bg-red-600"
+                className="text-md rounded-md px-3 py-2 font-medium text-white hover:bg-red-600"
               >
                 Logout
               </button>
@@ -167,7 +167,7 @@ export default function Header() {
         )}
       </div>
       {!hideNav && menuOpen && (
-        <nav className="md:hidden flex flex-col items-center pt-4 space-y-2">
+        <nav className="flex flex-col items-center space-y-2 pt-4 md:hidden">
           {roleHref === '/candidate' && (
             <>
               <Link
@@ -297,7 +297,7 @@ export default function Header() {
                 handleLogout();
                 setMenuOpen(false);
               }}
-              className="text-center px-3 py-2 rounded-md text-lg font-regular text-white hover:bg-red-600"
+              className="font-regular rounded-md px-3 py-2 text-center text-lg text-white hover:bg-red-600"
             >
               Logout
             </button>

@@ -110,7 +110,7 @@ export default function EditChurch() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-gray-100 flex items-center justify-center">
+      <div className="flex min-h-screen items-center justify-center bg-gray-100">
         <p>Loading church data...</p>
       </div>
     );
@@ -118,7 +118,7 @@ export default function EditChurch() {
 
   if (!churchData) {
     return (
-      <div className="min-h-screen bg-gray-100 flex items-center justify-center">
+      <div className="flex min-h-screen items-center justify-center bg-gray-100">
         <p>Church not found.</p>
       </div>
     );
@@ -126,24 +126,24 @@ export default function EditChurch() {
 
   return (
     <div className="min-h-screen bg-gray-100 p-8">
-      <div className="max-w-4xl mx-auto">
-        <header className="flex flex-col md:flex-row justify-between md:items-center gap-4 mb-8">
+      <div className="mx-auto max-w-4xl">
+        <header className="mb-8 flex flex-col justify-between gap-4 md:flex-row md:items-center">
           <h1 className="text-3xl font-bold text-gray-800">Edit: {churchData.name}</h1>
           <div className="flex gap-4">
             <Link
               href="/admin/churches"
-              className="px-4 py-2 bg-gray-600 text-white rounded hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-gray-500 transition-colors text-center w-full"
+              className="w-full rounded bg-gray-600 px-4 py-2 text-center text-white transition-colors hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-gray-500"
             >
               Back to Churches
             </Link>
           </div>
         </header>
 
-        <form onSubmit={handleSubmit} className="bg-white rounded-lg shadow-md p-8 space-y-8">
+        <form onSubmit={handleSubmit} className="space-y-8 rounded-lg bg-white p-8 shadow-md">
           {/* Church Information */}
           <section>
-            <h2 className="text-xl font-semibold text-gray-700 mb-6">Church Information</h2>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <h2 className="mb-6 text-xl font-semibold text-gray-700">Church Information</h2>
+            <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
               <input
                 name="name"
                 type="text"
@@ -229,10 +229,10 @@ export default function EditChurch() {
 
           {/* User Credentials */}
           <section>
-            <h2 className="text-xl font-semibold text-gray-700 mb-6">User Credentials</h2>
+            <h2 className="mb-6 text-xl font-semibold text-gray-700">User Credentials</h2>
             <div>
               {churchData.existingUsers.map((user: User, idx: number) => (
-                <div key={`${user.id}-${idx}`} className="p-4 mb-4 bg-gray-50 rounded border">
+                <div key={`${user.id}-${idx}`} className="mb-4 rounded border bg-gray-50 p-4">
                   <p>
                     <strong>Name:</strong> {user.name}
                   </p>
@@ -247,8 +247,8 @@ export default function EditChurch() {
             </div>
             <div className="space-y-6">
               {churchData.users.map((user, index) => (
-                <div key={user.id} className="p-4 border rounded-md bg-gray-50 relative">
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div key={user.id} className="relative rounded-md border bg-gray-50 p-4">
+                  <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
                     <input
                       name="first_name"
                       type="text"
@@ -299,7 +299,7 @@ export default function EditChurch() {
                     <button
                       type="button"
                       onClick={() => removeUser(index)}
-                      className="absolute top-2 right-2 text-red-500 hover:text-red-700"
+                      className="absolute right-2 top-2 text-red-500 hover:text-red-700"
                     >
                       <X />
                     </button>
@@ -307,28 +307,28 @@ export default function EditChurch() {
                 </div>
               ))}
             </div>
-            <button type="button" onClick={addUser} className="mt-4 btn-secondary-sm">
+            <button type="button" onClick={addUser} className="btn-secondary-sm mt-4">
               + Add Another User
             </button>
           </section>
 
           {/* Actions */}
-          <div className="flex justify-end gap-4 pt-4 border-t">
+          <div className="flex justify-end gap-4 border-t pt-4">
             <button
               type="button"
               onClick={() => router.push('/admin/churches')}
-              className="px-6 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors"
+              className="rounded-lg border border-gray-300 px-6 py-2 text-gray-700 transition-colors hover:bg-gray-50"
             >
               Cancel
             </button>
             <button
               type="submit"
               disabled={saving}
-              className="px-6 py-2 bg-efcaAccent text-white rounded-lg hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-efcaAccent focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+              className="rounded-lg bg-efcaAccent px-6 py-2 text-white transition-colors hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-efcaAccent focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
             >
               {saving ? 'Saving...' : 'Save Changes'}
             </button>
-            {error && <p className="mt-1 text-sm text-left text-[#FF5722]">{error}</p>}
+            {error && <p className="mt-1 text-left text-sm text-[#FF5722]">{error}</p>}
           </div>
         </form>
       </div>

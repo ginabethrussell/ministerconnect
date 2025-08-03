@@ -73,36 +73,36 @@ export default function SuperAdminChurches() {
 
   return (
     <div className="min-h-screen bg-efcaGray p-8">
-      <div className="max-w-7xl mx-auto">
-        <header className="flex justify-between items-center mb-8">
+      <div className="mx-auto max-w-7xl">
+        <header className="mb-8 flex items-center justify-between">
           <div>
-            <h1 className="text-3xl font-bold text-efcaDark">Manage Churches</h1>
-            <p className="text-gray-600 mt-2">Review and manage church accounts</p>
+            <h1 className="text-efcaDark text-3xl font-bold">Manage Churches</h1>
+            <p className="mt-2 text-gray-600">Review and manage church accounts</p>
           </div>
           <Link
             href="/superadmin"
-            className="px-4 py-2 bg-gray-600 text-white rounded hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-gray-500 transition-colors"
+            className="rounded bg-gray-600 px-4 py-2 text-white transition-colors hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-gray-500"
           >
             Back to Dashboard
           </Link>
         </header>
 
-        <div className="bg-white rounded-lg shadow-md p-6">
-          <div className="flex flex-col md:flex-row gap-4 mb-6">
+        <div className="rounded-lg bg-white p-6 shadow-md">
+          <div className="mb-6 flex flex-col gap-4 md:flex-row">
             <div className="flex-1">
               <input
                 type="text"
                 placeholder="Search churches by name, email, or location..."
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-efcaAccent focus:border-efcaAccent"
+                className="w-full rounded-lg border border-gray-300 px-4 py-2 focus:border-efcaAccent focus:outline-none focus:ring-2 focus:ring-efcaAccent"
               />
             </div>
             <div className="w-full md:w-48">
               <select
                 value={statusFilter}
                 onChange={(e) => setStatusFilter(e.target.value)}
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-efcaAccent focus:border-efcaAccent bg-white"
+                className="w-full rounded-lg border border-gray-300 bg-white px-4 py-2 focus:border-efcaAccent focus:outline-none focus:ring-2 focus:ring-efcaAccent"
               >
                 <option value="all">All Status</option>
                 <option value="active">Active</option>
@@ -116,72 +116,72 @@ export default function SuperAdminChurches() {
             <table className="w-full">
               <thead className="hidden md:table-header-group">
                 <tr className="border-b border-gray-200">
-                  <th className="text-left py-3 px-4 font-semibold text-efcaDark">Church</th>
-                  <th className="text-left py-3 px-4 font-semibold text-efcaDark">Contact</th>
-                  <th className="text-left py-3 px-4 font-semibold text-efcaDark">Location</th>
-                  <th className="text-left py-3 px-4 font-semibold text-efcaDark">Status</th>
-                  <th className="text-left py-3 px-4 font-semibold text-efcaDark">Job Listings</th>
-                  <th className="text-left py-3 px-4 font-semibold text-efcaDark">Joined</th>
-                  <th className="text-left py-3 px-4 font-semibold text-efcaDark">Actions</th>
+                  <th className="text-efcaDark px-4 py-3 text-left font-semibold">Church</th>
+                  <th className="text-efcaDark px-4 py-3 text-left font-semibold">Contact</th>
+                  <th className="text-efcaDark px-4 py-3 text-left font-semibold">Location</th>
+                  <th className="text-efcaDark px-4 py-3 text-left font-semibold">Status</th>
+                  <th className="text-efcaDark px-4 py-3 text-left font-semibold">Job Listings</th>
+                  <th className="text-efcaDark px-4 py-3 text-left font-semibold">Joined</th>
+                  <th className="text-efcaDark px-4 py-3 text-left font-semibold">Actions</th>
                 </tr>
               </thead>
               <tbody>
                 {filteredChurches.map((church) => (
                   <tr
                     key={church.id}
-                    className="block md:table-row mb-4 rounded-lg border border-gray-200 p-4 md:mb-0 md:border-0 md:border-b md:border-gray-100 md:p-0 md:hover:bg-gray-50 md:rounded-none"
+                    className="mb-4 block rounded-lg border border-gray-200 p-4 md:mb-0 md:table-row md:rounded-none md:border-0 md:border-b md:border-gray-100 md:p-0 md:hover:bg-gray-50"
                   >
-                    <td className="block md:table-cell py-2 px-4 md:py-4 md:px-4">
-                      <span className="font-bold md:hidden mr-2">Church:</span>
-                      <p className="font-medium text-efcaDark">{church.name}</p>
+                    <td className="block px-4 py-2 md:table-cell md:px-4 md:py-4">
+                      <span className="mr-2 font-bold md:hidden">Church:</span>
+                      <p className="text-efcaDark font-medium">{church.name}</p>
                     </td>
-                    <td className="block md:table-cell py-2 px-4 md:py-4 md:px-4">
-                      <span className="font-bold md:hidden mr-2">Contact:</span>
+                    <td className="block px-4 py-2 md:table-cell md:px-4 md:py-4">
+                      <span className="mr-2 font-bold md:hidden">Contact:</span>
                       <span>
-                        <p className="text-sm text-efcaDark md:block">{church.email}</p>
+                        <p className="text-efcaDark text-sm md:block">{church.email}</p>
                         <p className="text-sm text-gray-600 md:block">{church.phone}</p>
                       </span>
                     </td>
-                    <td className="block md:table-cell py-2 px-4 md:py-4 md:px-4 text-sm text-gray-600">
-                      <div className="flex justify-between items-center">
+                    <td className="block px-4 py-2 text-sm text-gray-600 md:table-cell md:px-4 md:py-4">
+                      <div className="flex items-center justify-between">
                         <span className="font-bold md:hidden">Location:</span>
                         <span>{church.location}</span>
                       </div>
                     </td>
-                    <td className="block md:table-cell py-2 px-4 md:py-4 md:px-4">
-                      <div className="flex justify-between items-center">
+                    <td className="block px-4 py-2 md:table-cell md:px-4 md:py-4">
+                      <div className="flex items-center justify-between">
                         <span className="font-bold md:hidden">Status:</span>
                         <span
-                          className={`px-2 py-1 rounded-full text-xs font-medium ${getStatusColor(church.status)}`}
+                          className={`rounded-full px-2 py-1 text-xs font-medium ${getStatusColor(church.status)}`}
                         >
                           {church.status.charAt(0).toUpperCase() + church.status.slice(1)}
                         </span>
                       </div>
                     </td>
-                    <td className="block md:table-cell py-2 px-4 md:py-4 md:px-4">
-                      <div className="flex justify-between items-center">
+                    <td className="block px-4 py-2 md:table-cell md:px-4 md:py-4">
+                      <div className="flex items-center justify-between">
                         <span className="font-bold md:hidden">Job Listings:</span>
-                        <span className="px-2 py-1 bg-blue-100 text-blue-800 rounded-full text-xs font-medium">
+                        <span className="rounded-full bg-blue-100 px-2 py-1 text-xs font-medium text-blue-800">
                           {church.jobListings} listings
                         </span>
                       </div>
                     </td>
-                    <td className="block md:table-cell py-2 px-4 md:py-4 md:px-4 text-sm text-gray-600">
-                      <div className="flex justify-between items-center">
+                    <td className="block px-4 py-2 text-sm text-gray-600 md:table-cell md:px-4 md:py-4">
+                      <div className="flex items-center justify-between">
                         <span className="font-bold md:hidden">Joined:</span>
                         <span>{new Date(church.createdAt).toLocaleDateString()}</span>
                       </div>
                     </td>
-                    <td className="block md:table-cell py-2 px-4 md:py-4 md:px-4">
-                      <div className="flex justify-between items-center md:justify-start md:space-x-2">
+                    <td className="block px-4 py-2 md:table-cell md:px-4 md:py-4">
+                      <div className="flex items-center justify-between md:justify-start md:space-x-2">
                         <span className="font-bold md:hidden">Actions:</span>
                         <div className="flex space-x-2">
                           {church.status === 'active' ? (
-                            <button className="px-3 py-1.5 bg-red-600 text-white rounded-md hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-500 disabled:opacity-50 disabled:cursor-not-allowed transition-colors text-sm font-medium w-24 text-center">
+                            <button className="w-24 rounded-md bg-red-600 px-3 py-1.5 text-center text-sm font-medium text-white transition-colors hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-500 disabled:cursor-not-allowed disabled:opacity-50">
                               Deactivate
                             </button>
                           ) : (
-                            <button className="px-3 py-1.5 bg-green-600 text-white rounded-md hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-500 disabled:opacity-50 disabled:cursor-not-allowed transition-colors text-sm font-medium w-24 text-center">
+                            <button className="w-24 rounded-md bg-green-600 px-3 py-1.5 text-center text-sm font-medium text-white transition-colors hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-500 disabled:cursor-not-allowed disabled:opacity-50">
                               Activate
                             </button>
                           )}
@@ -195,7 +195,7 @@ export default function SuperAdminChurches() {
           </div>
 
           {filteredChurches.length === 0 && (
-            <div className="text-center py-8">
+            <div className="py-8 text-center">
               <p className="text-gray-500">No churches found matching your criteria.</p>
             </div>
           )}

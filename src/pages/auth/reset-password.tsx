@@ -46,27 +46,27 @@ export default function ResetPassword() {
   };
 
   return (
-    <div className="min-h-screen bg-efcaGray flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
-      <div className="max-w-md w-full space-y-8">
-        <div className="bg-white rounded-lg shadow-lg p-6">
+    <div className="flex min-h-screen items-center justify-center bg-efcaGray px-4 py-12 sm:px-6 lg:px-8">
+      <div className="w-full max-w-md space-y-8">
+        <div className="rounded-lg bg-white p-6 shadow-lg">
           <div className="text-center">
-            <h2 className="text-2xl font-bold text-efcaDark mb-4">Reset Your Password</h2>
-            <p className="text-gray-600 mb-6">
+            <h2 className="text-efcaDark mb-4 text-2xl font-bold">Reset Your Password</h2>
+            <p className="mb-6 text-gray-600">
               For security reasons, you must reset your temporary password before continuing.
             </p>
           </div>
 
           <form className="space-y-6" onSubmit={handleSubmit}>
             {error && (
-              <div className="bg-red-50 border border-red-200 rounded-lg p-3">
-                <p className="text-red-600 text-sm">{error}</p>
+              <div className="rounded-lg border border-red-200 bg-red-50 p-3">
+                <p className="text-sm text-red-600">{error}</p>
               </div>
             )}
 
             <div>
               <label
                 htmlFor="temporaryPassword"
-                className="block text-sm font-medium text-gray-700 mb-2"
+                className="mb-2 block text-sm font-medium text-gray-700"
               >
                 Temporary Password
               </label>
@@ -81,7 +81,7 @@ export default function ResetPassword() {
             </div>
 
             <div>
-              <label htmlFor="newPassword" className="block text-sm font-medium text-gray-700 mb-2">
+              <label htmlFor="newPassword" className="mb-2 block text-sm font-medium text-gray-700">
                 New Password
               </label>
               <PasswordInput
@@ -97,7 +97,7 @@ export default function ResetPassword() {
             <div>
               <label
                 htmlFor="confirmPassword"
-                className="block text-sm font-medium text-gray-700 mb-2"
+                className="mb-2 block text-sm font-medium text-gray-700"
               >
                 Confirm New Password
               </label>
@@ -115,7 +115,7 @@ export default function ResetPassword() {
             <button
               type="submit"
               disabled={loading}
-              className="w-full bg-efcaAccent text-white py-2 px-4 rounded-lg hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-efcaAccent focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+              className="w-full rounded-lg bg-efcaAccent px-4 py-2 text-white transition-colors hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-efcaAccent focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
             >
               {loading ? 'Resetting Password...' : 'Reset Password'}
             </button>
@@ -126,7 +126,7 @@ export default function ResetPassword() {
               For assistance, please{' '}
               <a
                 href="mailto:ginabeth.russell@gmail.com?subject=Minister%20Connect%20Reset%20Password%20Help"
-                className="text-efcaAccent underline hover:text-efcaAccent-dark"
+                className="hover:text-efcaAccent-dark text-efcaAccent underline"
               >
                 contact the admin.
               </a>{' '}

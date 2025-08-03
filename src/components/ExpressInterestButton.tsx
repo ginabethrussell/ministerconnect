@@ -55,23 +55,16 @@ export default function ExpressInterestButton({
     <button
       onClick={handleClick}
       disabled={isProcessing || disabled}
-      className={`
-        ${sizeClasses[size]}
-        ${variantClasses[variant]}
-        rounded font-semibold transition-colors focus:outline-none focus:ring-2
-        ${isProcessing ? 'opacity-50 cursor-not-allowed' : ''}
-        ${disabled ? 'opacity-50 cursor-not-allowed' : ''}}
-        ${className}
-      `}
+      className={` ${sizeClasses[size]} ${variantClasses[variant]} rounded font-semibold transition-colors focus:outline-none focus:ring-2 ${isProcessing ? 'cursor-not-allowed opacity-50' : ''} ${disabled ? 'cursor-not-allowed opacity-50' : ''}} ${className} `}
     >
       {isProcessing ? (
         <div className="flex items-center justify-center">
-          <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-current mr-2"></div>
+          <div className="mr-2 h-4 w-4 animate-spin rounded-full border-b-2 border-current"></div>
           Processing...
         </div>
       ) : hasExpressedInterest ? (
         <div className="flex items-center justify-center">
-          <svg className="w-4 h-4 mr-1" fill="currentColor" viewBox="0 0 20 20">
+          <svg className="mr-1 h-4 w-4" fill="currentColor" viewBox="0 0 20 20">
             <path
               fillRule="evenodd"
               d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"

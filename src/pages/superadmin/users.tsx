@@ -145,36 +145,36 @@ export default function SuperAdminUsers() {
 
   return (
     <div className="min-h-screen bg-efcaGray p-8">
-      <div className="max-w-7xl mx-auto">
-        <header className="flex justify-between items-center mb-8">
+      <div className="mx-auto max-w-7xl">
+        <header className="mb-8 flex items-center justify-between">
           <div>
-            <h1 className="text-3xl font-bold text-efcaDark">Manage Users</h1>
-            <p className="text-gray-600 mt-2">View and manage all platform users</p>
+            <h1 className="text-efcaDark text-3xl font-bold">Manage Users</h1>
+            <p className="mt-2 text-gray-600">View and manage all platform users</p>
           </div>
           <Link
             href="/superadmin"
-            className="px-4 py-2 bg-gray-600 text-white rounded hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-gray-500 transition-colors"
+            className="rounded bg-gray-600 px-4 py-2 text-white transition-colors hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-gray-500"
           >
             Back to Dashboard
           </Link>
         </header>
 
-        <div className="bg-white rounded-lg shadow-md p-6">
-          <div className="flex flex-col md:flex-row gap-4 mb-6">
+        <div className="rounded-lg bg-white p-6 shadow-md">
+          <div className="mb-6 flex flex-col gap-4 md:flex-row">
             <div className="flex-1">
               <input
                 type="text"
                 placeholder="Search users by name or email..."
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-efcaAccent focus:border-efcaAccent"
+                className="w-full rounded-lg border border-gray-300 px-4 py-2 focus:border-efcaAccent focus:outline-none focus:ring-2 focus:ring-efcaAccent"
               />
             </div>
             <div className="w-full md:w-48">
               <select
                 value={roleFilter}
                 onChange={(e) => setRoleFilter(e.target.value)}
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-efcaAccent focus:border-efcaAccent bg-white"
+                className="w-full rounded-lg border border-gray-300 bg-white px-4 py-2 focus:border-efcaAccent focus:outline-none focus:ring-2 focus:ring-efcaAccent"
               >
                 <option value="all">All Roles</option>
                 <option value="candidate">Candidates</option>
@@ -189,68 +189,68 @@ export default function SuperAdminUsers() {
             <table className="w-full">
               <thead className="hidden md:table-header-group">
                 <tr className="border-b border-gray-200">
-                  <th className="text-left py-3 px-4 font-semibold text-efcaDark">User</th>
-                  <th className="text-left py-3 px-4 font-semibold text-efcaDark">Role</th>
-                  <th className="text-left py-3 px-4 font-semibold text-efcaDark">Status</th>
-                  <th className="text-left py-3 px-4 font-semibold text-efcaDark">Joined</th>
-                  <th className="text-left py-3 px-4 font-semibold text-efcaDark">Actions</th>
+                  <th className="text-efcaDark px-4 py-3 text-left font-semibold">User</th>
+                  <th className="text-efcaDark px-4 py-3 text-left font-semibold">Role</th>
+                  <th className="text-efcaDark px-4 py-3 text-left font-semibold">Status</th>
+                  <th className="text-efcaDark px-4 py-3 text-left font-semibold">Joined</th>
+                  <th className="text-efcaDark px-4 py-3 text-left font-semibold">Actions</th>
                 </tr>
               </thead>
               <tbody>
                 {filteredUsers.map((user) => (
                   <tr
                     key={user.id}
-                    className="block md:table-row mb-4 rounded-lg border border-gray-200 p-4 md:mb-0 md:border-0 md:border-b md:border-gray-100 md:p-0 md:hover:bg-gray-50 md:rounded-none"
+                    className="mb-4 block rounded-lg border border-gray-200 p-4 md:mb-0 md:table-row md:rounded-none md:border-0 md:border-b md:border-gray-100 md:p-0 md:hover:bg-gray-50"
                   >
-                    <td className="block md:table-cell py-2 px-4 md:py-4 md:px-4">
-                      <span className="font-bold md:hidden mr-2">User:</span>
+                    <td className="block px-4 py-2 md:table-cell md:px-4 md:py-4">
+                      <span className="mr-2 font-bold md:hidden">User:</span>
                       <span>
-                        <p className="font-medium text-efcaDark inline md:block">{user.name}</p>
+                        <p className="text-efcaDark inline font-medium md:block">{user.name}</p>
                         <p className="text-sm text-gray-600 md:block">{user.email}</p>
                       </span>
                     </td>
-                    <td className="block md:table-cell py-2 px-4 md:py-4 md:px-4">
-                      <div className="flex justify-between items-center">
+                    <td className="block px-4 py-2 md:table-cell md:px-4 md:py-4">
+                      <div className="flex items-center justify-between">
                         <span className="font-bold md:hidden">Role:</span>
                         <span
-                          className={`px-2 py-1 rounded-full text-xs font-medium ${getRoleColor(user.role)}`}
+                          className={`rounded-full px-2 py-1 text-xs font-medium ${getRoleColor(user.role)}`}
                         >
                           {user.role.charAt(0).toUpperCase() + user.role.slice(1)}
                         </span>
                       </div>
                     </td>
-                    <td className="block md:table-cell py-2 px-4 md:py-4 md:px-4">
-                      <div className="flex justify-between items-center">
+                    <td className="block px-4 py-2 md:table-cell md:px-4 md:py-4">
+                      <div className="flex items-center justify-between">
                         <span className="font-bold md:hidden">Status:</span>
                         <span
-                          className={`px-2 py-1 rounded-full text-xs font-medium ${getStatusColor(user.status)}`}
+                          className={`rounded-full px-2 py-1 text-xs font-medium ${getStatusColor(user.status)}`}
                         >
                           {user.status.charAt(0).toUpperCase() + user.status.slice(1)}
                         </span>
                       </div>
                     </td>
-                    <td className="block md:table-cell py-2 px-4 md:py-4 md:px-4 text-sm text-gray-600">
-                      <div className="flex justify-between items-center">
+                    <td className="block px-4 py-2 text-sm text-gray-600 md:table-cell md:px-4 md:py-4">
+                      <div className="flex items-center justify-between">
                         <span className="font-bold md:hidden">Joined:</span>
                         <span>{new Date(user.createdAt).toLocaleDateString()}</span>
                       </div>
                     </td>
-                    <td className="block md:table-cell py-2 px-4 md:py-4 md:px-4">
-                      <div className="flex justify-between items-center md:justify-start md:space-x-2">
+                    <td className="block px-4 py-2 md:table-cell md:px-4 md:py-4">
+                      <div className="flex items-center justify-between md:justify-start md:space-x-2">
                         <span className="font-bold md:hidden">Actions:</span>
                         <div className="flex space-x-2">
                           <button
                             onClick={() => handleResetPassword(user)}
-                            className="px-3 py-1.5 bg-blue-600 text-white rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:opacity-50 disabled:cursor-not-allowed transition-colors text-sm font-medium"
+                            className="rounded-md bg-blue-600 px-3 py-1.5 text-sm font-medium text-white transition-colors hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:cursor-not-allowed disabled:opacity-50"
                           >
                             Reset Password
                           </button>
                           {user.status === 'active' ? (
-                            <button className="px-3 py-1.5 bg-red-600 text-white rounded-md hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-500 disabled:opacity-50 disabled:cursor-not-allowed transition-colors text-sm font-medium w-24 text-center">
+                            <button className="w-24 rounded-md bg-red-600 px-3 py-1.5 text-center text-sm font-medium text-white transition-colors hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-500 disabled:cursor-not-allowed disabled:opacity-50">
                               Deactivate
                             </button>
                           ) : (
-                            <button className="px-3 py-1.5 bg-green-600 text-white rounded-md hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-500 disabled:opacity-50 disabled:cursor-not-allowed transition-colors text-sm font-medium w-24 text-center">
+                            <button className="w-24 rounded-md bg-green-600 px-3 py-1.5 text-center text-sm font-medium text-white transition-colors hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-500 disabled:cursor-not-allowed disabled:opacity-50">
                               Activate
                             </button>
                           )}
@@ -264,7 +264,7 @@ export default function SuperAdminUsers() {
           </div>
 
           {filteredUsers.length === 0 && (
-            <div className="text-center py-8">
+            <div className="py-8 text-center">
               <p className="text-gray-500">No users found matching your criteria.</p>
             </div>
           )}
@@ -272,30 +272,30 @@ export default function SuperAdminUsers() {
 
         {/* Password Reset Modal */}
         {showResetModal && (
-          <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-            <div className="bg-white rounded-lg p-6 max-w-md w-full mx-4">
+          <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
+            <div className="mx-4 w-full max-w-md rounded-lg bg-white p-6">
               {!resetPassword ? (
                 <>
-                  <h3 className="text-lg font-semibold text-efcaDark mb-4">Reset Password</h3>
-                  <p className="text-gray-600 mb-4">
+                  <h3 className="text-efcaDark mb-4 text-lg font-semibold">Reset Password</h3>
+                  <p className="mb-4 text-gray-600">
                     Are you sure you want to reset the password for{' '}
                     <strong>{selectedUser?.name}</strong> ({selectedUser?.email})?
                   </p>
-                  <p className="text-sm text-gray-500 mb-6">
+                  <p className="mb-6 text-sm text-gray-500">
                     A secure reset token will be generated. The user will receive a reset link via
                     email to set a new password.
                   </p>
                   <div className="flex justify-end space-x-3">
                     <button
                       onClick={closeResetModal}
-                      className="px-4 py-2 text-gray-600 hover:text-gray-800 transition-colors"
+                      className="px-4 py-2 text-gray-600 transition-colors hover:text-gray-800"
                     >
                       Cancel
                     </button>
                     <button
                       onClick={confirmResetPassword}
                       disabled={isResetting}
-                      className="px-4 py-2 bg-red-600 text-white rounded hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                      className="rounded bg-red-600 px-4 py-2 text-white transition-colors hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
                     >
                       {isResetting ? 'Resetting...' : 'Reset Password'}
                     </button>
@@ -303,30 +303,30 @@ export default function SuperAdminUsers() {
                 </>
               ) : (
                 <>
-                  <h3 className="text-lg font-semibold text-efcaDark mb-4">
+                  <h3 className="text-efcaDark mb-4 text-lg font-semibold">
                     Password Reset Complete
                   </h3>
-                  <p className="text-gray-600 mb-4">
+                  <p className="mb-4 text-gray-600">
                     A secure reset token has been generated for{' '}
                     <strong>{selectedUser?.name}</strong>.
                   </p>
-                  <div className="bg-gray-100 p-3 rounded mb-4">
-                    <p className="text-sm font-mono text-gray-800 break-all">{resetPassword}</p>
+                  <div className="mb-4 rounded bg-gray-100 p-3">
+                    <p className="break-all font-mono text-sm text-gray-800">{resetPassword}</p>
                   </div>
-                  <p className="text-sm text-gray-500 mb-4">
+                  <p className="mb-4 text-sm text-gray-500">
                     Reset Link:{' '}
-                    <span className="font-mono text-xs break-all">{`${window.location.origin}/auth/reset-password?token=${resetPassword}`}</span>
+                    <span className="break-all font-mono text-xs">{`${window.location.origin}/auth/reset-password?token=${resetPassword}`}</span>
                   </p>
                   <div className="flex justify-end space-x-3">
                     <button
                       onClick={copyToClipboard}
-                      className="px-4 py-2 bg-efcaAccent text-white rounded hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-efcaAccent focus:ring-offset-2 transition-colors"
+                      className="rounded bg-efcaAccent px-4 py-2 text-white transition-colors hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-efcaAccent focus:ring-offset-2"
                     >
                       Copy Token
                     </button>
                     <button
                       onClick={closeResetModal}
-                      className="px-4 py-2 bg-gray-600 text-white rounded hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-2 transition-colors"
+                      className="rounded bg-gray-600 px-4 py-2 text-white transition-colors hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-2"
                     >
                       Close
                     </button>

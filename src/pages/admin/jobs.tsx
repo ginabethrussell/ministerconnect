@@ -83,17 +83,17 @@ export default function AdminJobReview() {
 
   return (
     <div className="min-h-screen bg-gray-100 p-8">
-      <div className="max-w-7xl mx-auto">
-        <header className="flex justify-between items-center mb-8">
+      <div className="mx-auto max-w-7xl">
+        <header className="mb-8 flex items-center justify-between">
           <h1 className="text-3xl font-bold text-gray-800">Review Job Listings</h1>
         </header>
 
-        <section className="bg-white rounded-lg shadow-md">
+        <section className="rounded-lg bg-white shadow-md">
           <div className="p-6">
             <div className="flex flex-wrap gap-4">
               <button
                 onClick={() => setFilterStatus('all')}
-                className={`px-4 py-2 rounded-md font-medium text-sm ${
+                className={`rounded-md px-4 py-2 text-sm font-medium ${
                   filterStatus === 'all'
                     ? 'bg-blue-600 text-white'
                     : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
@@ -103,7 +103,7 @@ export default function AdminJobReview() {
               </button>
               <button
                 onClick={() => setFilterStatus('pending')}
-                className={`px-4 py-2 rounded-md font-medium text-sm ${
+                className={`rounded-md px-4 py-2 text-sm font-medium ${
                   filterStatus === 'pending'
                     ? 'bg-blue-600 text-white'
                     : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
@@ -113,7 +113,7 @@ export default function AdminJobReview() {
               </button>
               <button
                 onClick={() => setFilterStatus('approved')}
-                className={`px-4 py-2 rounded-md font-medium text-sm ${
+                className={`rounded-md px-4 py-2 text-sm font-medium ${
                   filterStatus === 'approved'
                     ? 'bg-blue-600 text-white'
                     : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
@@ -123,7 +123,7 @@ export default function AdminJobReview() {
               </button>
               <button
                 onClick={() => setFilterStatus('rejected')}
-                className={`px-4 py-2 rounded-md font-medium text-sm ${
+                className={`rounded-md px-4 py-2 text-sm font-medium ${
                   filterStatus === 'rejected'
                     ? 'bg-blue-600 text-white'
                     : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
@@ -135,15 +135,15 @@ export default function AdminJobReview() {
           </div>
 
           {loading ? (
-            <div className="text-center py-20">
+            <div className="py-20 text-center">
               <p className="text-gray-500">Loading job listings...</p>
             </div>
           ) : !filteredListings || filteredListings.length === 0 ? (
             <>
               {loadingError ? (
-                <p className="mt-1 text-sm text-left text-[#FF5722]">{loadingError}</p>
+                <p className="mt-1 text-left text-sm text-[#FF5722]">{loadingError}</p>
               ) : (
-                <div className="text-center py-20 text-gray-500">
+                <div className="py-20 text-center text-gray-500">
                   No job listings found for this filter.
                 </div>
               )}
@@ -151,11 +151,11 @@ export default function AdminJobReview() {
           ) : (
             <div className="divide-y divide-gray-200">
               {filteredListings.map((job) => (
-                <div key={job.id} className="p-6  mb-4">
-                  <div className="flex justify-between items-start flex-wrap gap-4">
+                <div key={job.id} className="mb-4 p-6">
+                  <div className="flex flex-wrap items-start justify-between gap-4">
                     <div className="flex-1">
-                      <h3 className="text-xl font-semibold text-gray-800 mb-2">{job.title}</h3>
-                      <div className="flex flex-wrap items-center gap-x-6 gap-y-2 text-sm text-gray-600 mb-3">
+                      <h3 className="mb-2 text-xl font-semibold text-gray-800">{job.title}</h3>
+                      <div className="mb-3 flex flex-wrap items-center gap-x-6 gap-y-2 text-sm text-gray-600">
                         <span>
                           <strong>Church:</strong> {job.church.name}
                         </span>
@@ -170,14 +170,14 @@ export default function AdminJobReview() {
                         </span>
                       </div>
                       <span
-                        className={`px-3 py-1 rounded-full text-xs font-semibold ${getStatusColor(
+                        className={`rounded-full px-3 py-1 text-xs font-semibold ${getStatusColor(
                           job.status
                         )}`}
                       >
                         {titleCase(job.status)}
                       </span>
                     </div>
-                    <div className="flex-shrink-0 flex items-center gap-2">
+                    <div className="flex flex-shrink-0 items-center gap-2">
                       {job.status === 'pending' && (
                         <>
                           <button
@@ -195,13 +195,13 @@ export default function AdminJobReview() {
                             {actionLoadingId === job.id ? 'Rejecting...' : 'Reject'}
                           </button>
                           {reviewError && (
-                            <p className="mt-1 text-sm text-left text-[#FF5722]">{reviewError}</p>
+                            <p className="mt-1 text-left text-sm text-[#FF5722]">{reviewError}</p>
                           )}
                         </>
                       )}
                       <button
                         onClick={() => toggleExpanded(job.id)}
-                        className="p-2 bg-gray-200 text-gray-700 rounded-md hover:bg-gray-300 transition text-sm font-medium"
+                        className="rounded-md bg-gray-200 p-2 text-sm font-medium text-gray-700 transition hover:bg-gray-300"
                       >
                         {expandedJob === job.id ? 'Hide' : 'Details'}
                       </button>
@@ -209,10 +209,10 @@ export default function AdminJobReview() {
                   </div>
 
                   {expandedJob === job.id && (
-                    <div className="mt-6 pt-6 border-t border-gray-200 space-y-6 text-sm">
+                    <div className="mt-6 space-y-6 border-t border-gray-200 pt-6 text-sm">
                       <div>
-                        <h4 className="font-semibold text-gray-700 mb-3">Church Information</h4>
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <h4 className="mb-3 font-semibold text-gray-700">Church Information</h4>
+                        <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
                           <p>
                             <strong>Name:</strong> {job.church.name}
                           </p>
@@ -234,20 +234,20 @@ export default function AdminJobReview() {
                       </div>
 
                       <div>
-                        <h4 className="font-semibold text-gray-700 mb-3">Job Description</h4>
-                        <div className="prose prose-sm max-w-none bg-gray-50 p-4 rounded-md">
+                        <h4 className="mb-3 font-semibold text-gray-700">Job Description</h4>
+                        <div className="prose prose-sm max-w-none rounded-md bg-gray-50 p-4">
                           {job.job_description}
                         </div>
                       </div>
 
                       <div>
-                        <h4 className="font-semibold text-gray-700 mb-3">About This Church</h4>
-                        <div className="prose prose-sm max-w-none bg-gray-50 p-4 rounded-md">
+                        <h4 className="mb-3 font-semibold text-gray-700">About This Church</h4>
+                        <div className="prose prose-sm max-w-none rounded-md bg-gray-50 p-4">
                           {job.about_church}
                         </div>
                       </div>
                       <div>
-                        <h4 className="font-semibold text-gray-800 mb-2">Job Link</h4>
+                        <h4 className="mb-2 font-semibold text-gray-800">Job Link</h4>
                         <a
                           href={job.job_url_link}
                           target="_blank"

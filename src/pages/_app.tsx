@@ -9,7 +9,7 @@ export default function App({ Component, pageProps }: AppProps) {
   return (
     <UserProvider>
       <ProfileProvider>
-        <div className="min-h-screen flex flex-col bg-efcaGray font-sans">
+        <div className="flex min-h-screen flex-col bg-efcaGray font-sans">
           <Header />
           <main className="flex-1">
             <Component {...pageProps} />

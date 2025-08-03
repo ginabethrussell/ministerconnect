@@ -99,9 +99,9 @@ export default function MutualInterests() {
   // Show loading state
   if (loading) {
     return (
-      <div className="min-h-screen bg-efcaGray flex items-center justify-center">
+      <div className="flex min-h-screen items-center justify-center bg-efcaGray">
         <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-efcaAccent mx-auto mb-4"></div>
+          <div className="mx-auto mb-4 h-12 w-12 animate-spin rounded-full border-b-2 border-efcaAccent"></div>
           <p className="text-gray-600">Loading mutual interests...</p>
         </div>
       </div>
@@ -110,33 +110,33 @@ export default function MutualInterests() {
 
   return (
     <div className="min-h-screen bg-efcaGray p-8">
-      <div className="max-w-6xl mx-auto">
-        <header className="flex justify-between items-center mb-8">
+      <div className="mx-auto max-w-6xl">
+        <header className="mb-8 flex items-center justify-between">
           <div>
-            <h1 className="text-3xl font-bold text-efcaDark">Mutual Interests</h1>
-            <p className="text-gray-600 mt-2">
+            <h1 className="text-efcaDark text-3xl font-bold">Mutual Interests</h1>
+            <p className="mt-2 text-gray-600">
               Candidates who have expressed interest in your job listings
             </p>
           </div>
         </header>
 
         {/* Summary Cards */}
-        <section className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-          <div className="bg-white rounded-lg shadow-sm p-6">
-            <h3 className="text-lg font-semibold text-efcaDark mb-2">Total Interests</h3>
+        <section className="mb-8 grid grid-cols-1 gap-6 md:grid-cols-3">
+          <div className="rounded-lg bg-white p-6 shadow-sm">
+            <h3 className="text-efcaDark mb-2 text-lg font-semibold">Total Interests</h3>
             <p className="text-3xl font-bold text-efcaAccent">{getTotalInterests()}</p>
             {loadingError && (
-              <p className="mt-1 text-sm text-left text-[#FF5722]">{loadingError}</p>
+              <p className="mt-1 text-left text-sm text-[#FF5722]">{loadingError}</p>
             )}
             <p className="text-sm text-gray-600">Candidates interested in your positions</p>
           </div>
-          <div className="bg-white rounded-lg shadow-sm p-6">
-            <h3 className="text-lg font-semibold text-efcaDark mb-2">Active Listings</h3>
+          <div className="rounded-lg bg-white p-6 shadow-sm">
+            <h3 className="text-efcaDark mb-2 text-lg font-semibold">Active Listings</h3>
             <p className="text-3xl font-bold text-efcaAccent">{jobListings.length}</p>
             <p className="text-sm text-gray-600">Job positions currently posted</p>
           </div>
-          <div className="bg-white rounded-lg shadow-sm p-6">
-            <h3 className="text-lg font-semibold text-efcaDark mb-2">Recent Activity</h3>
+          <div className="rounded-lg bg-white p-6 shadow-sm">
+            <h3 className="text-efcaDark mb-2 text-lg font-semibold">Recent Activity</h3>
             <p className="text-3xl font-bold text-efcaAccent">
               {mutualInterests?.filter((match) => {
                 const interestDate = new Date(match.created_at);
@@ -150,13 +150,13 @@ export default function MutualInterests() {
         </section>
 
         {/* Filter Section */}
-        <section className="bg-white rounded-lg shadow-sm p-6 mb-6">
-          <div className="flex flex-col md:flex-row gap-4 items-center">
+        <section className="mb-6 rounded-lg bg-white p-6 shadow-sm">
+          <div className="flex flex-col items-center gap-4 md:flex-row">
             <label className="text-sm font-medium text-gray-700">Filter by Position:</label>
             <select
               value={selectedJob}
               onChange={(e) => setSelectedJob(e.target.value)}
-              className="px-4 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-efcaAccent bg-white"
+              className="rounded border border-gray-300 bg-white px-4 py-2 focus:outline-none focus:ring-2 focus:ring-efcaAccent"
             >
               <option value="all">All Positions ({getTotalInterests()})</option>
               {jobListings.map((job: any) => (
@@ -169,10 +169,10 @@ export default function MutualInterests() {
         </section>
 
         {/* Candidates List */}
-        <section className="bg-white rounded-lg shadow-sm p-6">
+        <section className="rounded-lg bg-white p-6 shadow-sm">
           {filteredCandidates.length === 0 ? (
-            <div className="text-center py-8">
-              <h3 className="text-lg font-medium text-gray-900 mb-2">No interested candidates</h3>
+            <div className="py-8 text-center">
+              <h3 className="mb-2 text-lg font-medium text-gray-900">No interested candidates</h3>
               <p className="text-gray-600">
                 {selectedJob === 'all'
                   ? 'No candidates have expressed interest in your job listings yet.'
@@ -184,23 +184,23 @@ export default function MutualInterests() {
               {filteredCandidates.map((enrichedInterest) => (
                 <li
                   key={enrichedInterest.id}
-                  className="bg-white rounded-lg shadow-sm border border-gray-200 p-6"
+                  className="rounded-lg border border-gray-200 bg-white p-6 shadow-sm"
                 >
                   {/* Top Section */}
-                  <div className="flex flex-col md:flex-row gap-6 justify-between">
+                  <div className="flex flex-col justify-between gap-6 md:flex-row">
                     {/* Candidate Info */}
-                    <div className="flex items-start gap-6 flex-grow">
-                      <div className="w-24 h-24 flex-shrink-0">
+                    <div className="flex flex-grow items-start gap-6">
+                      <div className="h-24 w-24 flex-shrink-0">
                         {enrichedInterest.profile.profile_image ? (
                           <img
                             src={enrichedInterest.profile.profile_image}
                             alt={`${enrichedInterest.profile.user.first_name} ${enrichedInterest.profile.user.last_name}`}
-                            className="w-24 h-24 object-cover rounded-lg"
+                            className="h-24 w-24 rounded-lg object-cover"
                           />
                         ) : (
-                          <div className="w-24 h-24 rounded-lg bg-gray-200 flex items-center justify-center">
+                          <div className="flex h-24 w-24 items-center justify-center rounded-lg bg-gray-200">
                             <svg
-                              className="w-10 h-10 text-gray-400"
+                              className="h-10 w-10 text-gray-400"
                               fill="none"
                               stroke="currentColor"
                               viewBox="0 0 24 24"
@@ -216,7 +216,7 @@ export default function MutualInterests() {
                         )}
                       </div>
                       <div className="flex-grow">
-                        <h3 className="text-2xl font-bold text-efcaDark">{`${enrichedInterest.profile.user.first_name} ${enrichedInterest.profile.user.last_name}`}</h3>
+                        <h3 className="text-efcaDark text-2xl font-bold">{`${enrichedInterest.profile.user.first_name} ${enrichedInterest.profile.user.last_name}`}</h3>
                         <p className="text-gray-600">
                           Interested in:{' '}
                           <span className="font-semibold">{enrichedInterest.job_title}</span>
@@ -229,19 +229,19 @@ export default function MutualInterests() {
                     </div>
 
                     {/* Action Buttons */}
-                    <div className="w-full md:w-[200px] flex-shrink-0 flex flex-col gap-3">
+                    <div className="flex w-full flex-shrink-0 flex-col gap-3 md:w-[200px]">
                       <a
                         href={`mailto:${enrichedInterest.profile.user.email}`}
-                        className="px-4 py-2 bg-blue-600 text-white text-center rounded-md font-semibold hover:bg-blue-700 transition flex-1"
+                        className="flex-1 rounded-md bg-blue-600 px-4 py-2 text-center font-semibold text-white transition hover:bg-blue-700"
                       >
                         Send Email
                       </a>
                       <button
                         onClick={() => handleCopyContact(enrichedInterest.profile)}
-                        className={`px-4 py-2 text-center rounded-md font-semibold transition flex-1 border ${
+                        className={`flex-1 rounded-md border px-4 py-2 text-center font-semibold transition ${
                           copyStatus[enrichedInterest.profile.id]?.success
-                            ? 'bg-green-100 text-green-800 border-green-300'
-                            : 'bg-white text-gray-700 border-gray-300 hover:bg-gray-50'
+                            ? 'border-green-300 bg-green-100 text-green-800'
+                            : 'border-gray-300 bg-white text-gray-700 hover:bg-gray-50'
                         }`}
                       >
                         {copyStatus[enrichedInterest.profile.id]?.message || 'Copy Contact Info'}
@@ -250,13 +250,13 @@ export default function MutualInterests() {
                   </div>
 
                   {/* Separator */}
-                  <div className="border-t border-gray-200 my-4"></div>
+                  <div className="my-4 border-t border-gray-200"></div>
 
                   {/* Details Grid */}
-                  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+                  <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
                     {/* Contact Info */}
                     <div>
-                      <h4 className="font-semibold text-gray-700 mb-2">Contact Information</h4>
+                      <h4 className="mb-2 font-semibold text-gray-700">Contact Information</h4>
                       <p className="text-sm text-gray-600">
                         Email: {enrichedInterest.profile.user.email}
                       </p>
@@ -271,8 +271,8 @@ export default function MutualInterests() {
 
                     {/* Documents & Media */}
                     <div>
-                      <h4 className="font-semibold text-gray-700 mb-2">Documents & Media</h4>
-                      <div className="text-sm space-y-1">
+                      <h4 className="mb-2 font-semibold text-gray-700">Documents & Media</h4>
+                      <div className="space-y-1 text-sm">
                         <div>
                           <a
                             href={enrichedInterest.profile.resume || ''}
@@ -299,12 +299,12 @@ export default function MutualInterests() {
                       {enrichedInterest.profile.placement_preferences &&
                         enrichedInterest.profile.placement_preferences.length > 0 && (
                           <div className="mt-2">
-                            <h5 className="font-semibold text-gray-700 mb-1">Preferences</h5>
+                            <h5 className="mb-1 font-semibold text-gray-700">Preferences</h5>
                             <div className="flex flex-wrap gap-1">
                               {enrichedInterest.profile.placement_preferences.map((pref) => (
                                 <span
                                   key={pref}
-                                  className="bg-gray-100 text-gray-800 text-xs font-medium px-2 py-0.5 rounded-full"
+                                  className="rounded-full bg-gray-100 px-2 py-0.5 text-xs font-medium text-gray-800"
                                 >
                                   {pref}
                                 </span>
@@ -316,7 +316,7 @@ export default function MutualInterests() {
 
                     {/* Profile Details */}
                     <div>
-                      <h4 className="font-semibold text-gray-700 mb-2">Profile Details</h4>
+                      <h4 className="mb-2 font-semibold text-gray-700">Profile Details</h4>
                       <p className="text-sm text-gray-600">
                         Status:{' '}
                         {enrichedInterest.profile.status.charAt(0).toUpperCase() +

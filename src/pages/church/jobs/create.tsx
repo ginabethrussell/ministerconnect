@@ -52,25 +52,25 @@ export default function CreateJob() {
 
   return (
     <div className="min-h-screen bg-efcaGray p-8">
-      <div className="max-w-2xl mx-auto">
-        <header className="flex justify-between items-center mb-8">
-          <h1 className="text-3xl font-bold text-efcaDark">Create Job Posting</h1>
+      <div className="mx-auto max-w-2xl">
+        <header className="mb-8 flex items-center justify-between">
+          <h1 className="text-efcaDark text-3xl font-bold">Create Job Posting</h1>
           <Link
             href="/church/jobs"
-            className="px-4 py-2 bg-gray-600 text-white rounded hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-gray-500 transition-colors"
+            className="rounded bg-gray-600 px-4 py-2 text-white transition-colors hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-gray-500"
           >
             Back to Jobs
           </Link>
         </header>
 
-        <form onSubmit={handleSubmit} className="bg-white rounded-lg shadow-lg p-8 space-y-6">
+        <form onSubmit={handleSubmit} className="space-y-6 rounded-lg bg-white p-8 shadow-lg">
           <p className="text-gray-600">
             Create a job posting to attract ministry candidates. Provide detailed information about
             the position and your church.
           </p>
-          {error && <p className="text-red-500 mb-4">{error}</p>}
+          {error && <p className="mb-4 text-red-500">{error}</p>}
           <div>
-            <label htmlFor="title" className="block text-sm font-medium text-gray-700 mb-2">
+            <label htmlFor="title" className="mb-2 block text-sm font-medium text-gray-700">
               Job Title <span className="text-red-500">*</span>
             </label>
             <input
@@ -79,14 +79,14 @@ export default function CreateJob() {
               type="text"
               value={formData.title}
               onChange={(e) => handleInputChange('title', e.target.value)}
-              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-efcaAccent focus:border-efcaAccent"
+              className="w-full rounded-lg border border-gray-300 px-3 py-2 focus:border-efcaAccent focus:outline-none focus:ring-2 focus:ring-efcaAccent"
               placeholder="e.g., Associate Pastor of Family Ministries"
               required
             />
           </div>
 
           <div>
-            <label htmlFor="ministry_type" className="block text-sm font-medium text-gray-700 mb-2">
+            <label htmlFor="ministry_type" className="mb-2 block text-sm font-medium text-gray-700">
               Ministry Type <span className="text-red-500">*</span>
             </label>
             <select
@@ -94,7 +94,7 @@ export default function CreateJob() {
               name="ministry_type"
               value={formData.ministry_type}
               onChange={(e) => handleInputChange('ministry_type', e.target.value)}
-              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-efcaAccent focus:border-efcaAccent bg-white"
+              className="w-full rounded-lg border border-gray-300 bg-white px-3 py-2 focus:border-efcaAccent focus:outline-none focus:ring-2 focus:ring-efcaAccent"
               required
             >
               <option value="" disabled>
@@ -136,7 +136,7 @@ export default function CreateJob() {
           <div>
             <label
               htmlFor="employment_type"
-              className="block text-sm font-medium text-gray-700 mb-2"
+              className="mb-2 block text-sm font-medium text-gray-700"
             >
               Employment Type <span className="text-red-500">*</span>
             </label>
@@ -145,7 +145,7 @@ export default function CreateJob() {
               name="employment_type"
               value={formData.employment_type}
               onChange={(e) => handleInputChange('employment_type', e.target.value)}
-              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-efcaAccent focus:border-efcaAccent bg-white"
+              className="w-full rounded-lg border border-gray-300 bg-white px-3 py-2 focus:border-efcaAccent focus:outline-none focus:ring-2 focus:ring-efcaAccent"
               required
             >
               <option value="" disabled>
@@ -160,7 +160,7 @@ export default function CreateJob() {
           <div>
             <label
               htmlFor="job_description"
-              className="block text-sm font-medium text-gray-700 mb-2"
+              className="mb-2 block text-sm font-medium text-gray-700"
             >
               Job Description <span className="text-red-500">*</span>
             </label>
@@ -169,7 +169,7 @@ export default function CreateJob() {
               name="job_description"
               value={formData.job_description}
               onChange={(e) => handleInputChange('job_description', e.target.value)}
-              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-efcaAccent focus:border-efcaAccent"
+              className="w-full rounded-lg border border-gray-300 px-3 py-2 focus:border-efcaAccent focus:outline-none focus:ring-2 focus:ring-efcaAccent"
               placeholder="Describe the role, responsibilities, and requirements..."
               rows={6}
               required
@@ -177,7 +177,7 @@ export default function CreateJob() {
           </div>
 
           <div>
-            <label htmlFor="about_church" className="block text-sm font-medium text-gray-700 mb-2">
+            <label htmlFor="about_church" className="mb-2 block text-sm font-medium text-gray-700">
               About This Church <span className="text-red-500">*</span>
             </label>
             <textarea
@@ -185,7 +185,7 @@ export default function CreateJob() {
               name="about_church"
               value={formData.about_church}
               onChange={(e) => handleInputChange('about_church', e.target.value)}
-              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-efcaAccent focus:border-efcaAccent"
+              className="w-full rounded-lg border border-gray-300 px-3 py-2 focus:border-efcaAccent focus:outline-none focus:ring-2 focus:ring-efcaAccent"
               placeholder="Tell candidates about your church, mission, values, and community..."
               rows={4}
               required
@@ -193,7 +193,7 @@ export default function CreateJob() {
           </div>
 
           <div>
-            <label htmlFor="job_url_link" className="block text-sm font-medium text-gray-700 mb-2">
+            <label htmlFor="job_url_link" className="mb-2 block text-sm font-medium text-gray-700">
               Job URL Link
             </label>
             <input
@@ -202,7 +202,7 @@ export default function CreateJob() {
               type="text"
               value={formData.job_url_link}
               onChange={(e) => handleInputChange('job_url_link', e.target.value)}
-              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-efcaAccent focus:border-efcaAccent"
+              className="w-full rounded-lg border border-gray-300 px-3 py-2 focus:border-efcaAccent focus:outline-none focus:ring-2 focus:ring-efcaAccent"
               placeholder="Job URL Link"
             />
           </div>
@@ -210,14 +210,14 @@ export default function CreateJob() {
           <div className="flex justify-end gap-4 pt-4">
             <Link
               href="/church/jobs"
-              className="px-6 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors"
+              className="rounded-lg border border-gray-300 px-6 py-2 text-gray-700 transition-colors hover:bg-gray-50"
             >
               Cancel
             </Link>
             <button
               type="submit"
               disabled={submitting}
-              className="px-6 py-2 bg-efcaAccent text-white rounded-lg hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-efcaAccent focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+              className="rounded-lg bg-efcaAccent px-6 py-2 text-white transition-colors hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-efcaAccent focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
             >
               {submitting ? 'Submitting...' : 'Create Job Posting'}
             </button>

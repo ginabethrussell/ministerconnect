@@ -111,16 +111,16 @@ export default function ChurchSearch() {
 
   return (
     <div className="min-h-screen bg-gray-50 p-4 md:p-8">
-      <div className="max-w-7xl mx-auto">
-        <header className="flex flex-col md:flex-row justify-between md:items-center mb-8 gap-4">
+      <div className="mx-auto max-w-7xl">
+        <header className="mb-8 flex flex-col justify-between gap-4 md:flex-row md:items-center">
           <h1 className="text-3xl font-bold text-gray-800">Search Candidates</h1>
         </header>
 
-        <section className="bg-blue-50 border border-blue-200 rounded-lg p-6 my-6">
-          <h3 className="text-lg font-semibold text-blue-800 mb-2">
+        <section className="my-6 rounded-lg border border-blue-200 bg-blue-50 p-6">
+          <h3 className="mb-2 text-lg font-semibold text-blue-800">
             How Expressing Interest Works
           </h3>
-          <div className="text-blue-700 space-y-2 text-sm">
+          <div className="space-y-2 text-sm text-blue-700">
             <p>• You may express interest in a candidate by clicking Express Interest.</p>
             <p>• You may withdraw interest in a candidate by clicking Interest Expressed.</p>
             <p>• When you express or withdraw interest, the candidate is NOT notified.</p>
@@ -132,7 +132,7 @@ export default function ChurchSearch() {
               • You can view all Mutual Interests on the
               <Link
                 href="/church/mutual-interests"
-                className="text-blue-800 font-semibold cursor-pointer hover:underline"
+                className="cursor-pointer font-semibold text-blue-800 hover:underline"
               >
                 {' '}
                 Interests{' '}
@@ -144,7 +144,7 @@ export default function ChurchSearch() {
               Create a
               <Link
                 href="/church/jobs/create"
-                className="font-semibold text-blue-800 cursor-pointer hover:underline"
+                className="cursor-pointer font-semibold text-blue-800 hover:underline"
               >
                 {' '}
                 job listing{' '}
@@ -152,7 +152,7 @@ export default function ChurchSearch() {
               to get started or contact the
               <a
                 href="mailto:ginabeth.russell@gmail.com?subject=Minister%20Connect%20Assistance%20Request"
-                className="font-semibold text-blue-800 cursor-pointer hover:underline"
+                className="cursor-pointer font-semibold text-blue-800 hover:underline"
               >
                 {' '}
                 site admin{' '}
@@ -162,17 +162,17 @@ export default function ChurchSearch() {
           </div>
         </section>
 
-        <section className="bg-white rounded-lg shadow-sm p-4 sm:p-6">
+        <section className="rounded-lg bg-white p-4 shadow-sm sm:p-6">
           {churchJobListings && churchJobListings.length > 0 && (
-            <div className="flex flex-col md:flex-row items-center gap-2 mb-6">
-              <label htmlFor="job-select" className="text-2xl font-bold text-gray-800 mb-1">
+            <div className="mb-6 flex flex-col items-center gap-2 md:flex-row">
+              <label htmlFor="job-select" className="mb-1 text-2xl font-bold text-gray-800">
                 Expressing interest for:
               </label>
               <select
                 id="job-select"
                 value={selectedJobId}
                 onChange={(e) => setSelectedJobId(e.target.value)}
-                className="mt-1 w-full md:max-w-sm pl-3 pr-10 py-2 text-base border border-gray-300 focus:outline-none focus:ring-efcaAccent focus:border-efcaAccent sm:text-sm rounded-md shadow-sm"
+                className="mt-1 w-full rounded-md border border-gray-300 py-2 pl-3 pr-10 text-base shadow-sm focus:border-efcaAccent focus:outline-none focus:ring-efcaAccent sm:text-sm md:max-w-sm"
               >
                 {churchJobListings.map((job) => (
                   <option key={job.id} value={String(job.id)}>
@@ -189,10 +189,10 @@ export default function ChurchSearch() {
             placeholder="Search by name, email, city, or state abbreviation..."
             value={search}
             onChange={(e) => setSearch(e.target.value)}
-            className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 mb-6"
+            className="mb-6 w-full rounded-md border border-gray-300 px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
           />
           {!selectedJobId && (
-            <div className="mb-6 bg-yellow-50 border border-yellow-300 text-yellow-800 p-4 rounded">
+            <div className="mb-6 rounded border border-yellow-300 bg-yellow-50 p-4 text-yellow-800">
               <p>
                 You must{' '}
                 <Link href="/church/jobs/create" className="text-blue-600 hover:underline">
@@ -208,7 +208,7 @@ export default function ChurchSearch() {
                 No candidates found matching your criteria.
               </div>
               {loadingError && (
-                <p className="mt-1 text-sm text-left text-[#FF5722]">{loadingError}</p>
+                <p className="mt-1 text-left text-sm text-[#FF5722]">{loadingError}</p>
               )}
             </>
           ) : (
@@ -225,21 +225,21 @@ export default function ChurchSearch() {
                   return (
                     <li
                       key={`${profile.id}-${selectedJobId}`}
-                      className="bg-white rounded-lg shadow-sm border border-gray-200 p-6"
+                      className="rounded-lg border border-gray-200 bg-white p-6 shadow-sm"
                     >
                       {/* Top Section */}
-                      <div className="flex flex-col md:flex-row gap-6 justify-between md:items-center">
+                      <div className="flex flex-col justify-between gap-6 md:flex-row md:items-center">
                         {/* Candidate Info */}
-                        <div className="flex flex-col items-center gap-6 flex-grow md:flex-row">
+                        <div className="flex flex-grow flex-col items-center gap-6 md:flex-row">
                           <div className="flex-shrink-0">
                             {profile && profile?.profile_image ? (
                               <img
                                 src={profile.profile_image}
                                 alt={`${profile.user.first_name} ${profile.user.last_name}`}
-                                className="w-40 h-40 md:w-36 md:h-36 object-cover rounded-full border-2 border-gray-300 shadow-xlg"
+                                className="shadow-xlg h-40 w-40 rounded-full border-2 border-gray-300 object-cover md:h-36 md:w-36"
                               />
                             ) : (
-                              <div className="object-cover rounded-full">
+                              <div className="rounded-full object-cover">
                                 <UserIcon />
                               </div>
                             )}
@@ -250,7 +250,7 @@ export default function ChurchSearch() {
                         </div>
 
                         {/* Action Buttons */}
-                        <div className="w-full md:w-[250px] flex-shrink-0 flex flex-col gap-3">
+                        <div className="flex w-full flex-shrink-0 flex-col gap-3 md:w-[250px]">
                           <ExpressInterestButton
                             key={`${profile.id}-${selectedJobId}`}
                             id={String(profile.id)}
@@ -261,20 +261,20 @@ export default function ChurchSearch() {
                           />
                         </div>
                         {toggleInterestError && (
-                          <p className="mt-1 text-sm text-left text-[#FF5722]">
+                          <p className="mt-1 text-left text-sm text-[#FF5722]">
                             {toggleInterestError}
                           </p>
                         )}
                       </div>
 
                       {/* Separator */}
-                      <div className="border-t border-gray-200 my-4"></div>
+                      <div className="my-4 border-t border-gray-200"></div>
 
                       {/* Details Grid */}
-                      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-x-6 gap-y-8">
+                      <div className="grid grid-cols-1 gap-x-6 gap-y-8 sm:grid-cols-2 lg:grid-cols-3">
                         {/* Contact Info */}
                         <div>
-                          <h4 className="font-semibold text-gray-700 mb-2">Contact Information</h4>
+                          <h4 className="mb-2 font-semibold text-gray-700">Contact Information</h4>
                           <p className="text-sm text-gray-600">Email: {profile.user.email}</p>
                           <p className="text-sm text-gray-600">
                             Phone: {formatPhone(profile.phone)}
@@ -304,8 +304,8 @@ export default function ChurchSearch() {
 
                         {/* Documents & Media */}
                         <div>
-                          <h4 className="font-semibold text-gray-700 mb-2">Documents & Media</h4>
-                          <div className="text-sm space-y-1">
+                          <h4 className="mb-2 font-semibold text-gray-700">Documents & Media</h4>
+                          <div className="space-y-1 text-sm">
                             {profile.resume && (
                               <div>
                                 <a
@@ -334,12 +334,12 @@ export default function ChurchSearch() {
                           {profile.placement_preferences &&
                             profile.placement_preferences.length > 0 && (
                               <div className="mt-4">
-                                <h5 className="font-semibold text-gray-700 mb-1">Preferences</h5>
+                                <h5 className="mb-1 font-semibold text-gray-700">Preferences</h5>
                                 <div className="flex flex-wrap gap-1">
                                   {profile.placement_preferences.map((pref) => (
                                     <span
                                       key={pref}
-                                      className="bg-gray-100 text-gray-800 text-xs font-medium px-2 py-0.5 rounded-full"
+                                      className="rounded-full bg-gray-100 px-2 py-0.5 text-xs font-medium text-gray-800"
                                     >
                                       {pref}
                                     </span>
@@ -351,7 +351,7 @@ export default function ChurchSearch() {
 
                         {/* Profile Details */}
                         <div>
-                          <h4 className="font-semibold text-gray-700 mb-2">Profile Details</h4>
+                          <h4 className="mb-2 font-semibold text-gray-700">Profile Details</h4>
                           <p className="text-sm text-gray-600">
                             Status:{' '}
                             {profile.status.charAt(0).toUpperCase() + profile.status.slice(1)}

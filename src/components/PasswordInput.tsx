@@ -17,7 +17,7 @@ export default function PasswordInput({
 
   return (
     <div className="relative">
-      {label && <label className="block text-sm font-medium text-gray-700 mb-1">{label}</label>}
+      {label && <label className="mb-1 block text-sm font-medium text-gray-700">{label}</label>}
       <div className="relative">
         <input
           type={showPassword ? 'text' : 'password'}
@@ -27,7 +27,7 @@ export default function PasswordInput({
         <button
           type="button"
           onClick={() => setShowPassword(!showPassword)}
-          className="absolute right-0 top-1/2 -translate-y-1/2 pr-3 flex items-center justify-center text-gray-600 hover:text-gray-800 focus:outline-none"
+          className="absolute right-0 top-1/2 flex -translate-y-1/2 items-center justify-center pr-3 text-gray-600 hover:text-gray-800 focus:outline-none"
           tabIndex={-1}
         >
           {showPassword ? (
@@ -37,7 +37,7 @@ export default function PasswordInput({
               viewBox="0 0 24 24"
               strokeWidth={1.5}
               stroke="currentColor"
-              className="w-5 h-5"
+              className="h-5 w-5"
               aria-hidden="true"
             >
               <path
@@ -58,7 +58,7 @@ export default function PasswordInput({
               viewBox="0 0 24 24"
               strokeWidth={1.5}
               stroke="currentColor"
-              className="w-5 h-5"
+              className="h-5 w-5"
               aria-hidden="true"
             >
               <path

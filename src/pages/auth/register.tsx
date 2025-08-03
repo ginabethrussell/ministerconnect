@@ -91,9 +91,9 @@ export default function Register() {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-efcaGray font-sans">
-      <div className="card max-w-md mx-auto">
-        <h2 className="text-2xl font-bold text-efcaText mb-4">Candidate Registration</h2>
+    <div className="flex min-h-screen items-center justify-center bg-efcaGray font-sans">
+      <div className="card mx-auto max-w-md">
+        <h2 className="text-efcaText mb-4 text-2xl font-bold">Candidate Registration</h2>
         <form onSubmit={handleSubmit} className="space-y-4">
           <input
             className="input-field"
@@ -149,30 +149,30 @@ export default function Register() {
           </button>
         </form>
         {error && (
-          <p className="text-red-500 mt-2" aria-live="polite">
+          <p className="mt-2 text-red-500" aria-live="polite">
             {error}
           </p>
         )}
         {success && (
-          <p className="text-green-600 mt-2" aria-live="polite">
+          <p className="mt-2 text-green-600" aria-live="polite">
             Registration successful! Redirecting to login...
           </p>
         )}
-        <p className="mt-4 text-sm text-efcaMuted">
+        <p className="text-efcaMuted mt-4 text-sm">
           Are you a church or organization? Please{' '}
           <a
             href="mailto:ginabeth.russell@gmail.com?subject=Minister%20Connect%20Access%20Request"
-            className="text-efcaAccent underline hover:text-efcaAccent-dark"
+            className="hover:text-efcaAccent-dark text-efcaAccent underline"
           >
             contact the admin
           </a>{' '}
           to request access.
         </p>
-        <p className="mt-4 text-sm text-efcaMuted">
+        <p className="text-efcaMuted mt-4 text-sm">
           Already have an account?{' '}
           <Link
             href="/auth/login"
-            className="text-efcaAccent underline hover:text-blue-700 focus:underline focus:text-efcaAccent focus:outline-none"
+            className="text-efcaAccent underline hover:text-blue-700 focus:text-efcaAccent focus:underline focus:outline-none"
           >
             Login here
           </Link>
