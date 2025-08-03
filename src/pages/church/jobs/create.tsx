@@ -183,11 +183,11 @@ export default function CreateJob() {
             <textarea
               id="about_church"
               name="about_church"
+              className="w-full rounded-lg border border-gray-300 px-3 py-2 focus:border-efcaAccent focus:outline-none focus:ring-2 focus:ring-efcaAccent"
+              rows={4}
               value={formData.about_church}
               onChange={(e) => handleInputChange('about_church', e.target.value)}
-              className="w-full rounded-lg border border-gray-300 px-3 py-2 focus:border-efcaAccent focus:outline-none focus:ring-2 focus:ring-efcaAccent"
               placeholder="Tell candidates about your church, mission, values, and community..."
-              rows={4}
               required
             />
           </div>
@@ -199,10 +199,10 @@ export default function CreateJob() {
             <input
               id="job_url_link"
               name="job_url_link"
-              type="text"
+              type="url"
+              className="w-full rounded-lg border border-gray-300 px-3 py-2 focus:border-efcaAccent focus:outline-none focus:ring-2 focus:ring-efcaAccent"
               value={formData.job_url_link}
               onChange={(e) => handleInputChange('job_url_link', e.target.value)}
-              className="w-full rounded-lg border border-gray-300 px-3 py-2 focus:border-efcaAccent focus:outline-none focus:ring-2 focus:ring-efcaAccent"
               placeholder="Job URL Link"
             />
           </div>

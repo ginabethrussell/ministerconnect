@@ -96,8 +96,9 @@ export default function Register() {
         <h2 className="text-efcaText mb-4 text-2xl font-bold">Candidate Registration</h2>
         <form onSubmit={handleSubmit} className="space-y-4">
           <input
-            className="input-field"
             name="code"
+            type="text"
+            className="input-field"
             value={formValues.code}
             onChange={handleChange}
             placeholder="Invite Code"
@@ -105,25 +106,27 @@ export default function Register() {
             autoFocus
           />
           <input
-            className="input-field"
-            type="email"
             name="email"
+            type="email"
+            className="input-field"
             value={formValues.email}
             onChange={handleChange}
             placeholder="Email"
             required
           />
           <input
-            className="input-field"
             name="firstname"
+            type="text"
+            className="input-field"
             value={formValues.firstname}
             onChange={handleChange}
             placeholder="First Name"
             required
           />
           <input
-            className="input-field"
             name="lastname"
+            type="text"
+            className="input-field"
             value={formValues.lastname}
             onChange={handleChange}
             placeholder="Last Name"

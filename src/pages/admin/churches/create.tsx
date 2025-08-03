@@ -152,9 +152,9 @@ export default function CreateChurch() {
                   id="name"
                   name="name"
                   type="text"
+                  className="w-full rounded-lg border border-gray-300 px-3 py-2 focus:border-efcaAccent focus:outline-none focus:ring-2 focus:ring-efcaAccent"
                   value={churchData.name}
                   onChange={(e) => handleChurchDataChange('name', e.target.value)}
-                  className="w-full rounded-lg border border-gray-300 px-3 py-2 focus:border-efcaAccent focus:outline-none focus:ring-2 focus:ring-efcaAccent"
                   placeholder="e.g., Grace Fellowship Church"
                   required
                 />
@@ -166,11 +166,11 @@ export default function CreateChurch() {
                 </label>
                 <input
                   id="email"
-                  name="name"
+                  name="email"
                   type="email"
+                  className="w-full rounded-lg border border-gray-300 px-3 py-2 focus:border-efcaAccent focus:outline-none focus:ring-2 focus:ring-efcaAccent"
                   value={churchData.email}
                   onChange={(e) => handleChurchDataChange('email', e.target.value)}
-                  className="w-full rounded-lg border border-gray-300 px-3 py-2 focus:border-efcaAccent focus:outline-none focus:ring-2 focus:ring-efcaAccent"
                   placeholder="contact@church.org"
                   required
                 />
@@ -184,9 +184,9 @@ export default function CreateChurch() {
                   id="phone"
                   name="phone"
                   type="tel"
+                  className="w-full rounded-lg border border-gray-300 px-3 py-2 focus:border-efcaAccent focus:outline-none focus:ring-2 focus:ring-efcaAccent"
                   value={churchData.phone}
                   onChange={(e) => handleChurchDataChange('phone', e.target.value)}
-                  className="w-full rounded-lg border border-gray-300 px-3 py-2 focus:border-efcaAccent focus:outline-none focus:ring-2 focus:ring-efcaAccent"
                   placeholder="Enter 10 numbers with no punctuation"
                   required
                 />
@@ -200,9 +200,9 @@ export default function CreateChurch() {
                   id="website"
                   name="website"
                   type="url"
+                  className="w-full rounded-lg border border-gray-300 px-3 py-2 focus:border-efcaAccent focus:outline-none focus:ring-2 focus:ring-efcaAccent"
                   value={churchData.website}
                   onChange={(e) => handleChurchDataChange('website', e.target.value)}
-                  className="w-full rounded-lg border border-gray-300 px-3 py-2 focus:border-efcaAccent focus:outline-none focus:ring-2 focus:ring-efcaAccent"
                   placeholder="https://church.org"
                 />
               </div>
@@ -218,9 +218,9 @@ export default function CreateChurch() {
                   id="street_address"
                   name="street_address"
                   type="text"
+                  className="w-full rounded-lg border border-gray-300 px-3 py-2 focus:border-efcaAccent focus:outline-none focus:ring-2 focus:ring-efcaAccent"
                   value={churchData.street_address}
                   onChange={(e) => handleChurchDataChange('street_address', e.target.value)}
-                  className="w-full rounded-lg border border-gray-300 px-3 py-2 focus:border-efcaAccent focus:outline-none focus:ring-2 focus:ring-efcaAccent"
                   placeholder="123 Church St"
                   required
                 />
@@ -234,9 +234,9 @@ export default function CreateChurch() {
                   id="city"
                   name="city"
                   type="text"
+                  className="w-full rounded-lg border border-gray-300 px-3 py-2 focus:border-efcaAccent focus:outline-none focus:ring-2 focus:ring-efcaAccent"
                   value={churchData.city}
                   onChange={(e) => handleChurchDataChange('city', e.target.value)}
-                  className="w-full rounded-lg border border-gray-300 px-3 py-2 focus:border-efcaAccent focus:outline-none focus:ring-2 focus:ring-efcaAccent"
                   placeholder="Springfield"
                   required
                 />
@@ -250,9 +250,9 @@ export default function CreateChurch() {
                   id="state"
                   name="state"
                   type="text"
+                  className="w-full rounded-lg border border-gray-300 px-3 py-2 focus:border-efcaAccent focus:outline-none focus:ring-2 focus:ring-efcaAccent"
                   value={churchData.state}
                   onChange={(e) => handleChurchDataChange('state', e.target.value)}
-                  className="w-full rounded-lg border border-gray-300 px-3 py-2 focus:border-efcaAccent focus:outline-none focus:ring-2 focus:ring-efcaAccent"
                   placeholder="2 Letter Abbreviation - OH"
                   required
                 />
@@ -266,9 +266,9 @@ export default function CreateChurch() {
                   id="zipcode"
                   name="zipcode"
                   type="text"
+                  className="w-full rounded-lg border border-gray-300 px-3 py-2 focus:border-efcaAccent focus:outline-none focus:ring-2 focus:ring-efcaAccent"
                   value={churchData.zipcode}
                   onChange={(e) => handleChurchDataChange('zipcode', e.target.value)}
-                  className="w-full rounded-lg border border-gray-300 px-3 py-2 focus:border-efcaAccent focus:outline-none focus:ring-2 focus:ring-efcaAccent"
                   placeholder="62704"
                   required
                 />
@@ -315,11 +315,11 @@ export default function CreateChurch() {
                       </label>
                       <input
                         id="user_email"
-                        name="user_email"
+                        name="email"
                         type="email"
+                        className="w-full rounded-lg border border-gray-300 px-3 py-2 focus:border-efcaAccent focus:outline-none focus:ring-2 focus:ring-efcaAccent"
                         value={user.email}
                         onChange={(e) => handleUserChange(index, 'email', e.target.value)}
-                        className="w-full rounded-lg border border-gray-300 px-3 py-2 focus:border-efcaAccent focus:outline-none focus:ring-2 focus:ring-efcaAccent"
                         placeholder="user@church.org"
                         required
                       />
@@ -336,9 +336,9 @@ export default function CreateChurch() {
                         id="first_name"
                         name="first_name"
                         type="text"
+                        className="w-full rounded-lg border border-gray-300 px-3 py-2 focus:border-efcaAccent focus:outline-none focus:ring-2 focus:ring-efcaAccent"
                         value={user.first_name}
                         onChange={(e) => handleUserChange(index, 'first_name', e.target.value)}
-                        className="w-full rounded-lg border border-gray-300 px-3 py-2 focus:border-efcaAccent focus:outline-none focus:ring-2 focus:ring-efcaAccent"
                         placeholder="First Name"
                         required
                       />
@@ -355,9 +355,9 @@ export default function CreateChurch() {
                         id="last_name"
                         name="last_name"
                         type="text"
+                        className="w-full rounded-lg border border-gray-300 px-3 py-2 focus:border-efcaAccent focus:outline-none focus:ring-2 focus:ring-efcaAccent"
                         value={user.last_name}
                         onChange={(e) => handleUserChange(index, 'last_name', e.target.value)}
-                        className="w-full rounded-lg border border-gray-300 px-3 py-2 focus:border-efcaAccent focus:outline-none focus:ring-2 focus:ring-efcaAccent"
                         placeholder="Last Name"
                         required
                       />
@@ -371,6 +371,8 @@ export default function CreateChurch() {
                         Password <span className="text-red-500">*</span>
                       </label>
                       <PasswordInput
+                        id="password"
+                        name="password"
                         value={user.password}
                         onChange={(e) => handleUserChange(index, 'password', e.target.value)}
                         placeholder="Create a temporary password"
@@ -381,16 +383,16 @@ export default function CreateChurch() {
                   </div>
 
                   <div className="mt-3">
-                    <label htmlFor="require_password_change" className="flex items-center">
+                    <label htmlFor="requires_password_change" className="flex items-center">
                       <input
-                        id="require_password_change"
-                        name="require_password_change"
+                        id="requires_password_change"
+                        name="requires_password_change"
                         type="checkbox"
+                        className="rounded border-gray-300 text-efcaAccent focus:ring-efcaAccent"
                         checked={user.requires_password_change}
                         onChange={(e) =>
                           handleUserChange(index, 'requires_password_change', e.target.checked)
                         }
-                        className="rounded border-gray-300 text-efcaAccent focus:ring-efcaAccent"
                       />
                       <span className="ml-2 text-sm text-gray-700">
                         User will be required to reset password on first login.

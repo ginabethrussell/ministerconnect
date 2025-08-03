@@ -353,13 +353,14 @@ export default function CandidateProfilePage() {
       <h3 className="text-efcaDark mb-2 text-base font-semibold">Contact Information</h3>
       <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
         <div>
-          <label htmlFor="name" className="block text-sm font-medium text-gray-700">
+          <label htmlFor="first_name" className="block text-sm font-medium text-gray-700">
             First Name
           </label>
           <input
             id="first_name"
-            className="mt-1 block w-full rounded-lg border border-gray-300 p-2.5 text-sm focus:border-efcaAccent focus:ring-efcaAccent"
             name="first_name"
+            type="text"
+            className="mt-1 block w-full rounded-lg border border-gray-300 p-2.5 text-sm focus:border-efcaAccent focus:ring-efcaAccent"
             value={user?.first_name}
             disabled
           />
@@ -370,8 +371,9 @@ export default function CandidateProfilePage() {
           </label>
           <input
             id="last_name"
-            className="mt-1 block w-full rounded-lg border border-gray-300 p-2.5 text-sm focus:border-efcaAccent focus:ring-efcaAccent"
             name="last_name"
+            type="text"
+            className="mt-1 block w-full rounded-lg border border-gray-300 p-2.5 text-sm focus:border-efcaAccent focus:ring-efcaAccent"
             value={user?.last_name}
             disabled
           />
@@ -384,9 +386,9 @@ export default function CandidateProfilePage() {
         </label>
         <input
           id="email"
-          className="mt-1 block w-full rounded-lg border border-gray-300 p-2.5 text-sm focus:border-efcaAccent focus:ring-efcaAccent"
           name="email"
           type="email"
+          className="mt-1 block w-full rounded-lg border border-gray-300 p-2.5 text-sm focus:border-efcaAccent focus:ring-efcaAccent"
           value={user?.email}
           disabled
         />
@@ -397,11 +399,12 @@ export default function CandidateProfilePage() {
           Phone <span className="text-red-500">*</span>
         </label>
         <input
+          id="phone"
+          name="phone"
+          type="tel"
           className={`mt-1 block w-full rounded-lg border p-2.5 text-sm focus:border-efcaAccent focus:ring-efcaAccent ${
             formErrors.phone ? 'border-red-500' : 'border-gray-300'
           }`}
-          id="phone"
-          name="phone"
           value={form.phone}
           onChange={handleChange}
           placeholder="8592143456"
@@ -416,10 +419,11 @@ export default function CandidateProfilePage() {
         </label>
         <input
           id="street_address"
+          name="street_address"
+          type="street_address"
           className={`mt-1 block w-full rounded-lg border p-2.5 text-sm focus:border-efcaAccent focus:ring-efcaAccent ${
             formErrors.street_address ? 'border-red-500' : 'border-gray-300'
           }`}
-          name="street_address"
           value={form.street_address}
           onChange={handleChange}
           placeholder="105 Orchard Dr"
@@ -436,11 +440,12 @@ export default function CandidateProfilePage() {
             City <span className="text-red-500">*</span>
           </label>
           <input
-            id="city "
+            id="city"
+            name="city"
+            type="text"
             className={`mt-1 block w-full rounded-lg border p-2.5 text-sm focus:border-efcaAccent focus:ring-efcaAccent ${
               formErrors.city ? 'border-red-500' : 'border-gray-300'
             }`}
-            name="city"
             value={form.city}
             onChange={handleChange}
             placeholder="Cincinnati"
@@ -455,10 +460,11 @@ export default function CandidateProfilePage() {
           </label>
           <input
             id="state"
+            name="state"
+            type="text"
             className={`mt-1 block w-full rounded-lg border p-2.5 text-sm focus:border-efcaAccent focus:ring-efcaAccent ${
               formErrors.state ? 'border-red-500' : 'border-gray-300'
             }`}
-            name="state"
             value={form.state}
             onChange={handleChange}
             placeholder="OH"
@@ -473,10 +479,11 @@ export default function CandidateProfilePage() {
           </label>
           <input
             id="zipcode"
+            name="zipcode"
+            type="text"
             className={`mt-1 block w-full rounded-lg border p-2.5 text-sm focus:border-efcaAccent focus:ring-efcaAccent ${
               formErrors.zipcode ? 'border-red-500' : 'border-gray-300'
             }`}
-            name="zipcode"
             value={form.zipcode}
             onChange={handleChange}
             placeholder="45069"
@@ -495,13 +502,13 @@ export default function CandidateProfilePage() {
           </label>
           <div className="mt-1 flex gap-2">
             <input
-              type="file"
               id="resume"
               name="resume"
-              onChange={handleFileChange}
-              accept=".pdf"
-              required={!(typeof form.resume === 'string' && form.resume)}
+              type="file"
               className="flex-1 rounded-lg border border-gray-300 p-2.5 text-sm focus:border-efcaAccent focus:ring-efcaAccent"
+              accept=".pdf"
+              onChange={handleFileChange}
+              required={!(typeof form.resume === 'string' && form.resume)}
             />
           </div>
           {formErrors.resume && <p className="mt-1 text-sm text-red-600">{formErrors.resume}</p>}
@@ -528,16 +535,16 @@ export default function CandidateProfilePage() {
         </div>
       </div>
       <div className="mb-4">
-        <label htmlFor="profileImage" className="mb-2 block text-sm text-gray-700">
+        <label htmlFor="profile_image" className="mb-2 block text-sm text-gray-700">
           Profile Photo (Optional, JPG/PNG, max 1MB)
         </label>
         <input
-          type="file"
-          id="profileImage"
+          id="profile_image"
           name="profile_image"
+          type="file"
+          className="flex-1 rounded-lg border border-gray-300 p-2.5 text-sm focus:border-efcaAccent focus:ring-efcaAccent"
           accept="image/*"
           onChange={handleFileChange}
-          className="flex-1 rounded-lg border border-gray-300 p-2.5 text-sm focus:border-efcaAccent focus:ring-efcaAccent"
         />
         {typeof form.profile_image === 'string' && form.profile_image && (
           <div className="mt-2 flex items-center gap-2">
@@ -560,13 +567,15 @@ export default function CandidateProfilePage() {
       </div>
 
       <div>
-        <label className="mb-2 block text-sm text-gray-700">
+        <label htmlFor="video_url" className="mb-2 block text-sm text-gray-700">
           Teaching/Preaching Video URL (Optional)
         </label>
         <div className="mt-1 flex gap-2">
           <input
-            className="flex-1 rounded-lg border border-gray-300 p-2.5 text-sm focus:border-efcaAccent focus:ring-efcaAccent"
+            id="video_url"
             name="video_url"
+            type="url"
+            className="flex-1 rounded-lg border border-gray-300 p-2.5 text-sm focus:border-efcaAccent focus:ring-efcaAccent"
             value={form.video_url ?? ''}
             onChange={handleChange}
             placeholder="Video URL (YouTube, Vimeo, etc.)"
@@ -592,10 +601,15 @@ export default function CandidateProfilePage() {
           'Senior pastor (plus one or two full-time staff)',
           'Senior pastor (plus three or more full-time staff)',
         ].map((role) => (
-          <label key={role} className="flex items-center text-sm text-gray-700">
+          <label
+            htmlFor="placement_preferences"
+            key={role}
+            className="flex items-center text-sm text-gray-700"
+          >
             <input
-              type="checkbox"
+              id="placement_preferences"
               name="placement_preferences"
+              type="checkbox"
               value={role}
               checked={form.placement_preferences?.includes(role)}
               onChange={handlePlacementPreferenceChange}
@@ -633,10 +647,16 @@ export default function CandidateProfilePage() {
           'Student/youth ministry',
           "Women's ministry",
         ].map((role) => (
-          <label key={role} className="flex items-center text-sm text-gray-700">
+          <label
+            htmlFor="placement_preferences2"
+            key={role}
+            className="flex items-center text-sm text-gray-700"
+          >
             <input
-              type="checkbox"
+              id="placement_preferences2"
               name="placement_preferences"
+              type="checkbox"
+              className="mr-2"
               value={role}
               checked={form.placement_preferences?.includes(role)}
               onChange={handlePlacementPreferenceChange}
@@ -644,7 +664,6 @@ export default function CandidateProfilePage() {
                 !form.placement_preferences?.includes(role) &&
                 form.placement_preferences?.length >= 5
               }
-              className="mr-2"
             />
             {role}
           </label>

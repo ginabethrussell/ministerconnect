@@ -97,41 +97,50 @@ export default function AdminCodes() {
           className="mb-8 grid grid-cols-1 gap-4 rounded-lg bg-white p-6 shadow md:grid-cols-4"
         >
           <div className="flex flex-col">
-            <label className="mb-2 block text-sm font-medium text-gray-700">
+            <label htmlFor="code" className="mb-2 block text-sm font-medium text-gray-700">
               Invite Code <span className="text-red-500">*</span>
             </label>
             <input
+              id="code"
               name="code"
+              type="text"
+              className="input-field"
               value={formValues.code}
               onChange={handleChange}
               placeholder="Code"
-              className="input-field"
               required
             />
           </div>
           <div className="flex flex-col">
-            <label className="mb-2 block text-sm font-medium text-gray-700">
+            <label htmlFor="event" className="mb-2 block text-sm font-medium text-gray-700">
               Event <span className="text-red-500">*</span>
             </label>
             <input
+              id="event"
               name="event"
+              type="text"
+              className="input-field"
               value={formValues.event}
               onChange={handleChange}
               placeholder="Event"
-              className="input-field"
               required
             />
           </div>
           <div className="flex flex-col">
-            <label className="mb-2 block text-sm font-medium text-gray-700">
+            <label
+              htmlFor="expiration_date"
+              className="mb-2 block text-sm font-medium text-gray-700"
+            >
               Expiration Date <span className="text-red-500">*</span>
             </label>
             <ReactDatePicker
-              selected={formValues.expires_at}
-              onChange={handleDateChange}
+              id="expiration_date"
+              name="expiration_date"
               className="input-field"
               dateFormat="yyyy-MM-dd"
               minDate={new Date()}
+              selected={formValues.expires_at}
+              onChange={handleDateChange}
               placeholderText="Expiration Date"
             />
           </div>
@@ -235,22 +244,23 @@ function InviteCodeRow({
         <>
           <input
             name="code"
+            className="mb-3 w-full rounded-md border px-3 py-2 text-sm"
             value={localValues.code}
             onChange={handleChange}
-            className="mb-3 w-full rounded-md border px-3 py-2 text-sm"
           />
           <input
             name="event"
+            className="mb-3 w-full rounded-md border px-3 py-2 text-sm"
             value={localValues.event}
             onChange={handleChange}
-            className="mb-3 w-full rounded-md border px-3 py-2 text-sm"
           />
           <ReactDatePicker
-            selected={localValues.expires_at}
-            onChange={handleDateChange}
+            name="expiration_date"
             className="input-field mb-4"
             dateFormat="yyyy-MM-dd"
             minDate={new Date()}
+            selected={localValues.expires_at}
+            onChange={handleDateChange}
           />
           <div className="flex flex-col gap-2 md:flex-row">
             <button onClick={handleSave} className="btn-primary w-full md:w-auto">

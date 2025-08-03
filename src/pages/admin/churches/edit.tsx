@@ -147,79 +147,79 @@ export default function EditChurch() {
               <input
                 name="name"
                 type="text"
+                className="input-field"
                 value={churchData.name}
                 onChange={(e) => handleChurchDataChange('name', e.target.value)}
-                className="input-field"
                 placeholder="Church Name"
                 required
               />
               <input
                 name="email"
                 type="email"
+                className="input-field"
                 value={churchData.email}
                 onChange={(e) => handleChurchDataChange('email', e.target.value)}
-                className="input-field"
                 placeholder="Church Email"
                 required
               />
               <input
                 name="phone"
                 type="tel"
+                className="input-field"
                 value={formatPhone(churchData.phone)}
                 onChange={(e) => handleChurchDataChange('phone', e.target.value)}
-                className="input-field"
                 placeholder="Enter 10 numbers with no punctuation"
                 required
               />
               <input
                 name="website"
                 type="text"
+                className="input-field"
                 value={churchData.website}
                 onChange={(e) => handleChurchDataChange('website', e.target.value)}
-                className="input-field"
                 placeholder="Website"
               />
               <input
                 name="street_address"
                 type="text"
+                className="input-field"
                 value={churchData.street_address}
                 onChange={(e) => handleChurchDataChange('street_address', e.target.value)}
-                className="input-field"
                 placeholder="Street Address"
                 required
               />
               <input
                 name="city"
                 type="text"
+                className="input-field"
                 value={churchData.city}
                 onChange={(e) => handleChurchDataChange('city', e.target.value)}
-                className="input-field"
                 placeholder="City"
                 required
               />
               <input
                 name="state"
                 type="text"
+                className="input-field"
                 value={churchData.state}
                 onChange={(e) => handleChurchDataChange('state', e.target.value)}
-                className="input-field"
-                placeholder="State"
+                placeholder="State abbreviation"
                 required
               />
               <input
                 name="zipcode"
                 type="text"
+                className="input-field"
                 value={churchData.zipcode}
                 onChange={(e) => handleChurchDataChange('zipcode', e.target.value)}
-                className="input-field"
                 placeholder="Zip Code"
                 required
               />
               <select
                 name="status"
+                className="input-field"
                 value={churchData.status}
                 onChange={(e) => handleChurchDataChange('status', e.target.value)}
-                className="input-field"
               >
                 <option value="active">Active</option>
                 <option value="inactive">Inactive</option>
@@ -252,46 +252,47 @@ export default function EditChurch() {
                     <input
                       name="first_name"
                       type="text"
+                      className="input-field"
                       value={user.first_name}
                       onChange={(e) => handleUserChange(index, 'first_name', e.target.value)}
-                      className="input-field"
                       placeholder="User First Name"
                       required
                     />
                     <input
                       name="last_name"
                       type="text"
+                      className="input-field"
                       value={user.last_name}
                       onChange={(e) => handleUserChange(index, 'last_name', e.target.value)}
-                      className="input-field"
                       placeholder="User Last Name"
                       required
                     />
                     <input
                       name="email"
                       type="email"
+                      className="input-field"
                       value={user.email}
                       onChange={(e) => handleUserChange(index, 'email', e.target.value)}
-                      className="input-field"
                       placeholder="User Email"
                       required
                     />
                     <PasswordInput
+                      name="password"
                       value={user.password || ''}
                       onChange={(e) => handleUserChange(index, 'password', e.target.value)}
                       placeholder="Temporary Password"
                     />
                     <div className="flex items-center gap-2">
                       <input
+                        name="requires_password_change"
                         type="checkbox"
-                        id={`force-change-${user.id}`}
                         checked={user.requires_password_change}
                         onChange={(e) =>
                           handleUserChange(index, 'requires_password_change', e.target.checked)
                         }
                       />
                       <label htmlFor={`force-change-${user.id}`} className="text-sm">
-                        Force password change on next login
+                        Require password change on next login
                       </label>
                     </div>
                   </div>

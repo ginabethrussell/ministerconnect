@@ -58,8 +58,10 @@ export default function Login() {
         <p className="mb-4 text-gray-600">All users (candidates, churches, admins) log in here.</p>
         <form onSubmit={handleSubmit} className="space-y-4">
           <input
-            className="input-field"
+            id="email"
+            name="email"
             type="email"
+            className="input-field"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
             placeholder="Email"
@@ -67,6 +69,8 @@ export default function Login() {
             autoFocus
           />
           <PasswordInput
+            id="password"
+            name="password"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
             placeholder="Password"

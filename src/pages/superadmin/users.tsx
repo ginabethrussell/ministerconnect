@@ -163,18 +163,20 @@ export default function SuperAdminUsers() {
           <div className="mb-6 flex flex-col gap-4 md:flex-row">
             <div className="flex-1">
               <input
-                type="text"
-                placeholder="Search users by name or email..."
+                name="serachTerm"
+                type="search"
+                className="w-full rounded-lg border border-gray-300 px-4 py-2 focus:border-efcaAccent focus:outline-none focus:ring-2 focus:ring-efcaAccent"
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
-                className="w-full rounded-lg border border-gray-300 px-4 py-2 focus:border-efcaAccent focus:outline-none focus:ring-2 focus:ring-efcaAccent"
+                placeholder="Search users by name or email..."
               />
             </div>
             <div className="w-full md:w-48">
               <select
+                name="roleFilter"
+                className="w-full rounded-lg border border-gray-300 bg-white px-4 py-2 focus:border-efcaAccent focus:outline-none focus:ring-2 focus:ring-efcaAccent"
                 value={roleFilter}
                 onChange={(e) => setRoleFilter(e.target.value)}
-                className="w-full rounded-lg border border-gray-300 bg-white px-4 py-2 focus:border-efcaAccent focus:outline-none focus:ring-2 focus:ring-efcaAccent"
               >
                 <option value="all">All Roles</option>
                 <option value="candidate">Candidates</option>

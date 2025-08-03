@@ -184,12 +184,12 @@ export default function ChurchSearch() {
           )}
 
           <input
-            type="text"
             name="search"
-            placeholder="Search by name, email, city, or state abbreviation..."
+            type="search"
+            className="mb-6 w-full rounded-md border border-gray-300 px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
             value={search}
             onChange={(e) => setSearch(e.target.value)}
-            className="mb-6 w-full rounded-md border border-gray-300 px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+            placeholder="Search by name, email, city, or state abbreviation..."
           />
           {!selectedJobId && (
             <div className="mb-6 rounded border border-yellow-300 bg-yellow-50 p-4 text-yellow-800">
