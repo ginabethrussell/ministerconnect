@@ -116,12 +116,10 @@ All API endpoints are defined in `src/utils/api.ts` and match the Django backend
 
 Below are example views from the MinisterConnect frontend:
 
-<!-- Screenshot paths will be updated after user flow testing -->
-
 ### Landing Page
 
 <p align="center">
-  <img src="" alt="landing-page" width="280" />
+  <img src="screenshots/landing-page.png" alt="landing-page" width="280" />
   <br />
   <em>Landing Page</em>
 </p>
@@ -131,15 +129,15 @@ Below are example views from the MinisterConnect frontend:
 <table>
   <tr>
     <td align="center">
-      <img src="" width="280" alt="login" /><br/>
+      <img src="screenshots/login.png" width="280" alt="login" /><br/>
       <em>Login Screen</em>
     </td>
     <td align="center">
-      <img src="" width="280" alt="registration" /><br/>
+      <img src="screenshots/registration.png" width="280" alt="registration" /><br/>
       <em>Registration</em>
     </td>
     <td align="center">
-      <img src="" width="280" alt="reset-password" /><br/>
+      <img src="screenshots/reset-password.png" width="280" alt="reset-password" /><br/>
       <em>Reset Password</em>
     </td>
   </tr>
@@ -150,19 +148,19 @@ Below are example views from the MinisterConnect frontend:
 <table>
   <tr>
     <td align="center">
-      <img src="" width="280" alt="dashboard" /><br/>
+      <img src="screenshots/candidate_dashboard.png" width="280" alt="dashboard" /><br/>
       <em>Dashboard</em>
     </td>
     <td align="center">
-      <img src="" width="280" alt="view-profile" /><br/>
+      <img src="screenshots/candidate-profile.png" width="280" alt="view-profile" /><br/>
       <em>Profile View</em>
     </td>
    <td align="center">
-      <img src="" width="280" alt="edit-profile" /><br/>
+      <img src="screenshots/edit-profile.png" width="280" alt="edit-profile" /><br/>
       <em>Edit Profile</em>
     </td>
     <td align="center">
-      <img src="" width="280" alt="view-jobs" /><br/>
+      <img src="screenshots/candidate_express_interest.png" width="280" alt="view-jobs" /><br/>
       <em>View and Express Interest in Jobs</em>
     </td>
   </tr>
@@ -173,27 +171,19 @@ Below are example views from the MinisterConnect frontend:
 <table>
   <tr>
     <td align="center">
-      <img src="" width="280" alt="dashboard" /><br/>
+      <img src="screenshots/church-dashboard.png" width="280" alt="dashboard" /><br/>
       <em>Dashboard</em>
     </td>
     <td align="center">
-      <img src="" width="280" alt="view-church" /><br/>
-      <em>Church View</em>
-    </td>
-   <td align="center">
-      <img src="" width="280" alt="edit-church" /><br/>
-      <em>Edit Church</em>
-    </td>
-    <td align="center">
-      <img src="" width="280" alt="view-candidates" /><br/>
+      <img src="screenshots/search-candidates.png" width="280" alt="view-candidates" /><br/>
       <em>View and Express Interest in Candidates</em>
     </td>
     <td align="center">
-      <img src="" width="280" alt="view-jobs" /><br/>
+      <img src="screenshots/create-job.png" width="280" alt="view-jobs" /><br/>
       <em>View and Create Jobs</em>
     </td>
     <td align="center">
-      <img src="" width="280" alt="view-mutual-interests" /><br/>
+      <img src="screenshots/mutual_interests.png" width="280" alt="view-mutual-interests" /><br/>
       <em>View Mutual Interests</em>
     </td>
   </tr>
@@ -204,31 +194,31 @@ Below are example views from the MinisterConnect frontend:
 <table>
   <tr>
     <td align="center">
-      <img src="" width="280" alt="dashboard" /><br/>
+      <img src="screenshots/admin-dashboard.png" width="280" alt="dashboard" /><br/>
       <em>Dashboard</em>
     </td>
     <td align="center">
-      <img src="" width="280" alt="create-church" /><br/>
+      <img src="screenshots/create-church.png" width="280" alt="create-church" /><br/>
       <em>Create Church</em>
     </td>
     <td align="center">
-      <img src="" width="280" alt="view-church" /><br/>
+      <img src="screenshots/view-churches.png" width="280" alt="view-church" /><br/>
       <em>View Church</em>
     </td>
    <td align="center">
-      <img src="" width="280" alt="edit-church" /><br/>
+      <img src="screenshots/edit-church.png" width="280" alt="edit-church" /><br/>
       <em>Edit Church</em>
     </td>
     <td align="center">
-      <img src="" width="280" alt="review-candidates" /><br/>
+      <img src="screenshots/admin-profile-review.png" width="280" alt="review-candidates" /><br/>
       <em>Review Candidates</em>
     </td>
     <td align="center">
-      <img src="" width="280" alt="review-jobs" /><br/>
+      <img src="screenshots/admin-review-job.png" width="280" alt="review-jobs" /><br/>
       <em>Review Jobs</em>
     </td>
     <td align="center">
-      <img src="" width="280" alt="manage-invite-codes" /><br/>
+      <img src="screenshots/create-invite-code.png" width="280" alt="manage-invite-codes" /><br/>
       <em>Manage Invite Codes</em>
     </td>
   </tr>
