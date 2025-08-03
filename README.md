@@ -5,7 +5,7 @@
 ![TypeScript](https://img.shields.io/badge/TypeScript-4.x-blue?logo=typescript)
 ![License: Proprietary](https://img.shields.io/badge/license-proprietary-red)
 
-A multi-role Next.js application for connecting ministry candidates with churches, featuring role-based access for candidates, churches, admins, and super admins. Built with React, TypeScript, Tailwind CSS, and MSW for frontend development, with a Django REST API backend.
+A multi-role Next.js application for connecting ministry candidates with churches, featuring role-based access for candidates, churches, admins, and super admins. Built with React, TypeScript, Tailwind CSS for frontend development, with a Django REST API backend.
 
 ## Features
 
@@ -32,34 +32,7 @@ A multi-role Next.js application for connecting ministry candidates with churche
 - **Invite Code Management**: Generate and manage registration invite codes
 - **Church Oversight**: Review and manage church accounts
 
-## Quick Start
-
-### Full Stack Development (Frontend + Backend)
-
-1. **Start the Backend:**
-
-   ```bash
-   cd ministerconnect_backend
-   python3 -m venv env
-   source env/bin/activate
-   pip install -r requirements.txt
-   make migrate
-   make run
-   ```
-
-   The application will be available at `http://localhost:8000`
-
-2. **Start the Frontend:**
-   ```bash
-   cd ministerconnect
-   cp env.example .env.local
-   # Edit .env.local to set NEXT_PUBLIC_API_URL=http://localhost:8000
-   npm install
-   npm run dev
-   ```
-   The application will be available at `http://localhost:3000`
-
-## Backend Integration
+### Backend Integration
 
 This frontend connects to a Django REST API that provides:
 
@@ -71,23 +44,10 @@ This frontend connects to a Django REST API that provides:
 
 For full backend features and setup, see the [MinisterConnect Backend](https://github.com/ginabethrussell/ministerconnect_backend).
 
-### Backend API Documentation
+## Backend API Documentation
 
 The backend provides Swagger documentation at:
 [![View API Docs](https://img.shields.io/badge/View-API_Docs-blue)](https://minister-connect-backend.onrender.com/api/docs/)
-
-### Environment Setup
-
-1. **Frontend Environment:**
-
-   ```bash
-   cd ministerconnect
-   cp env.example .env.local
-   # Set NEXT_PUBLIC_API_URL=http://localhost:8000 for backend integration
-   ```
-
-2. **Backend Environment:**
-   Follow the backend setup instructions in [ministerconnect_backend/README.md](https://github.com/ginabethrussell/ministerconnect_backend)
 
 ### API Integration
 
@@ -102,7 +62,6 @@ All API endpoints are defined in `src/utils/api.ts` and match the Django backend
 ## Documentation
 
 - **Use Case Diagram**: See `docs/use-case-diagram.puml` for the PlantUML source code
-- **API Data Model**: See `API_DATA_MODEL.md` for detailed data structure information
 - **User Scenarios**: See `docs/user_scenarios/` for detailed user workflows
 - **Documentation**: See `docs/README.md` for additional documentation
 - **MVP Testing Requirements**: See `docs/mvp_testing_requirements/` for mvp delivery criteria
@@ -111,6 +70,10 @@ All API endpoints are defined in `src/utils/api.ts` and match the Django backend
 ### Use Case Diagram
 
 ![Use Case Diagram](docs/usecase_diagram.png)
+
+### Database Diagram
+
+![Database Diagram](docs/db_diagram.png)
 
 ## 📸 User Journey Screenshots
 
@@ -229,15 +192,6 @@ Below are example views from the MinisterConnect frontend:
   </tr>
 </table>
 
-## Tech Stack
-
-### Frontend
-
-- [Next.js](https://nextjs.org/) (v15+)
-- [React](https://react.dev/) (v19+)
-- [TypeScript](https://www.typescriptlang.org/)
-- [Tailwind CSS](https://tailwindcss.com/)
-
 ---
 
 ## Getting Started
@@ -284,20 +238,6 @@ Below are example views from the MinisterConnect frontend:
    ```
 
    The app will be available at [http://localhost:3000](http://localhost:3000).
-
-### Building for Production
-
-```bash
-# Frontend
-cd ministerconnect
-npm run build
-npm start
-
-# Backend
-cd ministerconnect_backend
-python manage.py collectstatic
-python manage.py runserver
-```
 
 ---
 
