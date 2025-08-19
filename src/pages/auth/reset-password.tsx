@@ -123,10 +123,10 @@ export default function ResetPassword() {
             <p className="mt-4 text-sm text-gray-600">
               For assistance, please{' '}
               <a
-                href="mailto:ginabeth.russell@gmail.com?subject=Minister%20Connect%20Reset%20Password%20Help"
+                href="mailto:mburks@gld-efca.org?subject=Minister%20Connect%20Reset%20Password%20Help"
                 className="hover:text-efcaAccent-dark text-efcaAccent underline"
               >
-                contact the admin.
+                contact the site admin.
               </a>{' '}
             </p>
           </div>

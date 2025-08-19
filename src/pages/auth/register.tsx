@@ -164,10 +164,10 @@ export default function Register() {
         <p className="text-efcaMuted mt-4 text-sm">
           Are you a church or organization? Please{' '}
           <a
-            href="mailto:ginabeth.russell@gmail.com?subject=Minister%20Connect%20Access%20Request"
+            href="mailto:mburks@gld-efca.org?subject=Minister%20Connect%20Access%20Request"
             className="hover:text-efcaAccent-dark text-efcaAccent underline"
           >
-            contact the admin
+            contact the site admin
           </a>{' '}
           to request access.
         </p>

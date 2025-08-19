@@ -4,6 +4,7 @@ import { UserProvider } from '@/context/UserContext';
 import { ProfileProvider } from '@/context/ProfileContext';
 import Header from '../components/Header';
 import Footer from '../components/Footer';
+import FeedbackWidget from '@/components/FeedbackWidget';
 
 export default function App({ Component, pageProps }: AppProps) {
   return (
@@ -14,6 +15,7 @@ export default function App({ Component, pageProps }: AppProps) {
           <main className="flex-1">
             <Component {...pageProps} />
           </main>
+          <FeedbackWidget />
           <Footer />
         </div>
       </ProfileProvider>

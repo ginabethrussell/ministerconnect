@@ -26,8 +26,7 @@ const HomePage = () => {
           <p>
             Please{' '}
             <a
-              // TODO: update this to the correct email address
-              href="mailto:ginabeth.russell@gmail.com?subject=Minister%20Connect%20Access%20Request"
+              href="mailto:mburks@gld-efca.org?subject=Minister%20Connect%20Access%20Request"
               className="hover:text-efcaAccent-dark text-efcaAccent underline"
             >
               contact the site admin
@@ -66,11 +65,10 @@ const HomePage = () => {
           <p>
             Churches: Please{' '}
             <a
-              // TODO: update this to the correct email address
-              href="mailto:ginabeth.russell@gmail.com?subject=Minister%20Connect%20Access%20Request"
+              href="mailto:mburks@gld-efca.org?subject=Minister%20Connect%20Access%20Request"
               className="hover:text-efcaAccent-dark text-efcaAccent underline"
             >
-              contact the admin
+              contact the site admin
             </a>{' '}
             for access.
           </p>

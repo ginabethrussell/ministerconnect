@@ -50,7 +50,7 @@ export default function Header() {
           href={roleHref}
           className="flex cursor-pointer items-center text-xl font-bold uppercase tracking-wide opacity-100"
         >
-          <span>MinisterConnect</span>
+          <span>EFCA MinisterConnect</span>
         </Link>
         {!hideNav && (
           <button

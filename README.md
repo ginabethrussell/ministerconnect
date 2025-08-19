@@ -289,7 +289,7 @@ ministerconnect/
 
 ## Password Reset (MVP Workflow)
 
-For the MVP, password resets are handled manually by the site administrator. If you forget your password, please contact the admin at [ginabeth.russell@gmail.com](mailto:ginabeth.russell@gmail.com?subject=Minister%20Connect%20Password%20Reset%20Request) to request a password reset. The admin will reset your password and provide you with a temporary password.
+For the MVP, password resets are handled manually by the site administrator. If you forget your password, please contact the site admin at [mburks@gld-efca.org](mailto:mburks@gld-efca.org?subject=Minister%20Connect%20Password%20Reset%20Request) to request a password reset. The admin will reset your password and provide you with a temporary password.
 
 Automated password reset via email will be implemented in a future release.
 
