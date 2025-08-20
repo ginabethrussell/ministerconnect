@@ -23,8 +23,8 @@ export default function Document() {
           property="og:description"
           content="A secure platform for churches and job candidates to express mutual interest."
         />
-        <meta property="og:image" content="https://ministerconnect.vercel.app/og-image.png" />
-        <meta property="og:url" content="https://ministerconnect.vercel.app/" />
+        <meta property="og:image" content="https://ministerconnect.org/og-image.png" />
+        <meta property="og:url" content="https://ministerconnect.org/" />
         <meta property="og:type" content="website" />
 
         {/* Twitter */}
@@ -34,7 +34,7 @@ export default function Document() {
           name="twitter:description"
           content="A secure platform for churches and job candidates to express mutual interest."
         />
-        <meta name="twitter:image" content="https://ministerconnect.vercel.app/og-image.png" />
+        <meta name="twitter:image" content="https://ministerconnect.org/og-image.png" />
       </Head>
       <body>
         <Main />
