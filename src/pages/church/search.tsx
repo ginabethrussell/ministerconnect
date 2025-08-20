@@ -151,7 +151,7 @@ export default function ChurchSearch() {
               </Link>
               to get started or contact the
               <a
-                href="mailto:ginabeth.russell@gmail.com?subject=Minister%20Connect%20Assistance%20Request"
+                href="mailto:mburks@gld-efca.org?subject=Minister%20Connect%20Assistance%20Request"
                 className="cursor-pointer font-semibold text-blue-800 hover:underline"
               >
                 {' '}

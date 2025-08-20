@@ -151,7 +151,7 @@ export default function CreateJob() {
               <option value="" disabled>
                 Select an employment type
               </option>
-              <option value="Full Time with Benefits">Full Time with Benefits</option>
+              <option value="Full Time">Full Time</option>
               <option value="Part Time">Part Time</option>
               <option value="Internship">Internship</option>
             </select>

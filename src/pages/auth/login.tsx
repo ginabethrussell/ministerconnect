@@ -79,10 +79,10 @@ export default function Login() {
             <p className="mt-4 text-sm text-gray-600">
               Forgot Password? Please{' '}
               <a
-                href="mailto:ginabeth.russell@gmail.com?subject=Minister%20Connect%20Password%20Reset%20Request"
+                href="mailto:mburks@gld-efca.org?subject=Minister%20Connect%20Password%20Reset%20Request"
                 className="hover:text-efcaAccent-dark text-efcaAccent underline"
               >
-                contact the admin
+                contact the site admin
               </a>{' '}
               to reset.
             </p>
@@ -96,10 +96,10 @@ export default function Login() {
         <p className="mt-4 text-sm text-gray-600">
           Are you a church or organization? Please{' '}
           <a
-            href="mailto:ginabeth.russell@gmail.com?subject=Minister%20Connect%20Access%20Request"
+            href="mailto:mburks@gld-efca.org?subject=Minister%20Connect%20Access%20Request"
             className="hover:text-efcaAccent-dark text-efcaAccent underline"
           >
-            contact the admin
+            contact the site admin
           </a>{' '}
           to request access.
         </p>

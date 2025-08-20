@@ -6,8 +6,7 @@ export default function Footer() {
       <div className="mx-auto flex max-w-4xl flex-col items-center justify-center gap-4 px-4 text-center">
         <div>
           <span className="mt-1 block text-sm">
-            &copy; {new Date().getFullYear()} EFCA Great Lakes District Minister Connect. All rights
-            reserved.
+            &copy; {new Date().getFullYear()} EFCA Minister Connect. All rights reserved.
           </span>
         </div>
       </div>
