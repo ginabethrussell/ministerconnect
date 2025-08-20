@@ -17,7 +17,7 @@ const HomePage = () => {
       <div className="flex min-h-screen flex-col items-center justify-center bg-efcaGray font-sans">
         <div className="max-w-xl rounded bg-white p-8 text-center shadow">
           <h1 className="mb-4 text-3xl font-bold text-efcaBlue">
-            Welcome to EFCA Great Lakes District Minister Connect
+            Welcome to EFCA Minister Connect
           </h1>
           <p className="mb-6 text-gray-700">
             Hi, {user.name}! You have successfully logged into Minister Connect but we are unable to
@@ -40,9 +40,7 @@ const HomePage = () => {
   return (
     <div className="flex min-h-screen flex-col items-center justify-center bg-efcaGray font-sans">
       <div className="max-w-xl rounded bg-white p-8 text-center shadow">
-        <h1 className="mb-4 text-3xl font-bold text-efcaBlue">
-          Welcome to EFCA Great Lakes District Minister Connect
-        </h1>
+        <h1 className="mb-4 text-3xl font-bold text-efcaBlue">Welcome to EFCA Minister Connect</h1>
         <p className="mb-6 text-gray-700">
           Minister Connect provides job candidates and churches a secure, admin-approved platform
           for expressing mutual interest.
