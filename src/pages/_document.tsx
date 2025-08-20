@@ -34,7 +34,7 @@ export default function Document() {
           name="twitter:description"
           content="A secure platform for churches and job candidates to express mutual interest."
         />
-        <meta name="twitter:image" content="https://www.ministerconnect/og-image.png" />
+        <meta name="twitter:image" content="https://www.ministerconnect.org/og-image.png" />
       </Head>
       <body>
         <Main />
